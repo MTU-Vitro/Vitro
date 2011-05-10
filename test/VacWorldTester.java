@@ -1,20 +1,23 @@
 import java.util.*;
+import static junit.framework.Assert.*;
 
 public class VacWorldTester {
 
+	@Test
 	private static void testClean() {
 		VacWorld w = new VacWorld();
 		Graph.Node a = w.createNode();
 
 		a.actors.add(w.createScrubby());
 
-		assert w.clean();
+		assertTrue(w.clean());
 
 		a.actors.add(w.createDirt());
 
-		assert !(w.clean());
+		assertFalse(w.clean());
 	}
 
+	@Test
 	private static void testScrubbyActions() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
@@ -27,20 +30,21 @@ public class VacWorldTester {
 		n1.actors.add(scrubby);
 
 		Set<Action> a = scrubby.actions();
-		assert a.contains(new MoveAction(w, e1, scrubby)) : a;
-		assert a.contains(new MoveAction(w, e2, scrubby)) : a;
-		assert a.size() == 2;
+		assertTrue(a.contains(new MoveAction(w, e1, scrubby)));
+		assertTrue(a.contains(new MoveAction(w, e2, scrubby)));
+		assertTrue(a.size() == 2);
 
 		VacWorld.Dirt dirt = w.createDirt();
 		n1.actors.add(dirt);
 
 		Set<Action> b = scrubby.actions();
-		assert b.contains(new MoveAction(w, e1, scrubby)) : b;
-		assert b.contains(new MoveAction(w, e2, scrubby)) : b;
-		assert b.contains(new DestroyAction(w, dirt)) : b;
-		assert b.size() == 3;
+		assertTrue(b.contains(new MoveAction(w, e1, scrubby)));
+		assertTrue(b.contains(new MoveAction(w, e2, scrubby)));
+		assertTrue(b.contains(new DestroyAction(w, dirt)));
+		assertTrue(b.size() == 3);
 	}
 
+	@Test
 	public static void testScrubbyMove() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
@@ -50,21 +54,22 @@ public class VacWorldTester {
 		VacWorld.Scrubby scrubby = w.createScrubby();
 		n1.actors.add(scrubby);
 		
-		assert n1.actors.contains(scrubby);
+		assertTrue(n1.actors.contains(scrubby));
 
 		MoveAction move = new MoveAction(w, e1, scrubby);
 		
-		assert scrubby.actions().contains(move);
+		assertTrue(scrubby.actions().contains(move));
 
 		move.apply();
 
-		assert w.getLocation(scrubby) == n2;
+		assertTrue(w.getLocation(scrubby) == n2);
 
 		move.undo();
 
-		assert w.getLocation(scrubby) == n1;
+		assertTrue(w.getLocation(scrubby) == n1);
 	}
 
+	@Test
 	public static void testScrubbyClean() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
@@ -77,23 +82,14 @@ public class VacWorldTester {
 
 		DestroyAction clean = new DestroyAction(w, dirt);
 		
-		assert scrubby.actions().contains(clean);
+		assertTrue(scrubby.actions().contains(clean));
 
 		clean.apply();
 
-		assert w.clean();
+		assertTrue(w.clean());
 
 		clean.undo();
 
-		assert !(w.clean());
-	}
-
-	public static void main(String[] args) {
-		testClean();
-		testScrubbyActions();
-		testScrubbyMove();
-		testScrubbyClean();
-
-		System.out.println("\nAll tests successful!\n");
+		assertFalse(w.clean());
 	}
 }
