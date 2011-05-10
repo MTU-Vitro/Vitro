@@ -1,0 +1,57 @@
+<project name="aiViz" default="all">
+	<property name = "bin"   value = "bin"  />
+	<property name = "src"   value = "src"  />
+	<property name = "doc"   value = "doc"  />
+	<property name = "dist"  value = "dist" />
+
+	<path id="build.classpath">
+		<pathelement path = "${bin}" />
+	</path>
+
+	<target name="clean">
+		<delete dir = "${bin}"         />
+		<delete dir = "${doc}/javadoc" />
+		<delete dir = "${dist}"        />
+	</target>
+
+	<target name="mkdir" depends="clean">
+		<mkdir dir = "${bin}"         />
+		<mkdir dir = "${doc}"         />
+		<mkdir dir = "${doc}/javadoc" />
+		<mkdir dir = "${dist}"        />
+	</target>
+
+	<target name="compile"      depends="mkdir">
+		<javac sourcepath = ""
+		       srcdir      = "${src}"
+		       destdir     = "${bin}"
+			   debug       = "on"
+			   debuglevel  = "lines,vars,source"
+			   deprecation = "on"
+			   includeantruntime = "false">
+			<include name = "**/*.java" />
+		</javac>
+	</target>
+
+	<!--<target name="compile-test" depends="mkdir">-->
+
+	<target name="build"        depends="compile">
+		<jar destfile = "${dist}/aiViz.jar"
+		     basedir  = "${bin}"
+			 excludes = "*.class"
+		/>
+	</target>
+
+	<target name="build-docs"   depends="compile">
+		<javadoc destdir     = "${doc}/javadoc"
+				 sourcepath  = "${src}">
+			<fileset dir = "src" defaultexcludes="yes">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="all" depends="build, build-docs"> 
+	</target>
+
+</project>
