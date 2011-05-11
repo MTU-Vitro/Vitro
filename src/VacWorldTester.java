@@ -1,10 +1,12 @@
 import java.util.*;
-import static junit.framework.Assert.*;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class VacWorldTester {
 
 	@Test
-	private static void testClean() {
+	public void testClean() {
 		VacWorld w = new VacWorld();
 		Graph.Node a = w.createNode();
 
@@ -18,7 +20,7 @@ public class VacWorldTester {
 	}
 
 	@Test
-	private static void testScrubbyActions() {
+	public void testScrubbyActions() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
 		Graph.Node n2 = w.createNode();
@@ -45,7 +47,7 @@ public class VacWorldTester {
 	}
 
 	@Test
-	public static void testScrubbyMove() {
+	public void testScrubbyMove() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
 		Graph.Node n2 = w.createNode();
@@ -70,7 +72,7 @@ public class VacWorldTester {
 	}
 
 	@Test
-	public static void testScrubbyClean() {
+	public void testScrubbyClean() {
 		VacWorld w = new VacWorld();
 		Graph.Node n1 = w.createNode();
 		

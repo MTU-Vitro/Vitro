@@ -1,16 +1,32 @@
 <project name="aiViz" default="all">
-	<property name = "bin"   value = "bin"  />
-	<property name = "src"   value = "src"  />
-	<property name = "doc"   value = "doc"  />
-	<property name = "dist"  value = "dist" />
+	<property name = "bin"      value = "bin"       />
+	<property name = "test.src" value = "src/bin"   />
+	<property name = "src"      value = "src"       />
+	<property name = "test"     value = "test"      />
+	<property name = "doc"      value = "doc"       />
+	<property name = "dist"     value = "dist"      />
+	<property name = "lib"      value = "lib"       />
 
 	<path id="build.classpath">
 		<pathelement path = "${bin}" />
 	</path>
 
+	<path id="lib.classpath">
+		<pathelement path = "${lib}/junit.jar" />
+	</path>
+
+	<path id="test.classpath">
+		<pathelement location="${bin}" />
+		<pathelement location="${test}" />
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
 	<target name="clean">
 		<delete dir = "${bin}"         />
 		<delete dir = "${doc}/javadoc" />
+		<delete dir = "${test}"        />
 		<delete dir = "${dist}"        />
 	</target>
 
@@ -18,22 +34,38 @@
 		<mkdir dir = "${bin}"         />
 		<mkdir dir = "${doc}"         />
 		<mkdir dir = "${doc}/javadoc" />
+		<mkdir dir = "${test}"        />
+		<mkdir dir = "${test}/logs"   />
+		<mkdir dir = "${test}/reports" />
 		<mkdir dir = "${dist}"        />
 	</target>
 
-	<target name="compile"      depends="mkdir">
-		<javac sourcepath = ""
+	<target name="compile" depends="mkdir">
+		<javac sourcepath  = ""
 		       srcdir      = "${src}"
 		       destdir     = "${bin}"
 			   debug       = "on"
-			   debuglevel  = "lines,vars,source"
+			   debuglevel  = "lines, vars, source"
+			   deprecation = "on"
+			   includeantruntime = "false">
+			<classpath refid = "lib.classpath" />
+			<include name = "**/*.java" />
+		</javac>
+	</target>
+
+<!--
+	<target name="compile-test" depends="compile">
+		<javac sourcepath  = ""
+		       srcdir      = "${test.src}"
+		       destdir     = "${test.bin}"
+			   debug       = "on"
+			   debuglevel  = "lines, vars, source"
 			   deprecation = "on"
 			   includeantruntime = "false">
 			<include name = "**/*.java" />
 		</javac>
 	</target>
-
-	<!--<target name="compile-test" depends="mkdir">-->
+-->
 
 	<target name="build"        depends="compile">
 		<jar destfile = "${dist}/aiViz.jar"
@@ -42,9 +74,45 @@
 		/>
 	</target>
 
+	<target name="test"         depends="compile">
+		<junit fork="yes" printsummary="no" haltonfailure="no">
+			<batchtest fork="yes" todir="${test}/logs/">
+				<fileset dir="${bin}">
+					<include name="**/*Tester.class" />
+				</fileset>
+			</batchtest>
+			<formatter type="xml" />
+			<classpath refid="test.classpath" />
+		</junit>
+
+		<junitreport todir="${test}/reports/">
+			<fileset dir="${test}/logs">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test}/reports" />
+		</junitreport>
+	</target>
+
+<!--
+	<target name="test"         depends="compile">
+		<junit printsummary = "no" haltonfailure = "no">
+			<classpath refid = "test.classpath" />
+			<test name="VacWorldTester" />
+			<formatter type = "plain" usefile = "false" />
+
+			<batchtest fork = "yes" todir = "${test}/reports/">
+				<fileset dir = "${bin}">
+					<include name = "**/*.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+-->
+
 	<target name="build-docs"   depends="compile">
 		<javadoc destdir     = "${doc}/javadoc"
 				 sourcepath  = "${src}">
+			<classpath refid="test.classpath" />
 			<fileset dir = "src" defaultexcludes="yes">
 				<include name="**/*.java" />
 			</fileset>
