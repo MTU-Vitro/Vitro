@@ -42,7 +42,7 @@
 	<target name = "clean">
 		<delete dir = "${bin}"          />
 		<delete dir = "${dist}"         />
-		<delete dir = "${test.logs}"    />
+		<delete dir = "${test.output}"  />
 		<delete dir = "${test.reports}" />
 		<delete dir = "${javadoc}"      />
 	</target>
@@ -51,7 +51,7 @@
 	<target name = "mkdir" depends="clean">
 		<mkdir dir = "${bin}"           />
 		<mkdir dir = "${dist}"          />
-		<mkdir dir = "${test.logs}"     />
+		<mkdir dir = "${test.output}"   />
 		<mkdir dir = "${test.reports}"  />
 		<mkdir dir = "${javadoc}"       />
 	</target>
@@ -86,7 +86,7 @@
 			   printsummary  = "no" 
 			   haltonfailure = "no" >
 			<batchtest fork  = "yes" 
-			           todir = "${test.logs}">
+			           todir = "${test.output}">
 				<!-- testing fileset, should eventually be test package -->
 				<fileset dir = "${bin}">
 					<include name = "**/*Tester.class" />
@@ -98,7 +98,7 @@
 
 		<!-- produce html output for tests -->
 		<junitreport todir = "${test.reports}">
-			<fileset dir = "${test.logs}">
+			<fileset dir = "${test.output}">
 				<include name = "TEST-*.xml" />
 			</fileset>
 			<report todir = "${test.reports}" />
