@@ -1,46 +1,63 @@
 <project name="aiViz" default="all">
-	<property name = "bin"      value = "bin"       />
-	<property name = "test.src" value = "src/bin"   />
-	<property name = "src"      value = "src"       />
-	<property name = "test"     value = "test"      />
-	<property name = "doc"      value = "doc"       />
-	<property name = "dist"     value = "dist"      />
-	<property name = "lib"      value = "lib"       />
 
-	<path id="build.classpath">
+	<!-- Source Code   -->
+	<property name = "src"           value = "src"                    />
+	<property name = "bin"           value = "bin"                    />
+	<property name = "dist"          value = "dist"                   />
+
+	<path id = "build.classpath">
 		<pathelement path = "${bin}" />
 	</path>
 
-	<path id="lib.classpath">
-		<pathelement path = "${lib}/junit.jar" />
-	</path>
+	<!-- Libraries     -->
+	<property name = "lib"           value = "lib"                    />
 
-	<path id="test.classpath">
-		<pathelement location="${bin}" />
-		<pathelement location="${test}" />
-		<fileset dir="${lib}">
-			<include name="**/*.jar" />
+	<path id = "lib.classpath">
+		<fileset dir = "${lib}">
+			<include name = "**/*.jar" />
 		</fileset>
 	</path>
 
-	<target name="clean">
-		<delete dir = "${bin}"         />
-		<delete dir = "${doc}/javadoc" />
-		<delete dir = "${test}"        />
-		<delete dir = "${dist}"        />
+	<!-- Test Code     -->
+	<property name = "test.src"      value = "${src}/test"            />
+	<property name = "test.reports"  value = "test"                   />
+	<property name = "test.output"   value = "${test.reports}/output" />
+
+	<path id = "test.classpath">
+		<pathelement location = "${bin}"          />
+		<pathelement location = "${test.reports}" />
+		<pathelement location = "${test.output}"  />
+		<fileset dir = "${lib}">
+			<include name = "**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Documentation -->
+	<property name = "doc"           value = "doc"                    />
+	<property name = "javadoc"       value = "${doc}/javadoc"         />
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<!-- Clean            -->
+	<target name = "clean">
+		<delete dir = "${bin}"          />
+		<delete dir = "${dist}"         />
+		<delete dir = "${test.logs}"    />
+		<delete dir = "${test.reports}" />
+		<delete dir = "${javadoc}"      />
 	</target>
 
-	<target name="mkdir" depends="clean">
-		<mkdir dir = "${bin}"         />
-		<mkdir dir = "${doc}"         />
-		<mkdir dir = "${doc}/javadoc" />
-		<mkdir dir = "${test}"        />
-		<mkdir dir = "${test}/logs"   />
-		<mkdir dir = "${test}/reports" />
-		<mkdir dir = "${dist}"        />
+	<!-- Make Directories -->
+	<target name = "mkdir" depends="clean">
+		<mkdir dir = "${bin}"           />
+		<mkdir dir = "${dist}"          />
+		<mkdir dir = "${test.logs}"     />
+		<mkdir dir = "${test.reports}"  />
+		<mkdir dir = "${javadoc}"       />
 	</target>
 
-	<target name="compile" depends="mkdir">
+	<!-- Compile          -->
+	<target name = "compile" depends = "mkdir">
 		<javac sourcepath  = ""
 		       srcdir      = "${src}"
 		       destdir     = "${bin}"
@@ -48,78 +65,59 @@
 			   debuglevel  = "lines, vars, source"
 			   deprecation = "on"
 			   includeantruntime = "false">
+			<!-- compile against libraries -->
 			<classpath refid = "lib.classpath" />
+			<!-- compile default package files, which should eventually be removed  -->
 			<include name = "**/*.java" />
 		</javac>
 	</target>
 
-<!--
-	<target name="compile-test" depends="compile">
-		<javac sourcepath  = ""
-		       srcdir      = "${test.src}"
-		       destdir     = "${test.bin}"
-			   debug       = "on"
-			   debuglevel  = "lines, vars, source"
-			   deprecation = "on"
-			   includeantruntime = "false">
-			<include name = "**/*.java" />
-		</javac>
-	</target>
--->
-
-	<target name="build"        depends="compile">
+	<!-- Build JAR        -->
+	<target name="build" depends="compile">
 		<jar destfile = "${dist}/aiViz.jar"
 		     basedir  = "${bin}"
-			 excludes = "*.class"
-		/>
+			 excludes = "*.class" />
 	</target>
 
-	<target name="test"         depends="compile">
-		<junit fork="yes" printsummary="no" haltonfailure="no">
-			<batchtest fork="yes" todir="${test}/logs/">
-				<fileset dir="${bin}">
-					<include name="**/*Tester.class" />
+	<!-- JUnit Test       -->
+	<target name="junit" depends="compile">
+		<!-- perform junit tests           -->
+		<junit fork          = "yes" 
+			   printsummary  = "no" 
+			   haltonfailure = "no" >
+			<batchtest fork  = "yes" 
+			           todir = "${test.logs}">
+				<!-- testing fileset, should eventually be test package -->
+				<fileset dir = "${bin}">
+					<include name = "**/*Tester.class" />
 				</fileset>
 			</batchtest>
-			<formatter type="xml" />
-			<classpath refid="test.classpath" />
+			<formatter type = "xml" />
+			<classpath refid = "test.classpath" />
 		</junit>
 
-		<junitreport todir="${test}/reports/">
-			<fileset dir="${test}/logs">
-				<include name="TEST-*.xml" />
+		<!-- produce html output for tests -->
+		<junitreport todir = "${test.reports}">
+			<fileset dir = "${test.logs}">
+				<include name = "TEST-*.xml" />
 			</fileset>
-			<report todir="${test}/reports" />
+			<report todir = "${test.reports}" />
 		</junitreport>
 	</target>
 
-<!--
-	<target name="test"         depends="compile">
-		<junit printsummary = "no" haltonfailure = "no">
-			<classpath refid = "test.classpath" />
-			<test name="VacWorldTester" />
-			<formatter type = "plain" usefile = "false" />
-
-			<batchtest fork = "yes" todir = "${test}/reports/">
-				<fileset dir = "${bin}">
-					<include name = "**/*.class" />
-				</fileset>
-			</batchtest>
-		</junit>
-	</target>
--->
-
-	<target name="build-docs"   depends="compile">
-		<javadoc destdir     = "${doc}/javadoc"
+	<!-- Javadocs         -->
+	<target name="javadoc" depends="compile">
+		<javadoc destdir     = "${javadoc}"
 				 sourcepath  = "${src}">
-			<classpath refid="test.classpath" />
-			<fileset dir = "src" defaultexcludes="yes">
-				<include name="**/*.java" />
+			<classpath refid = "test.classpath" />
+			<fileset dir             = "src" 
+			         defaultexcludes = "yes">
+				<include name = "**/*.java" />
 			</fileset>
 		</javadoc>
 	</target>
 
-	<target name="all" depends="build, build-docs"> 
+	<target name="all" depends="build, junit, javadoc"> 
 	</target>
 
 </project>

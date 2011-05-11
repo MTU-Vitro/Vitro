@@ -1,5 +1,6 @@
 *.class
 *.DS_Store
 bin/
-doc/
+doc/javadoc/
 dist/
+test/
