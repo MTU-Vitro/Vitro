@@ -2,7 +2,7 @@ import java.util.*;
 
 public class DestroyAction extends GraphAction {
 
-	private final Map<Actor, Graph.Node> actors = new HashMap<Actor, Graph.Node>();
+	protected final Map<Actor, Graph.Node> actors = new HashMap<Actor, Graph.Node>();
 
 	public DestroyAction(Graph model, Actor... targets) {
 		super(model);
@@ -35,5 +35,10 @@ public class DestroyAction extends GraphAction {
 		DestroyAction other = (DestroyAction)o;
 		return (other.actors.equals(actors)) &&
 		       (other.model == this.model  );
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Destroy actors: %s", actors.keySet());
 	}
 }

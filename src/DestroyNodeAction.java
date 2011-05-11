@@ -40,4 +40,9 @@ public class DestroyNodeAction extends GraphAction {
 		       (other.edges.equals(this.edges));
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Destroy node '%s'.", node);
+	}
+
 }

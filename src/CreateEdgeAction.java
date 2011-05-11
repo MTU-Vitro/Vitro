@@ -35,4 +35,9 @@ public class CreateEdgeAction extends GraphAction {
 		       (other.end   == this.end  );
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Create edge from '%s' to '%s'.", start, end);
+	}
+
 }

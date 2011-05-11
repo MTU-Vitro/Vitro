@@ -84,7 +84,8 @@
 		<!-- perform junit tests           -->
 		<junit fork          = "yes" 
 			   printsummary  = "no" 
-			   haltonfailure = "no" >
+			   haltonfailure = "no"
+			   showoutput    = "yes" >
 			<batchtest fork  = "yes" 
 			           todir = "${test.output}">
 				<!-- testing fileset, should eventually be test package -->

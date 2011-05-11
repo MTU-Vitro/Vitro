@@ -29,4 +29,9 @@ public class DestroyEdgeAction extends GraphAction {
 		       (other.edge  == this.edge );
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Destroy edge from '%s' to '%s'.", edge.start, edge.end);
+	}
+
 }

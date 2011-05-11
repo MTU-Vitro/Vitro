@@ -30,4 +30,9 @@ public class CreateNodeAction extends GraphAction {
 		       (other.node  == this.node );
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Create node '%s'.", node);
+	}
+
 }

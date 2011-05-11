@@ -32,4 +32,9 @@ public class CreateAction extends GraphAction {
 		       (other.node  == this.node ) &&
 		       (other.actor == this.actor);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Create actor '%s' at location '%s'.", actor, node);
+	}
 }

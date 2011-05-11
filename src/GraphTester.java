@@ -287,4 +287,25 @@ public class GraphTester {
 		assertTrue(check1);
 	}
 
+	@Test
+	public void testToStrings() {
+		Graph g = new Graph();
+		Graph.Node v1 = g.createNode();
+		Graph.Node v2 = g.createNode();
+		Graph.Edge e1 = g.createEdge(v1, v2);
+		Actor a1 = new Actor();
+		Actor a2 = new Actor();
+		v1.actors.add(a1);
+		v2.actors.add(a2);
+
+		/*
+		System.out.println(new CreateAction(g, v1, new Actor()));
+		System.out.println(new CreateEdgeAction(g, v1, v2));
+		System.out.println(new CreateNodeAction(g));
+		System.out.println(new DestroyAction(g, a1, a2));
+		System.out.println(new DestroyEdgeAction(g, e1));
+		System.out.println(new DestroyNodeAction(g, v1));
+		System.out.println(new MoveAction(g, e1, a1));
+		*/
+	}
 }

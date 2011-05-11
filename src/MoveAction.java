@@ -32,4 +32,9 @@ public class MoveAction extends GraphAction {
 		       (other.edge  == this.edge ) &&
 		       (other.actor == this.actor);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Move actor '%s' from '%s' to '%s'.", actor, edge.start, edge.end);
+	}
 }
