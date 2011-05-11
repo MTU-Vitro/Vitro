@@ -1,8 +1,8 @@
 public class CreateEdgeAction extends GraphAction {
 
-	private final Graph.Node start;
-	private final Graph.Node end;
-	private Graph.Edge e = null;
+	protected final Graph.Node start;
+	protected final Graph.Node end;
+	protected Graph.Edge e = null;
 
 	public CreateEdgeAction(Graph model, Graph.Node start, Graph.Node end) {
 		super(model);

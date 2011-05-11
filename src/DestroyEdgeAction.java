@@ -1,24 +1,24 @@
 public class DestroyEdgeAction extends GraphAction {
 
-	private final Graph.Edge e;
+	protected final Graph.Edge edge;
 
-	public DestroyEdgeAction(Graph model, Graph.Edge e) {
+	public DestroyEdgeAction(Graph model, Graph.Edge edge) {
 		super(model);
-		this.e = e;
+		this.edge = edge;
 	}
 
 	public void apply() {
-		model.edges.remove(e);
+		model.edges.remove(edge);
 	}
 
 	public void undo() {
-		model.edges.add(e);
+		model.edges.add(edge);
 	}
 
 	@Override
 	public int hashCode() {
 		return model.hashCode() ^
-		           e.hashCode();
+		        edge.hashCode();
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class DestroyEdgeAction extends GraphAction {
 		if (!(o instanceof DestroyEdgeAction)) { return false; }
 		DestroyEdgeAction other = (DestroyEdgeAction)o;
 		return (other.model == this.model) &&
-		       (other.e     == this.e    );
+		       (other.edge  == this.edge );
 	}
 
 }

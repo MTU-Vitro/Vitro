@@ -1,25 +1,25 @@
 public class CreateNodeAction extends GraphAction {
 
-	private final Graph.Node n;
+	protected final Graph.Node node;
 
 	public CreateNodeAction(Graph model) {
 		super(model);
-		n = model.createNode();
-		model.nodes.remove(n);
+		node = model.createNode();
+		model.nodes.remove(node);
 	}
 
 	public void apply() {
-		model.nodes.add(n);
+		model.nodes.add(node);
 	}
 
 	public void undo() {
-		model.nodes.remove(n);
+		model.nodes.remove(node);
 	}
 
 	@Override
 	public int hashCode() {
 		return model.hashCode() ^
-		           n.hashCode();
+		        node.hashCode();
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class CreateNodeAction extends GraphAction {
 		if (!(o instanceof CreateNodeAction)) { return false; }
 		CreateNodeAction other = (CreateNodeAction)o;
 		return (other.model == this.model) &&
-		       (other.n     == this.n    );
+		       (other.node  == this.node );
 	}
 
 }
