@@ -1,28 +1,20 @@
 import java.util.*;
 
-public class Graph {
+public class Graph extends Model {
 	
-	public final Set<Edge>   edges;
-	public final List<Node>  nodes;
-	public final Set<Actor> actors;
+	public final Set<Edge>   edges = new ObservableSet<Edge>();
+	public final List<Node>  nodes = new ObservableList<Node>();
 
 	protected final Graph model;
 	
-	private final Map<Actor, Node> locations;
-	private final Map<Integer, Node> lists;
-	private final CollectionObserver<Actor> actorObserver;
-	private final CollectionObserver<Node>  nodeObserver;
-	private final CollectionObserver<Edge>  edgeObserver;
+	private final Map<Actor, Node> locations = new HashMap<Actor, Node>();
+	private final Map<Integer, Node> lists   = new HashMap<Integer, Node>();
+	private final CollectionObserver<Actor> actorObserver = new ActorObserver();
+	private final CollectionObserver<Node>  nodeObserver  = new NodeObserver();
+	private final CollectionObserver<Edge>  edgeObserver  = new EdgeObserver();
 	
 	public Graph() {
-		edges         = new ObservableSet<Edge>();
-		nodes         = new ObservableList<Node>();
-		actors        = new ObservableSet<Actor>();
-		locations     = new HashMap<Actor, Node>();
-		lists         = new HashMap<Integer, Node>();
-		actorObserver = new ActorObserver();
-		nodeObserver  = new NodeObserver();
-		edgeObserver  = new EdgeObserver();
+		super(new ObservableSet<Actor>());
 		((ObservableSet<Actor>)actors).addObserver(actorObserver);
 		((ObservableList<Node>)nodes).addObserver(nodeObserver);
 		((ObservableSet<Edge>)edges).addObserver(edgeObserver);
@@ -50,7 +42,7 @@ public class Graph {
 		return locations.get(a);
 	}
 	
-	protected static List<Edge> path(Node start, Node destination) {
+	protected List<Edge> path(Node start, Node destination) {
 		List<Edge> ret = new ArrayList<Edge>();
 		return path(
 			ret,
@@ -64,7 +56,7 @@ public class Graph {
 	// in the future, this should probably be rewritten
 	// iteratively to avoid stack overflows on large graphs.
 	// also this greedily returns any path, not the best path. Do better.
-	private static boolean path(List<Edge> path, Set<Node> visited, Node a, Node b) {
+	private boolean path(List<Edge> path, Set<Node> visited, Node a, Node b) {
 		if (a == b)              { return true; }
 		if (visited.contains(a)) { return false; }
 		visited.add(a);
@@ -77,7 +69,7 @@ public class Graph {
 		return false;
 	}
 	
-	protected static Set<Node> reachable(Node start) {
+	protected Set<Node> reachable(Node start) {
 		List<Node> frontier = new ArrayList<Node>();
 		 Set<Node> visited  = new   HashSet<Node>();
 		frontier.add(start);
@@ -94,13 +86,13 @@ public class Graph {
 		return visited;
 	}
 
-	protected static Set<Node> reachable(Node root, int depth) {
+	protected Set<Node> reachable(Node root, int depth) {
 		Set<Node> ret = new HashSet<Node>();
 		reachable(ret, root, depth);
 		return ret;
 	}
 
-	private static void reachable(Set<Node> visited, Node root, int depth) {
+	private void reachable(Set<Node> visited, Node root, int depth) {
 		if (visited.contains(root)) { return; }
 		visited.add(root);
 		if (depth == 0) { return; }
@@ -134,7 +126,7 @@ public class Graph {
 		}
 		
 		public List<Edge> path(Node destination) {
-			return Graph.path(this, destination);
+			return model.path(this, destination);
 		}
 		
 		public List<Node> pathNodes(Node destination) {
@@ -149,11 +141,11 @@ public class Graph {
 		}
 		
 		public Set<Node> reachable() {
-			return Graph.reachable(this);
+			return model.reachable(this);
 		}
 
 		public Set<Node> reachable(int depth) {
-			return Graph.reachable(this, depth);
+			return model.reachable(this, depth);
 		}
 				
 		public Set<Actor> reachableActors() {
