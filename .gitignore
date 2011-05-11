@@ -4,3 +4,4 @@ bin/
 doc/javadoc/
 dist/
 test/
+*~
