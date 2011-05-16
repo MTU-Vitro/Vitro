@@ -65,6 +65,8 @@
 			   debuglevel  = "lines, vars, source"
 			   deprecation = "on"
 			   includeantruntime = "false">
+			<!-- show all warnings -->
+			<compilerarg value="-Xlint"/>
 			<!-- compile against libraries -->
 			<classpath refid = "lib.classpath" />
 			<!-- compile default package files, which should eventually be removed  -->

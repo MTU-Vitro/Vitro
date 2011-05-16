@@ -34,4 +34,10 @@ public class Groups {
 		List<S> group = new ArrayList<S>(source);
 		return group.get(rand.nextInt(group.size()));
 	}
+
+	public static <S> S first(Collection<S> source) {
+		if (source.size() < 1) { return null; }
+		Iterator<S> iterator = source.iterator();
+		return iterator.next();
+	}
 }
