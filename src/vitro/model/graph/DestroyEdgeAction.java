@@ -1,3 +1,7 @@
+package vitro.model.graph;
+
+import vitro.model.*;
+
 public class DestroyEdgeAction extends GraphAction {
 
 	protected final Graph.Edge edge;

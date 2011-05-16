@@ -1,3 +1,6 @@
+package vitro.model.graph;
+
+import vitro.model.*;
 import java.util.*;
 
 public class DestroyAction extends GraphAction {

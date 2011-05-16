@@ -1,3 +1,4 @@
+package vitro.util;
 import java.util.*;
 
 public class Groups {

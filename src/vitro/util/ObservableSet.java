@@ -1,3 +1,4 @@
+package vitro.util;
 import java.util.*;
 
 public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollection<E> {

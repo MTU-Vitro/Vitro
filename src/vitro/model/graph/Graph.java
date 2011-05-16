@@ -1,3 +1,7 @@
+package vitro.model.graph;
+
+import vitro.util.*;
+import vitro.model.*;
 import java.util.*;
 
 public class Graph extends Model {

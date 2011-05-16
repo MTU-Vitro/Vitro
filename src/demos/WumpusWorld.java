@@ -1,3 +1,6 @@
+import vitro.util.*;
+import vitro.model.*;
+import vitro.model.graph.*;
 import java.util.*;
 
 public class WumpusWorld extends Graph {

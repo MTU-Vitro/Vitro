@@ -1,3 +1,4 @@
+package vitro.model;
 import java.util.*;
 
 public class Actor {

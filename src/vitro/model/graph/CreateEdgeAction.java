@@ -1,3 +1,7 @@
+package vitro.model.graph;
+
+import vitro.model.*;
+
 public class CreateEdgeAction extends GraphAction {
 
 	protected final Graph.Node start;
