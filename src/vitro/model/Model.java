@@ -7,4 +7,8 @@ public abstract class Model {
 	public Model(Set<Actor> actors) {
 		this.actors = actors;
 	}
+
+	public boolean done() {
+		return false;
+	}
 }

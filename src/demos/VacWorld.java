@@ -8,7 +8,7 @@ public class VacWorld extends Graph {
 	public Dirt    createDirt()    { return new Dirt();    }
 	public Scrubby createScrubby() { return new Scrubby(); }
 
-	public boolean clean() {
+	public boolean done() {
 		return !Groups.containsType(Dirt.class, actors);
 	}
 

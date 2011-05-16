@@ -11,6 +11,9 @@ public abstract class Controller {
 	protected final Map<Class, Agent> classAgents = new HashMap<Class, Agent>();
 	protected final Map<Actor, Agent> actorAgents = new HashMap<Actor, Agent>();
 
+	private List<List<Action>> history = new ArrayList<List<Action>>();
+	private int cursor = 0;
+
 	public Controller(Model model) {
 		this.model = model;
 	}
@@ -46,7 +49,47 @@ public abstract class Controller {
 		return Groups.first(actions);
 	}
 
-	public abstract void next();
-	public abstract void prev();
+	public void flush() {
+		while(history.size() > cursor) {
+			history.remove(history.size()-1);
+		}
+	}
 
+	public boolean hasNext() {
+		return !model.done();
+	}
+
+	public boolean hasPrev() {
+		return cursor > 0;
+	}
+
+	public void next() {
+		if (!hasNext()) { return; }
+		
+		// generate a new round:
+		if (cursor == history.size()) {
+			history.add(nextRound());
+			cursor =  history.size();
+			return;
+		}
+
+		// replay a historical round:
+		List<Action> actions = history.get(cursor);
+		for(int x = 0; x < actions.size(); x++) {
+			actions.get(x).apply();
+		}
+		cursor++;
+	}
+
+	public void prev() {
+		if (!hasPrev()) { return; }
+
+		List<Action> actions = history.get(cursor);
+		for(int x = actions.size() - 1; x >= 0; x--) {
+			actions.get(x).undo();
+		}
+		cursor--;
+	}
+
+	protected abstract List<Action> nextRound();
 }

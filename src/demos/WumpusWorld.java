@@ -9,6 +9,11 @@ public class WumpusWorld extends Graph {
 	public class Bat extends Actor {}
 	public class Wumpus extends Actor {}
 
+	public boolean done() {
+		return (!Groups.containsType(Wumpus.class, actors)) ||
+		       (!Groups.containsType(Hunter.class, actors));
+	}
+
 	public class Arrow extends Actor {
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();

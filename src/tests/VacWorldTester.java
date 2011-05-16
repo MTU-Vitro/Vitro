@@ -14,11 +14,11 @@ public class VacWorldTester {
 
 		a.actors.add(w.createScrubby());
 
-		assertTrue(w.clean());
+		assertTrue(w.done());
 
 		a.actors.add(w.createDirt());
 
-		assertFalse(w.clean());
+		assertFalse(w.done());
 	}
 
 	@Test
@@ -90,10 +90,10 @@ public class VacWorldTester {
 
 		clean.apply();
 
-		assertTrue(w.clean());
+		assertTrue(w.done());
 
 		clean.undo();
 
-		assertFalse(w.clean());
+		assertFalse(w.done());
 	}
 }
