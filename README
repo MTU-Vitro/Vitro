@@ -1,7 +1,7 @@
 Project: aiViz
 Collaborators: Laura E. Brown, John Earnest, Jason Hiebel
 
-
+A library which supports the rapid development of domains and models useful to computer science curriculum, with the purpose of providing both the visualization of such domains and models, as well as the algorithmic processes for the agents of the model. 
 
 Department of Computer Science
 Michigan Technological University
