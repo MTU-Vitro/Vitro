@@ -132,6 +132,10 @@ public class Graph extends Model {
 		public List<Edge> path(Node destination) {
 			return model.path(this, destination);
 		}
+
+		public List<Edge> path(Actor goal) {
+			return path(model.getLocation(goal));
+		}
 		
 		public List<Node> pathNodes(Node destination) {
 			List<Edge> path = path(destination);
@@ -166,6 +170,48 @@ public class Graph extends Model {
 				ret.addAll(v.actors);
 			}
 			return ret;
+		}
+	}
+
+	public class VisibleNode extends Node {
+		public final Set<Edge>   edges;
+		public final Set<Actor> actors;
+		
+		protected final Node node;
+		protected final int depth;
+
+		private VisibleNode(Node node, int depth) {
+			this.node  = node;
+			this.depth = depth;
+			if (depth > 0) {
+				Set<Edge> shadowEdges = new HashSet<Edge>();
+				for(Edge e : node.edges) {
+					shadowEdges.add(new VisibleEdge(this, e.end, depth));
+				}
+				edges  = Collections.unmodifiableSet(shadowEdges);
+				actors = Collections.unmodifiableSet(node.actors);
+			}
+			else {
+				edges  = Collections.unmodifiableSet(new HashSet<Edge>());
+				actors = Collections.unmodifiableSet(new HashSet<Actor>());
+			}
+		}
+	}
+
+	public class VisibleEdge extends Edge {
+		protected final int depth;
+
+		private VisibleEdge(VisibleNode a, Node b, int depth) {
+			super(a, (depth == 0) ? new InvisibleNode(b) :
+			                        new   VisibleNode(b, depth - 1)
+			);
+			this.depth = depth;
+		}
+	}
+
+	public class InvisibleNode extends VisibleNode {
+		private InvisibleNode(Node node) {
+			super(node, 0);
 		}
 	}
 

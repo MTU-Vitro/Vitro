@@ -37,8 +37,12 @@ public class WumpusWorld extends Graph {
 		}
 	}
 
-	public class Hunter extends Actor {
+	public class Hunter extends GraphActor {
 		
+		public Hunter(Graph model) {
+			super(model);
+		}
+
 		public int arrows = 3;
 
 		public boolean alive() {

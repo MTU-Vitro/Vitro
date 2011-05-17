@@ -4,8 +4,8 @@ import vitro.model.*;
 
 public class MoveAction extends GraphAction {
 
-	protected final Graph.Edge edge;
-	protected final Actor actor;
+	public final Graph.Edge edge;
+	public final Actor actor;
 
 	public MoveAction(Graph model, Graph.Edge edge, Actor actor) {
 		super(model);
