@@ -7,6 +7,8 @@ import java.util.*;
 * and modify the state of the Model through atomic Actions.
 * Any other useful state or meaningful constraints can be
 * expressed by extending this basic class.
+*
+* @author John Earnest
 **/
 public abstract class Model {
 

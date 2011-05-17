@@ -113,16 +113,34 @@ public class Graph extends Model {
 			start = a;
 			end   = b;
 		}
+
+		public String toString() {
+			return String.format("('%s'-->'%s')", start, end);
+		}
 	}
 	
 	public class Node {
-		public final Set<Edge>   edges = new ObservableSet<Edge>();
-		public final Set<Actor> actors = new ObservableSet<Actor>();
-		
+		public final Set<Edge>   edges;
+		public final Set<Actor> actors;
+
+		protected final Set<Edge> internalEdges;
+		protected final Set<Actor> internalActors;
+
 		private Node() {
+			edges = new ObservableSet<Edge>();
+			actors = new ObservableSet<Actor>();
+			internalEdges  = ((ObservableSet<Edge>)edges).store();
+			internalActors = ((ObservableSet<Actor>)actors).store();
 			((ObservableSet<Actor>)actors).addObserver(actorObserver);
 			((ObservableSet<Edge>)edges).addObserver(edgeObserver);
 			lists.put(System.identityHashCode(actors), this);
+		}
+
+		private Node(Set<Edge> edges, Set<Actor> actors) {
+			this.edges  = Collections.unmodifiableSet(edges);
+			this.actors = Collections.unmodifiableSet(actors);
+			this.internalEdges  = edges;
+			this.internalActors = actors;
 		}
 
 		private Graph model() {
@@ -174,26 +192,22 @@ public class Graph extends Model {
 	}
 
 	public class VisibleNode extends Node {
-		public final Set<Edge>   edges;
-		public final Set<Actor> actors;
-		
 		protected final Node node;
 		protected final int depth;
 
-		private VisibleNode(Node node, int depth) {
+		public VisibleNode(Node node, int depth) {
+			super(
+				new HashSet<Edge>(),
+				new HashSet<Actor>()
+			);
 			this.node  = node;
 			this.depth = depth;
+
 			if (depth > 0) {
-				Set<Edge> shadowEdges = new HashSet<Edge>();
 				for(Edge e : node.edges) {
-					shadowEdges.add(new VisibleEdge(this, e.end, depth));
+					internalEdges.add(new VisibleEdge(this, e.end, depth));
 				}
-				edges  = Collections.unmodifiableSet(shadowEdges);
-				actors = Collections.unmodifiableSet(node.actors);
-			}
-			else {
-				edges  = Collections.unmodifiableSet(new HashSet<Edge>());
-				actors = Collections.unmodifiableSet(new HashSet<Actor>());
+				internalActors.addAll(node.actors);
 			}
 		}
 	}
@@ -202,16 +216,8 @@ public class Graph extends Model {
 		protected final int depth;
 
 		private VisibleEdge(VisibleNode a, Node b, int depth) {
-			super(a, (depth == 0) ? new InvisibleNode(b) :
-			                        new   VisibleNode(b, depth - 1)
-			);
+			super(a, new VisibleNode(b, depth - 1));
 			this.depth = depth;
-		}
-	}
-
-	public class InvisibleNode extends VisibleNode {
-		private InvisibleNode(Node node) {
-			super(node, 0);
 		}
 	}
 
