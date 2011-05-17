@@ -1,15 +1,30 @@
 package vitro.util;
 import java.util.*;
 
+/**
+* An ObservableCollection implementing the List
+* interface by way of extending AbstractList and
+* wrapping an internal List.
+*
+* @author John Earnest
+**/
 public class ObservableList<E> extends AbstractList<E> implements ObservableCollection<E> {
 	
 	private final List<E> store;
 	private final List<CollectionObserver<E>> observers = new ArrayList<CollectionObserver<E>>();
 	
+	/**
+	* Create a new, empty List.
+	**/
 	public ObservableList() {
 		store = new ArrayList<E>();
 	}
 	
+	/**
+	* Create a new List with the same elements as another Collection.
+	*
+	* @param c the source Collection.
+	**/
 	public ObservableList(Collection<? extends E> c) {
 		store = new ArrayList<E>(c);
 	}
@@ -18,6 +33,13 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 		observers.add(o);
 	}
 	
+	/**
+	* Obtain a reference to the backing store used by this List.
+	* Changes to the backing store will not trigger calls
+	* to any observers of this collection.
+	*
+	* @return the internal List.
+	**/
 	public List<E> store() {
 		return store;
 	}

@@ -1,15 +1,30 @@
 package vitro.util;
 import java.util.*;
 
+/**
+* An ObservableCollection implementing the Set
+* interface by way of extending AbstractSet and
+* wrapping an internal Set.
+*
+* @author John Earnest
+**/
 public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollection<E> {
 	
 	private final Set<E> store;
 	private final List<CollectionObserver<E>> observers = new ArrayList<CollectionObserver<E>>();
 
+	/**
+	* Create a new, empty Set.
+	**/
 	public ObservableSet() {
 		store = new HashSet<E>();
 	}
 	
+	/**
+	* Create a new Set with the same elements as another Collection.
+	*
+	* @param c the source Collection.
+	**/
 	public ObservableSet(Collection<? extends E> c) {
 		store = new HashSet<E>(c);
 	}
@@ -18,6 +33,13 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 		observers.add(o);
 	}
 	
+	/**
+	* Obtain a reference to the backing store used by this Set.
+	* Changes to the backing store will not trigger calls
+	* to any observers of this collection.
+	*
+	* @return the internal Set.
+	**/
 	public Set<E> store() {
 		return store;
 	}
