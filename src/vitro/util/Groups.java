@@ -71,8 +71,8 @@ public class Groups {
 	* Extract the first element from a Collection.
 	* The first element returned by the collection's iterator is considered 'first'.
 	* 
-	* @param source the Collection to filter.
-	* @param the first Object from source.
+	* @param  source the Collection to filter.
+	* @return the first Object from source.
 	**/
 	public static <S> S first(Collection<S> source) {
 		if (source.size() < 1) { return null; }

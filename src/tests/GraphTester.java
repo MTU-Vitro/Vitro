@@ -1,3 +1,5 @@
+package tests;
+
 import vitro.model.*;
 import vitro.model.graph.*;
 import java.util.*;

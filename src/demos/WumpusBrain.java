@@ -1,3 +1,5 @@
+package demos;
+
 import vitro.util.*;
 import vitro.model.*;
 import vitro.model.graph.*;

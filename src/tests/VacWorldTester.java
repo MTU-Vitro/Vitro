@@ -1,3 +1,7 @@
+package tests;
+
+import demos.VacWorld;
+
 import vitro.model.*;
 import vitro.model.graph.*;
 import java.util.*;

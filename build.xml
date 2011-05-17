@@ -113,10 +113,6 @@
 		<javadoc destdir     = "${javadoc}"
 				 sourcepath  = "${src}">
 			<classpath refid = "test.classpath" />
-			<fileset dir             = "src" 
-			         defaultexcludes = "yes">
-				<include name = "**/*.java" />
-			</fileset>
 		</javadoc>
 	</target>
 
