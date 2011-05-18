@@ -44,7 +44,15 @@ public abstract class Controller {
 		Set<Action> actions = a.actions();
 		Agent<A> agent = getAgent(a);
 		if (actions.size() > 1 && agent != null) {
-			return agent.choose(a, actions);
+			Action choice = agent.choose(a, Collections.unmodifiableSet(actions));
+			// If the agent returns a malicious Action, using
+			// equals() or hashCode() to confirm it was one of the
+			// available choices may allow it to slip through
+			// the cracks. Thus, we perform reference comparisons:
+			for(Action a : actions) {
+				if (a == choice) { return a; }
+			}
+			throw new Error("Agent selected an invalid choice.");
 		}
 		return Groups.first(actions);
 	}

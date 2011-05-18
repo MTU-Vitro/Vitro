@@ -62,7 +62,16 @@ public class ThreadedController extends Controller {
 		}
 
 		public void run() {
-			action = getAgent(actor).choose(actor, actor.actions());
+			Set<Action> actions = Collections.unmodifiableSet(actor.actions());
+			Action choice = getAgent(actor).choose(actor, actions);
+			// If the agent returns a malicious Action, using
+			// equals() or hashCode() to confirm it was one of the
+			// available choices may allow it to slip through
+			// the cracks. Thus, we perform reference comparisons:
+			for(Action a : actions) {
+				if (a == choice) { return action = a; }
+			}
+			throw new Error("Agent selected an invalid choice.");
 		}
 	}
 }
