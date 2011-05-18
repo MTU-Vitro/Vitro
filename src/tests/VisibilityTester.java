@@ -10,21 +10,6 @@ import static org.junit.Assert.*;
 public class VisibilityTester {
 	
 	private class VisModel extends Graph {
-		public VisModel() {
-			Node n1 = createNode();
-			Node n2 = createNode();
-			Node n3 = createNode();
-			Node n4 = createNode();
-			Node n5 = createNode();
-
-			createEdge(n1, n2);
-			createEdge(n2, n1);
-			createEdge(n1, n3);
-			createEdge(n2, n4);
-			createEdge(n3, n5);
-			createEdge(n4, n5);
-		}
-
 		public Player createPlayer() {
 			return new Player();
 		}
@@ -39,6 +24,19 @@ public class VisibilityTester {
 	@Test
 	public void testZeroDepth() {
 		VisModel model = new VisModel();
+		Node n1 = model.createNode();
+		Node n2 = model.createNode();
+		Node n3 = model.createNode();
+		Node n4 = model.createNode();
+		Node n5 = model.createNode();
+
+		Edge e1 = model.createEdge(n1, n2);
+		Edge e2 = model.createEdge(n2, n1);
+		Edge e3 = model.createEdge(n1, n3);
+		Edge e4 = model.createEdge(n2, n4);
+		Edge e5 = model.createEdge(n3, n5);
+		Edge e6 = model.createEdge(n4, n5);
+
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
@@ -51,24 +49,48 @@ public class VisibilityTester {
 	@Test
 	public void testOneDepth() {
 		VisModel model = new VisModel();
+		Node n1 = model.createNode();
+		Node n2 = model.createNode();
+		Node n3 = model.createNode();
+		Node n4 = model.createNode();
+		Node n5 = model.createNode();
+
+		Edge e1 = model.createEdge(n1, n2);
+		Edge e2 = model.createEdge(n2, n1);
+		Edge e3 = model.createEdge(n1, n3);
+		Edge e4 = model.createEdge(n2, n4);
+		Edge e5 = model.createEdge(n3, n5);
+		Edge e6 = model.createEdge(n4, n5);
+
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
 		VisibleNode node = player.location(1);
 
 		assertEquals(2, node.edges.size());
-		
-		// this method of testing is brittle.
-		// if the hashcodes for edges or nodes change,
-		// it will break.
-		List<Edge> edges1 = new ArrayList<Edge>(node.edges);
-		assertEquals(0, edges1.get(0).end.edges.size());
-		assertEquals(0, edges1.get(1).end.edges.size());
+
+		List<Edge> edges = new ArrayList<Edge>(node.edges);
+
+		assertEquals(0, edges.get(0).end.edges.size());
+		assertEquals(0, edges.get(1).end.edges.size());
 	}
 
 	@Test
 	public void testTwoDepth() {
 		VisModel model = new VisModel();
+		Node n1 = model.createNode();
+		Node n2 = model.createNode();
+		Node n3 = model.createNode();
+		Node n4 = model.createNode();
+		Node n5 = model.createNode();
+
+		Edge e1 = model.createEdge(n1, n2);
+		Edge e2 = model.createEdge(n2, n1);
+		Edge e3 = model.createEdge(n1, n3);
+		Edge e4 = model.createEdge(n2, n4);
+		Edge e5 = model.createEdge(n3, n5);
+		Edge e6 = model.createEdge(n4, n5);
+
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
@@ -80,7 +102,7 @@ public class VisibilityTester {
 		// if the hashcodes for edges or nodes change,
 		// it will break.
 		List<Edge> edges1 = new ArrayList<Edge>(node.edges);
-		assertEquals(1, edges1.get(0).end.edges.size());
-		assertEquals(2, edges1.get(1).end.edges.size());
+		assertEquals(1, edges1.get(1).end.edges.size());
+		assertEquals(2, edges1.get(0).end.edges.size());
 	}
 }

@@ -43,6 +43,6 @@ public class VisibleNode extends Node {
 	}
 
 	public int hashCode() {
-		return node.hashCode(o);
+		return node.hashCode();
 	}
 }
