@@ -16,6 +16,18 @@ public class GraphActor extends Actor {
 		return model.getLocation(this);
 	}
 
+	public MoveAction moveTo(Edge edge, Set<Action> options) {
+		throw new Error("not implemented.");
+	}
+
+	public MoveAction moveTo(Node node, Set<Action> options) {
+		throw new Error("not implemented.");
+	}
+
+	public MoveAction moveTo(Actor actor, Set<Action> options) {
+		throw new Error("not implemented.");
+	}
+
 	public MoveAction move(Edge edge, Set<Action> options) {
 		for(Action action : Groups.ofType(MoveAction.class, options)) {
 			MoveAction move = (MoveAction)action;
