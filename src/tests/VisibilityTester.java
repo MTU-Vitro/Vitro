@@ -98,11 +98,7 @@ public class VisibilityTester {
 
 		assertEquals(2, node.edges.size());
 		
-		// this method of testing is brittle.
-		// if the hashcodes for edges or nodes change,
-		// it will break.
 		List<Edge> edges1 = new ArrayList<Edge>(node.edges);
-		assertEquals(1, edges1.get(1).end.edges.size());
-		assertEquals(2, edges1.get(0).end.edges.size());
+		assertEquals(3, edges1.get(1).end.edges.size() + edges1.get(0).end.edges.size());
 	}
 }

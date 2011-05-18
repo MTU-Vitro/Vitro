@@ -28,7 +28,7 @@ public abstract class Controller {
 
 	// As far as I can tell, there is no type-safe way to extract Agents
 	// from these maps. Even if I made the map signature like:
-	//   Map<Actor, Agent<A extends Actor>
+	//   Map<Actor, Agent<A extends Actor>>
 	// there wouldn't be any way to ensure that the Agent generic type
 	// matches the Actor generic type. Having generic agents is
 	// desirable because it saves a cast in every implementation.
