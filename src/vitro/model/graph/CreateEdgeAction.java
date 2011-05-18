@@ -4,14 +4,14 @@ import vitro.model.*;
 
 public class CreateEdgeAction extends GraphAction {
 
-	protected final Node start;
-	protected final Node end;
+	public final Node start;
+	public final Node end;
 	protected Edge e = null;
 
 	public CreateEdgeAction(Graph model, Node start, Node end) {
 		super(model);
-		this.start = start;
-		this.end   = end;
+		this.start = new NodeWrapper(start);
+		this.end   = new nodeWrapper(end);
 	}
 
 	public void apply() {

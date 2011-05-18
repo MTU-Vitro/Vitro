@@ -4,11 +4,11 @@ import vitro.model.*;
 
 public class DestroyEdgeAction extends GraphAction {
 
-	protected final Edge edge;
+	public final Edge edge;
 
 	public DestroyEdgeAction(Graph model, Edge edge) {
 		super(model);
-		this.edge = edge;
+		this.edge = new EdgeWrapper(edge);
 	}
 
 	public void apply() {

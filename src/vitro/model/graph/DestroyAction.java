@@ -5,13 +5,15 @@ import java.util.*;
 
 public class DestroyAction extends GraphAction {
 
-	protected final Map<Actor, Node> actors = new HashMap<Actor, Node>();
+	public final Map<Actor, Node> actors = new HashMap<Actor, Node>();
 
 	public DestroyAction(Graph model, Actor... targets) {
 		super(model);
+		Map<Actor, Node> actorMap = new HashMap<Actor, Node>();
 		for(Actor a : targets) {
-			actors.put(a, model.getLocation(a));
+			actorMap.put(a, new NodeWrapper(model.getLocation(a)));
 		}
+		actors = Collections.unmodifiableMap(actorMap);
 	}
 
 	public void apply() {

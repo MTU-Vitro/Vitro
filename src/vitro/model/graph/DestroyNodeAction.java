@@ -5,17 +5,21 @@ import java.util.*;
 
 public class DestroyNodeAction extends GraphAction {
 
-	protected final Node node;
-	protected final Set<Edge> edges = new HashSet<Edge>();
+	public final Node node;
+	public final Set<Edge> edges;
 
 	public DestroyNodeAction(Graph model, Node node) {
 		super(model);
-		this.node = node;
+		this.node = new NodeWrapper(node);
 
-		edges.addAll(node.edges);
-		for(Edge e : model.edges) {
-			if (e.end == node) { edges.add(e); }
+		Set<Edge> edgeSet = new HashSet<Edge>();
+		for(Edge e : node.edges) {
+			edgeSet.add(new EdgeWrapper(e));
 		}
+		for(Edge e : model.edges) {
+			if (e.end == node) { edgeSet.add(new EdgeWrapper(e)); }
+		}
+		edges = Collections.unmodifiableSet(edgeSet);
 	}
 
 	public void apply() {

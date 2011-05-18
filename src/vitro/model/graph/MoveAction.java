@@ -9,7 +9,7 @@ public class MoveAction extends GraphAction {
 
 	public MoveAction(Graph model, Edge edge, Actor actor) {
 		super(model);
-		this.edge = edge;
+		this.edge = new EdgeWrapper(edge);
 		this.actor = actor;
 	}
 

@@ -4,11 +4,11 @@ import vitro.model.*;
 
 public class CreateNodeAction extends GraphAction {
 
-	protected final Node node;
+	public final Node node;
 
 	public CreateNodeAction(Graph model) {
 		super(model);
-		node = model.createNode();
+		node = new NodeWrapper(model.createNode());
 		model.nodes.remove(node);
 	}
 
