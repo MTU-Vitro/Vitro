@@ -68,8 +68,9 @@ public class ThreadedController extends Controller {
 			// equals() or hashCode() to confirm it was one of the
 			// available choices may allow it to slip through
 			// the cracks. Thus, we perform reference comparisons:
+			if (choice == null) { return; }
 			for(Action a : actions) {
-				if (a == choice) { return action = a; }
+				if (a == choice) { action = a; }
 			}
 			throw new Error("Agent selected an invalid choice.");
 		}
