@@ -5,7 +5,7 @@ import java.util.*;
 
 public class DestroyAction extends GraphAction {
 
-	protected final Map<Actor, Graph.Node> actors = new HashMap<Actor, Graph.Node>();
+	protected final Map<Actor, Node> actors = new HashMap<Actor, Node>();
 
 	public DestroyAction(Graph model, Actor... targets) {
 		super(model);
@@ -15,13 +15,13 @@ public class DestroyAction extends GraphAction {
 	}
 
 	public void apply() {
-		for(Map.Entry<Actor, Graph.Node> e : actors.entrySet()) {
+		for(Map.Entry<Actor, Node> e : actors.entrySet()) {
 			e.getValue().actors.remove(e.getKey());
 		}
 	}
 
 	public void undo() {
-		for(Map.Entry<Actor, Graph.Node> e : actors.entrySet()) {
+		for(Map.Entry<Actor, Node> e : actors.entrySet()) {
 			e.getValue().actors.add(e.getKey());
 		}
 	}

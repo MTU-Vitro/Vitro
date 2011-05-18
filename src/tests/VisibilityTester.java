@@ -31,7 +31,7 @@ public class VisibilityTester {
 
 		public class Player extends Actor {
 			public VisibleNode location(int depth) {
-				return new VisibleNode(model.getLocation(this), depth);
+				return new VisibleNode(model, model.getLocation(this), depth);
 			}
 		}
 	}
@@ -42,7 +42,7 @@ public class VisibilityTester {
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
-		Graph.VisibleNode node = player.location(0);
+		VisibleNode node = player.location(0);
 
 		assertEquals(0, node.edges.size());
 		assertEquals(0, node.actors.size());
@@ -54,14 +54,14 @@ public class VisibilityTester {
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
-		Graph.VisibleNode node = player.location(1);
+		VisibleNode node = player.location(1);
 
 		assertEquals(2, node.edges.size());
 		
 		// this method of testing is brittle.
 		// if the hashcodes for edges or nodes change,
 		// it will break.
-		List<Graph.Edge> edges1 = new ArrayList<Graph.Edge>(node.edges);
+		List<Edge> edges1 = new ArrayList<Edge>(node.edges);
 		assertEquals(0, edges1.get(0).end.edges.size());
 		assertEquals(0, edges1.get(1).end.edges.size());
 	}
@@ -72,14 +72,14 @@ public class VisibilityTester {
 		VisModel.Player player = model.createPlayer();
 		model.nodes.get(0).actors.add(player);
 
-		Graph.VisibleNode node = player.location(2);
+		VisibleNode node = player.location(2);
 
 		assertEquals(2, node.edges.size());
 		
 		// this method of testing is brittle.
 		// if the hashcodes for edges or nodes change,
 		// it will break.
-		List<Graph.Edge> edges1 = new ArrayList<Graph.Edge>(node.edges);
+		List<Edge> edges1 = new ArrayList<Edge>(node.edges);
 		assertEquals(1, edges1.get(0).end.edges.size());
 		assertEquals(2, edges1.get(1).end.edges.size());
 	}

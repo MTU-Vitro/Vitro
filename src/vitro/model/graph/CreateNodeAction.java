@@ -4,7 +4,7 @@ import vitro.model.*;
 
 public class CreateNodeAction extends GraphAction {
 
-	protected final Graph.Node node;
+	protected final Node node;
 
 	public CreateNodeAction(Graph model) {
 		super(model);

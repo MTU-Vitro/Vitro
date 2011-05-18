@@ -4,10 +4,10 @@ import vitro.model.*;
 
 public class CreateAction extends GraphAction {
 
-	public final Graph.Node node;
+	public final Node node;
 	public final Actor actor;
 
-	public CreateAction(Graph model, Graph.Node node, Actor actor) {
+	public CreateAction(Graph model, Node node, Actor actor) {
 		super(model);
 		this.node = node;
 		this.actor = actor;

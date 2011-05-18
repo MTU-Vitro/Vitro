@@ -16,10 +16,10 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		public boolean visited  = false;
 	}
 
-	private final Map<Graph.Node, Room> worldToPrivate = new HashMap<Graph.Node, Room>();
-	private final Map<Room, Graph.Node> privateToWorld = new HashMap<Room, Graph.Node>();
+	private final Map<Node, Room> worldToPrivate = new HashMap<Node, Room>();
+	private final Map<Room, Node> privateToWorld = new HashMap<Room, Node>();
 
-	private final Queue<Graph.Edge> path = new LinkedList<Graph.Edge>();
+	private final Queue<Edge> path = new LinkedList<Edge>();
 	private Room wumpusGoal = null;
 
 	public Action choose(WumpusWorld.Hunter me, Set<Action> options) {
@@ -38,7 +38,7 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		here.visited  = true;
 			
 		// build links to adjacent rooms:
-		for(Graph.Edge edge : me.location().edges) {
+		for(Edge edge : me.location().edges) {
 			if (!worldToPrivate.containsKey(edge.end)) {
 				buildRoom(edge.end);
 			}
@@ -106,7 +106,7 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		return Groups.any(Groups.ofType(MoveAction.class, options));
 	}
 
-	private void buildRoom(Graph.Node place) {
+	private void buildRoom(Node place) {
 		Room node = new Room();
 		worldToPrivate.put(place, node);
 		privateToWorld.put(node, place);

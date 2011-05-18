@@ -12,11 +12,11 @@ public class GraphActor extends Actor {
 		this.model = model;
 	}
 
-	public Graph.Node location() {
+	public Node location() {
 		return model.getLocation(this);
 	}
 
-	public MoveAction move(Graph.Edge edge, Set<Action> options) {
+	public MoveAction move(Edge edge, Set<Action> options) {
 		for(Action action : Groups.ofType(MoveAction.class, options)) {
 			MoveAction move = (MoveAction)action;
 			if (move.actor == this && move.edge == edge) { return move; }
@@ -24,7 +24,7 @@ public class GraphActor extends Actor {
 		return null;
 	}
 
-	public MoveAction move(Graph.Node node, Set<Action> options) {
+	public MoveAction move(Node node, Set<Action> options) {
 		for(Action action : Groups.ofType(MoveAction.class, options)) {
 			MoveAction move = (MoveAction)action;
 			if (move.actor == this && move.edge.end == node) { return move; }
@@ -40,7 +40,7 @@ public class GraphActor extends Actor {
 		return null;
 	}
 
-	public CreateAction create(Graph.Node node, Class type, Set<Action> options) {
+	public CreateAction create(Node node, Class type, Set<Action> options) {
 		for(Action action : Groups.ofType(CreateAction.class, options)) {
 			CreateAction create = (CreateAction)action;
 			if (type.equals(create.actor.getClass()) && node == create.node) { return create; }

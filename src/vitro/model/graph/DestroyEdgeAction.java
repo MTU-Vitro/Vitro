@@ -4,9 +4,9 @@ import vitro.model.*;
 
 public class DestroyEdgeAction extends GraphAction {
 
-	protected final Graph.Edge edge;
+	protected final Edge edge;
 
-	public DestroyEdgeAction(Graph model, Graph.Edge edge) {
+	public DestroyEdgeAction(Graph model, Edge edge) {
 		super(model);
 		this.edge = edge;
 	}

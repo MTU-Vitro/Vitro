@@ -8,7 +8,7 @@ import java.util.*;
 
 public class VacBrain implements Agent<VacWorld.Scrubby> {
 
-	private final Queue<Graph.Edge> path = new LinkedList<Graph.Edge>();
+	private final Queue<Edge> path = new LinkedList<Edge>();
 
 	public Action choose(VacWorld.Scrubby actor, Set<Action> options) {
 		

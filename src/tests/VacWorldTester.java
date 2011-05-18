@@ -14,7 +14,7 @@ public class VacWorldTester {
 	@Test
 	public void testClean() {
 		VacWorld w = new VacWorld();
-		Graph.Node a = w.createNode();
+		Node a = w.createNode();
 
 		a.actors.add(w.createScrubby());
 
@@ -28,11 +28,11 @@ public class VacWorldTester {
 	@Test
 	public void testScrubbyActions() {
 		VacWorld w = new VacWorld();
-		Graph.Node n1 = w.createNode();
-		Graph.Node n2 = w.createNode();
-		Graph.Node n3 = w.createNode();
-		Graph.Edge e1 = w.createEdge(n1, n2);
-		Graph.Edge e2 = w.createEdge(n1, n3);
+		Node n1 = w.createNode();
+		Node n2 = w.createNode();
+		Node n3 = w.createNode();
+		Edge e1 = w.createEdge(n1, n2);
+		Edge e2 = w.createEdge(n1, n3);
 
 		VacWorld.Scrubby scrubby = w.createScrubby();
 		n1.actors.add(scrubby);
@@ -55,9 +55,9 @@ public class VacWorldTester {
 	@Test
 	public void testScrubbyMove() {
 		VacWorld w = new VacWorld();
-		Graph.Node n1 = w.createNode();
-		Graph.Node n2 = w.createNode();
-		Graph.Edge e1 = w.createEdge(n1, n2);
+		Node n1 = w.createNode();
+		Node n2 = w.createNode();
+		Edge e1 = w.createEdge(n1, n2);
 		
 		VacWorld.Scrubby scrubby = w.createScrubby();
 		n1.actors.add(scrubby);
@@ -80,7 +80,7 @@ public class VacWorldTester {
 	@Test
 	public void testScrubbyClean() {
 		VacWorld w = new VacWorld();
-		Graph.Node n1 = w.createNode();
+		Node n1 = w.createNode();
 		
 		VacWorld.Scrubby scrubby = w.createScrubby();
 		n1.actors.add(scrubby);

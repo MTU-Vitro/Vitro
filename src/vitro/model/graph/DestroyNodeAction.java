@@ -5,15 +5,15 @@ import java.util.*;
 
 public class DestroyNodeAction extends GraphAction {
 
-	protected final Graph.Node node;
-	protected final Set<Graph.Edge> edges = new HashSet<Graph.Edge>();
+	protected final Node node;
+	protected final Set<Edge> edges = new HashSet<Edge>();
 
-	public DestroyNodeAction(Graph model, Graph.Node node) {
+	public DestroyNodeAction(Graph model, Node node) {
 		super(model);
 		this.node = node;
 
 		edges.addAll(node.edges);
-		for(Graph.Edge e : model.edges) {
+		for(Edge e : model.edges) {
 			if (e.end == node) { edges.add(e); }
 		}
 	}

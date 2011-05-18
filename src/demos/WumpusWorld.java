@@ -19,7 +19,7 @@ public class WumpusWorld extends Graph {
 	public class Arrow extends Actor {
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
-			Graph.Node room = model.getLocation(this);
+			Node room = model.getLocation(this);
 			Actor wumpus = Groups.firstOfType(Wumpus.class, room.actors);
 			Actor hunter = Groups.firstOfType(Hunter.class, room.actors);
 
@@ -88,15 +88,15 @@ public class WumpusWorld extends Graph {
 
 	public class WalkAction extends MoveAction {
 		
-		private final Graph.Node randomRoom = Groups.any(model.nodes);
+		private final Node randomRoom = Groups.any(model.nodes);
 
-		public WalkAction(Graph model, Graph.Edge e, Hunter h) {
+		public WalkAction(Graph model, Edge e, Hunter h) {
 			super(model, e, h);
 		}
 
 		public void apply() {
 			super.apply();
-			Graph.Node room = model.getLocation(actor);
+			Node room = model.getLocation(actor);
 			if (Groups.containsType(Bat.class, room.actors)) {
 				// Super-Bats! Elsewheresville for you!
 				randomRoom.actors.add(actor);
@@ -116,7 +116,7 @@ public class WumpusWorld extends Graph {
 
 		private final Hunter hunter;
 
-		public ShootAction(Graph model, Graph.Node n, Hunter hunter) {
+		public ShootAction(Graph model, Node n, Hunter hunter) {
 			super(model, n, new Arrow());
 			this.hunter = hunter;
 		}

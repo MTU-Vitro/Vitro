@@ -4,11 +4,11 @@ import vitro.model.*;
 
 public class CreateEdgeAction extends GraphAction {
 
-	protected final Graph.Node start;
-	protected final Graph.Node end;
-	protected Graph.Edge e = null;
+	protected final Node start;
+	protected final Node end;
+	protected Edge e = null;
 
-	public CreateEdgeAction(Graph model, Graph.Node start, Graph.Node end) {
+	public CreateEdgeAction(Graph model, Node start, Node end) {
 		super(model);
 		this.start = start;
 		this.end   = end;

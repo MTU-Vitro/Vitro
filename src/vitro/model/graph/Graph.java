@@ -26,7 +26,7 @@ public class Graph extends Model {
 	}
 	
 	public Node createNode() {
-		Node ret = new Node();
+		Node ret = new GraphNode(this);
 		nodes.add(ret);
 		lists.put(System.identityHashCode(ret.actors), ret);
 		return ret;
@@ -36,7 +36,7 @@ public class Graph extends Model {
 		if (!nodes.contains(a) || !nodes.contains(b)) {
 			throw new IllegalArgumentException("Edge does not connect two valid Nodes in this Graph.");
 		}
-		Edge ret = new Edge(a, b);
+		Edge ret = new GraphEdge(a, b);
 		edges.add(ret);
 		a.edges.add(ret);
 		return ret;
@@ -105,119 +105,18 @@ public class Graph extends Model {
 		}
 	}
 	
-	public class Edge {
-		public final Node start;
-		public final Node end;
-		
-		private Edge(Node a, Node b) {
-			start = a;
-			end   = b;
-		}
-
-		public String toString() {
-			return String.format("('%s'-->'%s')", start, end);
+	private static class GraphEdge extends Edge {
+		private GraphEdge(Node a, Node b) {
+			super(a, b);
 		}
 	}
-	
-	public class Node {
-		public final Set<Edge>   edges;
-		public final Set<Actor> actors;
 
-		protected final Set<Edge> internalEdges;
-		protected final Set<Actor> internalActors;
-
-		private Node() {
-			edges = new ObservableSet<Edge>();
-			actors = new ObservableSet<Actor>();
-			internalEdges  = ((ObservableSet<Edge>)edges).store();
-			internalActors = ((ObservableSet<Actor>)actors).store();
+	private class GraphNode extends Node {
+		private GraphNode(Graph model) {
+			super(new ObservableSet<Edge>(), new ObservableSet<Actor>(), model);
 			((ObservableSet<Actor>)actors).addObserver(actorObserver);
-			((ObservableSet<Edge>)edges).addObserver(edgeObserver);
+			((ObservableSet<Edge>) edges ).addObserver(edgeObserver);
 			lists.put(System.identityHashCode(actors), this);
-		}
-
-		private Node(Set<Edge> edges, Set<Actor> actors) {
-			this.edges  = Collections.unmodifiableSet(edges);
-			this.actors = Collections.unmodifiableSet(actors);
-			this.internalEdges  = edges;
-			this.internalActors = actors;
-		}
-
-		private Graph model() {
-			return model;
-		}
-		
-		public List<Edge> path(Node destination) {
-			return model.path(this, destination);
-		}
-
-		public List<Edge> path(Actor goal) {
-			return path(model.getLocation(goal));
-		}
-		
-		public List<Node> pathNodes(Node destination) {
-			List<Edge> path = path(destination);
-			if (path == null) { return null; }
-			List<Node> ret = new ArrayList<Node>();
-			for(Edge e : path) {
-				ret.add(e.start);
-			}
-			ret.add(destination);
-			return ret;
-		}
-		
-		public Set<Node> reachable() {
-			return model.reachable(this);
-		}
-
-		public Set<Node> reachable(int depth) {
-			return model.reachable(this, depth);
-		}
-				
-		public Set<Actor> reachableActors() {
-			Set<Actor> ret = new HashSet<Actor>();
-			for(Node v : reachable()) {
-				ret.addAll(v.actors);
-			}
-			return ret;
-		}
-
-		public Set<Actor> reachableActors(int depth) {
-			Set<Actor> ret = new HashSet<Actor>();
-			for(Node v : reachable(depth)) {
-				ret.addAll(v.actors);
-			}
-			return ret;
-		}
-	}
-
-	public class VisibleNode extends Node {
-		protected final Node node;
-		protected final int depth;
-
-		public VisibleNode(Node node, int depth) {
-			super(
-				new HashSet<Edge>(),
-				new HashSet<Actor>()
-			);
-			this.node  = node;
-			this.depth = depth;
-
-			if (depth > 0) {
-				for(Edge e : node.edges) {
-					internalEdges.add(new VisibleEdge(this, e.end, depth));
-				}
-				internalActors.addAll(node.actors);
-			}
-		}
-	}
-
-	public class VisibleEdge extends Edge {
-		protected final int depth;
-
-		private VisibleEdge(VisibleNode a, Node b, int depth) {
-			super(a, new VisibleNode(b, depth - 1));
-			this.depth = depth;
 		}
 	}
 
