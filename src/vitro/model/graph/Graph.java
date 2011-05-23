@@ -28,7 +28,6 @@ public class Graph extends Model {
 	public Node createNode() {
 		Node ret = new GraphNode(this);
 		nodes.add(ret);
-		lists.put(System.identityHashCode(ret.actors), ret);
 		return ret;
 	}
 	
@@ -130,6 +129,8 @@ public class Graph extends Model {
 			if (n.model() != model) {
 				throw new IllegalArgumentException("Node belongs to a different Graph.");
 			}
+			
+			lists.put(System.identityHashCode(n.actors), n);
 		}
 
 		public void removed(ObservableCollection sender, Node n) {
