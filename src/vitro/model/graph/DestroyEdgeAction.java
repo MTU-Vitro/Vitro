@@ -8,7 +8,7 @@ public class DestroyEdgeAction extends GraphAction {
 
 	public DestroyEdgeAction(Graph model, Edge edge) {
 		super(model);
-		this.edge = new EdgeWrapper(edge);
+		this.edge = edge;
 	}
 
 	public void apply() {

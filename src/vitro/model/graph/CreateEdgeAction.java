@@ -10,8 +10,8 @@ public class CreateEdgeAction extends GraphAction {
 
 	public CreateEdgeAction(Graph model, Node start, Node end) {
 		super(model);
-		this.start = new NodeWrapper(start);
-		this.end   = new nodeWrapper(end);
+		this.start = start;
+		this.end   = end;
 	}
 
 	public void apply() {

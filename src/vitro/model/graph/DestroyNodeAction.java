@@ -10,14 +10,14 @@ public class DestroyNodeAction extends GraphAction {
 
 	public DestroyNodeAction(Graph model, Node node) {
 		super(model);
-		this.node = new NodeWrapper(node);
+		this.node = node;
 
 		Set<Edge> edgeSet = new HashSet<Edge>();
 		for(Edge e : node.edges) {
-			edgeSet.add(new EdgeWrapper(e));
+			edgeSet.add(e);
 		}
 		for(Edge e : model.edges) {
-			if (e.end == node) { edgeSet.add(new EdgeWrapper(e)); }
+			if (e.end == node) { edgeSet.add(e); }
 		}
 		edges = Collections.unmodifiableSet(edgeSet);
 	}

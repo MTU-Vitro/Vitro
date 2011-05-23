@@ -9,7 +9,7 @@ public class CreateAction extends GraphAction {
 
 	public CreateAction(Graph model, Node node, Actor actor) {
 		super(model);
-		this.node = new NodeWrapper(node);
+		this.node = node;
 		this.actor = actor;
 	}
 

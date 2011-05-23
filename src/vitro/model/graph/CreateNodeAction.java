@@ -8,7 +8,7 @@ public class CreateNodeAction extends GraphAction {
 
 	public CreateNodeAction(Graph model) {
 		super(model);
-		node = new NodeWrapper(model.createNode());
+		node = model.createNode();
 		model.nodes.remove(node);
 	}
 
