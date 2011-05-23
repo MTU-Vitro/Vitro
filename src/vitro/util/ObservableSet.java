@@ -10,6 +10,7 @@ import java.util.*;
 **/
 public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollection<E> {
 	
+	private final ObservableCollection host;
 	private final Set<E> store;
 	private final List<CollectionObserver<E>> observers = new ArrayList<CollectionObserver<E>>();
 
@@ -18,6 +19,7 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 	**/
 	public ObservableSet() {
 		store = new HashSet<E>();
+		host = this;
 	}
 	
 	/**
@@ -27,6 +29,20 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 	**/
 	public ObservableSet(Collection<? extends E> c) {
 		store = new HashSet<E>(c);
+		host = this;
+	}
+
+	/**
+	* Create a new Set with the same elements as another Collection.
+	* Update notifications will be sent to observers as if originating
+	* at the supplied host ObservableCollection.
+	*
+	* @param c the source Collection.
+	* @param host the host ObservableCollection
+	**/
+	public ObservableSet(Collection<? extends E> c, ObservableCollection host) {
+		store = new HashSet<E>(c);
+		this.host = host;
 	}
 	
 	public void addObserver(CollectionObserver<E> o) {
@@ -49,16 +65,14 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 	}
 
 	public Iterator<E> iterator() {
-		return new ObservableSetIterator(this);
+		return new ObservableSetIterator();
 	}
 
 	private class ObservableSetIterator implements Iterator<E> {
-		private final ObservableSet<E> set;
 		private final Iterator<E> iterator;
 		private E previous;
 		
-		private ObservableSetIterator(ObservableSet<E> set) {
-			this.set = set;
+		private ObservableSetIterator() {
 			this.iterator = store.iterator();
 		}
 
@@ -74,7 +88,7 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 		public void remove() {
 			iterator.remove();
 			for(CollectionObserver<E> observer : observers) {
-				observer.removed(set, previous);
+				observer.removed(host, previous);
 			}
 		}
 	}
@@ -82,7 +96,7 @@ public class ObservableSet<E> extends AbstractSet<E> implements ObservableCollec
 	public boolean add(E o) {
 		boolean ret = store.add(o);
 		for(CollectionObserver<E> observer : observers) {
-			observer.added(this, o);
+			observer.added(host, o);
 		}
 		return ret;
 	}

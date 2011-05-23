@@ -10,6 +10,7 @@ import java.util.*;
 **/
 public class ObservableList<E> extends AbstractList<E> implements ObservableCollection<E> {
 	
+	private final ObservableCollection host;
 	private final List<E> store;
 	private final List<CollectionObserver<E>> observers = new ArrayList<CollectionObserver<E>>();
 	
@@ -18,6 +19,7 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 	**/
 	public ObservableList() {
 		store = new ArrayList<E>();
+		host = this;
 	}
 	
 	/**
@@ -27,6 +29,20 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 	**/
 	public ObservableList(Collection<? extends E> c) {
 		store = new ArrayList<E>(c);
+		host = this;
+	}
+
+	/**
+	* Create a new List with the same elements as another Collection.
+	* Update notifications will be sent to observers as if originating
+	* at the supplied host ObservableCollection.
+	*
+	* @param c the source Collection.
+	* @param host the host ObservableCollection
+	**/
+	public ObservableList(Collection<? extends E> c, ObservableCollection host) {
+		store = new ArrayList<E>(c);
+		this.host = host;
 	}
 	
 	public void addObserver(CollectionObserver<E> o) {
@@ -55,7 +71,7 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 	public E remove(int i) {
 		E ret = store.remove(i);
 		for(CollectionObserver<E> o : observers) {
-			o.removed(this, ret);
+			o.removed(host, ret);
 		}
 		return ret;
 	}
@@ -63,7 +79,7 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 	public void add(int i, E e) {
 		store.add(i, e);
 		for(CollectionObserver<E> o : observers) {
-			o.added(this, e);
+			o.added(host, e);
 		}
 	}
 	
@@ -72,8 +88,8 @@ public class ObservableList<E> extends AbstractList<E> implements ObservableColl
 		E ret = store.set(i, e);
 		if (old != e) {
 			for(CollectionObserver<E> o : observers) {
-				o.removed(this, old);
-				o.added(this, e);
+				o.removed(host, old);
+				o.added(host, e);
 			}
 		}
 		return ret;
