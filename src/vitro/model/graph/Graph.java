@@ -11,6 +11,9 @@ public class Graph extends Model {
 
 	protected final Graph model;
 	
+	private final ReversibleMap<Node, Position> nodeToPosition = new ReversibleMap<Node, Position>();
+	private final ReversibleMap<Position, Node> positionToNode = nodeToPosition.reverse();
+
 	private final Map<Actor, Node> locations = new HashMap<Actor, Node>();
 	private final Map<Integer, Node> lists   = new HashMap<Integer, Node>();
 	private final CollectionObserver<Actor> actorObserver = new ActorObserver();
@@ -37,12 +40,19 @@ public class Graph extends Model {
 		}
 		Edge ret = new GraphEdge(a, b);
 		edges.add(ret);
-		a.edges.add(ret);
 		return ret;
 	}
 	
 	public Node getLocation(Actor a) {
 		return locations.get(a);
+	}
+
+	public Node getNode(Position position) {
+		return positionToNode.get(position);
+	}
+
+	public Position getPosition(Node node) {
+		return nodeToPosition.get(node);
 	}
 	
 	protected List<Edge> path(Node start, Node destination) {
@@ -129,8 +139,8 @@ public class Graph extends Model {
 			if (n.model() != model) {
 				throw new IllegalArgumentException("Node belongs to a different Graph.");
 			}
-			
 			lists.put(System.identityHashCode(n.actors), n);
+			nodeToPosition.put(n, new Position(n));
 		}
 
 		public void removed(ObservableCollection sender, Node n) {
@@ -142,6 +152,7 @@ public class Graph extends Model {
 				if (e.end == n) { incident.add(e); }
 			}
 			edges.removeAll(incident);
+			nodeToPosition.remove(n);
 		}
 	}
 
@@ -174,8 +185,7 @@ public class Graph extends Model {
 		public void added(ObservableCollection sender, Actor e) {
 			if (sender == actors) {
 				// actors added 'raw' do not have a location.
-				// if we wanted a default, we'd do it here:
-				// locations.put(e, vertices.get(0));
+				// if we wanted a default, we'd do it here.
 			}
 			else {
 				// actors should only exist in a single
