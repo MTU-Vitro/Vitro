@@ -4,13 +4,16 @@ import vitro.model.*;
 
 public class CreateAction extends GraphAction {
 
-	public final Node node;
+	public final Position position;
 	public final Actor actor;
+
+	protected final Node node;
 
 	public CreateAction(Graph model, Node node, Actor actor) {
 		super(model);
-		this.node = node;
+		position = new Position(node);
 		this.actor = actor;
+		this.node = node;
 	}
 
 	public void apply() {

@@ -5,30 +5,22 @@ import vitro.model.*;
 import vitro.model.graph.*;
 import vitro.controller.*;
 import java.util.*;
+import static vitro.util.Groups.*;
 
 public class VacBrain implements Agent<VacWorld.Scrubby> {
-
-	private final Queue<Edge> path = new LinkedList<Edge>();
 
 	public Action choose(VacWorld.Scrubby actor, Set<Action> options) {
 		
 		// if there's stuff to clean, clean it!
-		Action clean = Groups.firstOfType(DestroyAction.class, options);
+		Action clean = firstOfType(DestroyAction.class, options);
 		if (clean != null) { return clean; }
 
-		// follow a path I've decided to walk:
-		if (path.size() > 0) { return walkPath(actor, options); }
-
 		// otherwise, find stuff to clean!
-		Actor dirt = Groups.firstOfType(VacWorld.Dirt.class, actor.location().reachableActors());
-		path.addAll(actor.location().path(dirt));
+		Actor dirt = firstOfType(VacWorld.Dirt.class, actor.location().reachableActors());
+		MoveAction move = actor.moveToward(dirt, options);
+		if (move != null) { return move; }
 
-		return walkPath(actor, options);
-	}
-
-	private MoveAction walkPath(VacWorld.Scrubby actor, Set<Action> options) {
-		MoveAction move = actor.move(path.remove(), options);
-		if (move == null) { throw new Error("I can't find a path- someone *LIED* to me!!!"); }
-		return move;
+		// life without cleaning is meaningless.
+		return null;
 	}
 }

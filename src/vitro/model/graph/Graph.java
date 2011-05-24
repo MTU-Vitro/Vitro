@@ -11,14 +11,12 @@ public class Graph extends Model {
 
 	protected final Graph model;
 	
-	private final ReversibleMap<Node, Position> nodeToPosition = new ReversibleMap<Node, Position>();
-	private final ReversibleMap<Position, Node> positionToNode = nodeToPosition.reverse();
-
-	private final Map<Actor, Node> locations = new HashMap<Actor, Node>();
-	private final Map<Integer, Node> lists   = new HashMap<Integer, Node>();
+	private final Map<Position, Node> positions = new HashMap<Position, Node>();
+	private final Map<   Actor, Node> locations = new HashMap<   Actor, Node>();
+	private final Map< Integer, Node> lists     = new HashMap< Integer, Node>();
 	private final CollectionObserver<Actor> actorObserver = new ActorObserver();
-	private final CollectionObserver<Node>  nodeObserver  = new NodeObserver();
-	private final CollectionObserver<Edge>  edgeObserver  = new EdgeObserver();
+	private final CollectionObserver<Node>   nodeObserver = new NodeObserver();
+	private final CollectionObserver<Edge>   edgeObserver = new EdgeObserver();
 	
 	public Graph() {
 		super(new ObservableSet<Actor>());
@@ -48,11 +46,7 @@ public class Graph extends Model {
 	}
 
 	public Node getNode(Position position) {
-		return positionToNode.get(position);
-	}
-
-	public Position getPosition(Node node) {
-		return nodeToPosition.get(node);
+		return positions.get(position);
 	}
 	
 	protected List<Edge> path(Node start, Node destination) {
@@ -140,7 +134,7 @@ public class Graph extends Model {
 				throw new IllegalArgumentException("Node belongs to a different Graph.");
 			}
 			lists.put(System.identityHashCode(n.actors), n);
-			nodeToPosition.put(n, new Position(n));
+			positions.put(new Position(n), n);
 		}
 
 		public void removed(ObservableCollection sender, Node n) {
@@ -152,7 +146,7 @@ public class Graph extends Model {
 				if (e.end == n) { incident.add(e); }
 			}
 			edges.removeAll(incident);
-			nodeToPosition.remove(n);
+			positions.remove(new Position(n));
 		}
 	}
 
