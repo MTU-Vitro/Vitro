@@ -37,11 +37,11 @@ public class GraphActor extends Actor {
 	}
 
 	public MoveAction moveToward(Actor actor, Set<Action> options) {
-		return move(location().path(actor).get(0), options);
+		return move(model.getLocation(this).path(actor).get(0), options);
 	}
 
 	public MoveAction moveToward(Node node, Set<Action> options) {
-		return move(location().path(node).get(0), options);
+		return move(model.getLocation(this).path(node).get(0), options);
 	}
 
 	public MoveAction moveToward(Position position, Set<Action> options) {
@@ -72,6 +72,24 @@ public class GraphActor extends Actor {
 		for(Action action : Groups.ofType(DestroyAction.class, options)) {
 			DestroyAction destroy = (DestroyAction)action;
 			if (actors.equals(destroy.actors.keySet())) { return destroy; }
+		}
+		return null;
+	}
+
+	public DestroyAction destroy(Actor actor, Set<Action> options) {
+		Set<Actor> set = new HashSet<Actor>();
+		set.add(actor);
+		return destroy(set, options);
+	}
+
+	public DestroyAction destroy(Class type, Set<Action> options) {
+		for(Action action : Groups.ofType(DestroyAction.class, options)) {
+			DestroyAction destroy = (DestroyAction)action;
+			boolean match = true;
+			for(Actor target : destroy.actors.keySet()) {
+				if (!type.equals(target.getClass())) { match = false; break; }
+			}
+			if (match) { return destroy; }
 		}
 		return null;
 	}

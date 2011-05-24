@@ -12,7 +12,7 @@ public class VacBrain implements Agent<VacWorld.Scrubby> {
 	public Action choose(VacWorld.Scrubby actor, Set<Action> options) {
 		
 		// if there's stuff to clean, clean it!
-		Action clean = firstOfType(DestroyAction.class, options);
+		DestroyAction clean = actor.destroy(VacWorld.Dirt.class, options);
 		if (clean != null) { return clean; }
 
 		// otherwise, find stuff to clean!
