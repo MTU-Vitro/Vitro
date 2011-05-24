@@ -16,8 +16,8 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		public boolean visited  = false;
 	}
 
-	private final Map<Node, Room> worldToPrivate = new HashMap<Node, Room>();
-	private final Map<Room, Node> privateToWorld = new HashMap<Room, Node>();
+	private final ReversibleMap<Node, Room> worldToPrivate = new ReversibleMap<Node, Room>();
+	private final ReversibleMap<Room, Node> privateToWorld = worldToPrivate.reverse();
 
 	private final Queue<Edge> path = new LinkedList<Edge>();
 	private Room wumpusGoal = null;
@@ -27,7 +27,7 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		// we're in an unknown place, so start building a graph
 		// and clear any path we may have plotted.
 		if (!worldToPrivate.containsKey(me.location())) {
-			buildRoom(me.location());
+			worldToPrivate.put(me.location(), new Room());
 		}
 
 		// update our map with local information:
@@ -40,7 +40,7 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 		// build links to adjacent rooms:
 		for(Edge edge : me.location().edges) {
 			if (!worldToPrivate.containsKey(edge.end)) {
-				buildRoom(edge.end);
+				worldToPrivate.put(edge.end, new Room());
 			}
 			here.adjacent.add(worldToPrivate.get(edge.end));
 		}
@@ -104,11 +104,5 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 
 		// give up and walk randomly:
 		return Groups.any(Groups.ofType(MoveAction.class, options));
-	}
-
-	private void buildRoom(Node place) {
-		Room node = new Room();
-		worldToPrivate.put(place, node);
-		privateToWorld.put(node, place);
 	}
 }
