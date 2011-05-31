@@ -11,6 +11,8 @@ public class MediaButton extends JButton {
 	public static final int PAUSE        = 3;
 	public static final int PLAY         = 4;
 
+	private static final long serialVersionUID = 1L;
+
 	private static Image mediaControls;
 	{
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
