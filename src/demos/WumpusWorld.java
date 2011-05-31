@@ -7,9 +7,10 @@ import java.util.*;
 
 public class WumpusWorld extends Graph {
 
-	public class Pit extends Actor {}
-	public class Bat extends Actor {}
-	public class Wumpus extends Actor {}
+	public Hunter createHunter() { return new Hunter(this); }
+	public Pit    createPit()    { return new Pit();        }
+	public Bat    createBat()    { return new Bat();        }
+	public Wumpus createWumpus() { return new Wumpus();     }
 
 	public boolean done() {
 		return (!Groups.containsType(Wumpus.class, actors)) ||
@@ -85,6 +86,10 @@ public class WumpusWorld extends Graph {
 			return ret;
 		}
 	}
+	
+	public class Pit    extends Actor {}
+	public class Bat    extends Actor {}
+	public class Wumpus extends Actor {}
 
 	public class WalkAction extends MoveAction {
 		
