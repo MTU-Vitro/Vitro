@@ -119,5 +119,12 @@
 
 	<target name="all" depends="build, junit, javadoc"> 
 	</target>
+	
+	<!-- Launch Demos -->
+	<target name="vacworld-demo" >
+		<java classname="demos.VacEye" fork="true">
+			<classpath refid = "build.classpath" />
+		</java>
+	</target>
 
 </project>
