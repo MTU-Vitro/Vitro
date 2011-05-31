@@ -37,11 +37,15 @@ public class GraphActor extends Actor {
 	}
 
 	public MoveAction moveToward(Actor actor, Set<Action> options) {
-		return move(model.getLocation(this).path(actor).get(0), options);
+		List<Edge> path = model.getLocation(this).path(actor);
+		if (path == null || path.size() < 1) { return null; }
+		return move(path.get(0), options);
 	}
 
 	public MoveAction moveToward(Node node, Set<Action> options) {
-		return move(model.getLocation(this).path(node).get(0), options);
+		List<Edge> path = model.getLocation(this).path(node);
+		if (path == null || path.size() < 1) { return null; }
+		return move(path.get(0), options);
 	}
 
 	public MoveAction moveToward(Position position, Set<Action> options) {
