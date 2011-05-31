@@ -13,6 +13,8 @@ public class Host extends JFrame implements ActionListener {
 	private final MediaButton buttonPlay = new MediaButton(MediaButton.PLAY);
 	private final MediaButton buttonNext = new MediaButton(MediaButton.STEP_FORWARD);
 
+	private static final long serialVersionUID = 1L;
+
 	public void show(View view) {
 		this.view = view;
 
@@ -85,6 +87,8 @@ class HostPanel extends JPanel {
 	private final View view;
 	private final int w;
 	private final int h;
+
+	private static final long serialVersionUID = 1L;
 
 	public HostPanel(View view) {
 		this.view = view;
