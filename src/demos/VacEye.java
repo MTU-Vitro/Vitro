@@ -23,11 +23,11 @@ public class VacEye extends Host {
 		controller.bind(scrubby, new VacBrain());
 
 		Node start = view.createNode(.5, .2, "Start");
-		Node roomA = view.createNode(.3, .5, "Room A");
-		Node roomB = view.createNode(.5, .5, "Room B");
-		Node roomC = view.createNode(.7, .5, "Room C");
+		Node roomA = view.createNode(.2, .5, "Room A");
+		Node roomB = view.createNode(.4, .5, "Room B");
+		Node roomC = view.createNode(.6, .5, "Room C");
 		Node roomE = view.createNode(.5, .8, "End");
-		Node roomF = view.createNode(.1, .5, "");
+		Node roomF = view.createNode(.8, .5, "");
 
 		view.createEdge(start, roomA);
 		view.createEdge(start, roomB);
