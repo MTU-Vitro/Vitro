@@ -59,6 +59,11 @@ public class GraphView implements View {
 		return ret;
 	}
 
+	private static int stringWidth(String s, Graphics g) {
+		Font font = g.getFont();
+		return (int)font.getStringBounds(s, g.getFontMetrics().getFontRenderContext()).getWidth();
+	}
+
 	public static void drawStringCentered(String s, int x, int y, Graphics g) {
 		Font font = g.getFont();
 		Rectangle2D bounds = font.getStringBounds(s, g.getFontMetrics().getFontRenderContext());
@@ -110,6 +115,31 @@ public class GraphView implements View {
 			for(ActorView actor : actorViews) {
 				actor.draw(tg);
 			}
+		}
+
+		int x = 10;
+		int y = 18;
+
+		Map<Color, String> key = new HashMap<Color, String>();
+		int maxWidth = 0;
+		for(ActorView a : actorViews) {
+			String name = a.actor.getClass().toString().split(" ")[1];
+			key.put(a.fill, name);
+			maxWidth = Math.max(maxWidth, stringWidth(name, tg));
+		}
+		tg.setColor(Color.WHITE);
+		tg.fillRoundRect(x, y+7, maxWidth + 60, 24 * key.size() + 1, 15, 15);
+		tg.setColor(Color.BLACK);
+		tg.drawRoundRect(x, y+7, maxWidth + 60, 24 * key.size() + 1, 15, 15);
+		tg.drawString("Key:", x+3, 18);
+		y += 8;
+		for(Map.Entry<Color, String> pair : key.entrySet()) {
+			tg.setColor(pair.getKey());
+			tg.fillRoundRect(x+5, y+4, 40, 16, 8, 8);
+			tg.setColor(Color.BLACK);
+			tg.drawRoundRect(x+5, y+4, 40, 16, 8, 8);
+			tg.drawString(pair.getValue(), x+50, y+16);
+			y += 24;
 		}
 	}
 
