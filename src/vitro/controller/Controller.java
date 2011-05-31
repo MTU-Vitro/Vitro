@@ -50,8 +50,9 @@ public abstract class Controller {
 			// available choices may allow it to slip through
 			// the cracks. Thus, we perform reference comparisons:
 			if (choice == null) { return null; }
+
 			for(Action action : actions) {
-				if (a == choice) { return action; }
+				if (action == choice) { return action; }
 			}
 			throw new Error("Agent selected an invalid choice.");
 		}
