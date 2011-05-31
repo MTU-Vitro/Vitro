@@ -44,7 +44,7 @@ public class GraphView implements View {
 	}
 
 	public Node createNode(double x, double y) {
-		return createNode(x, y, null);
+		return createNode(x, y, "");
 	}
 
 	public Node createNode(double x, double y, String label) {
@@ -201,5 +201,17 @@ public class GraphView implements View {
 		public void draw(Graphics g) {
 			
 		}
+	}
+	
+	public Node[][] layoutGrid(int xSize, int ySize) {
+		Node[][] array = new Node[xSize][ySize];
+		
+		for(int y = 0; y < ySize; y++) {
+			for(int x = 0; x < xSize; x++) {
+				array[x][y] = createNode((double)(x + 1) / (xSize + 1), (double)(y + 1) / (ySize + 1), "");
+			}
+		}
+		
+		return array;
 	}
 }
