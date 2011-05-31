@@ -234,6 +234,7 @@ public class GraphView implements View {
 		}
 
 		public void draw(Graphics g) {
+			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
 			g.setColor(fill);
 			g.fillOval(x()-radius, y()-radius, 2*radius, 2*radius);
 			g.setColor(Color.BLACK);
