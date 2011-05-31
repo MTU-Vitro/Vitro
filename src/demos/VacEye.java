@@ -19,18 +19,31 @@ public class VacEye extends Host {
 		SequentialController controller = new SequentialController(model);
 		GraphView view                  = new GraphView(model, controller, 640, 480);
 
-		controller.bind(VacWorld.Scrubby.class, new VacBrain());
+		VacWorld.Scrubby scrubby = model.createScrubby();
+		controller.bind(scrubby, new VacBrain());
 
-		Node start = view.createNode(.5, .3, "start");
-		Node roomA = view.createNode(.3, .7, "room A");
-		Node roomB = view.createNode(.7, .7, "room B");
+		Node start = view.createNode(.5, .2, "Start");
+		Node roomA = view.createNode(.2, .5, "Room A");
+		Node roomB = view.createNode(.4, .5, "Room B");
+		Node roomC = view.createNode(.6, .5, "Room C");
+		Node roomE = view.createNode(.5, .8, "End");
+		Node roomF = view.createNode(.8, .5, "");
 
 		view.createEdge(start, roomA);
-		view.createEdge(roomA, roomB);
+		view.createEdge(start, roomB);
+		view.createEdge(start, roomC);
+		view.createEdge(roomA, roomE);
+		view.createEdge(roomB, roomE);
+		view.createEdge(roomC, roomE);
+		view.createEdge(roomE, roomF);
+		view.createEdge(roomF, roomE);
+		view.createEdge(roomF, start);
+		view.createEdge(start, roomF);
 
-		start.actors.add(model.createScrubby());
-		roomB.actors.add(model.createDirt());
+		start.actors.add(scrubby);
 		roomA.actors.add(model.createDirt());
+		roomB.actors.add(model.createDirt());
+		roomC.actors.add(model.createDirt());
 
 		show(view);
 	}

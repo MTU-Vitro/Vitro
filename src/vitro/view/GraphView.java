@@ -142,8 +142,16 @@ public class GraphView implements View {
 		}
 
 		public void draw(Graphics g) {
+			// get desired parametric displacement
+			int[] s = { end.x - start.x, end.y - start.y };
+			double t = 1 - (end.radius / Math.sqrt(s[0] * s[0] + s[1] * s[1]));
+			
+			s[0] = start.x + (int)Math.round(s[0] * t);
+			s[1] = start.y + (int)Math.round(s[1] * t);
+
 			g.setColor(Color.BLACK);
 			g.drawLine(start.x, start.y, end.x, end.y);
+			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
 	}
 
