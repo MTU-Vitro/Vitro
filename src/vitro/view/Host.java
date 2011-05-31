@@ -46,6 +46,8 @@ public class Host extends JFrame implements ActionListener {
 			buttonPrev.setEnabled(view.controller().hasPrev());
 			buttonNext.setEnabled(view.controller().hasNext());
 			buttonPlay.setEnabled(view.controller().hasNext());
+			if (wait) { buttonPlay.setIcon(MediaButton.PLAY);  }
+			else      { buttonPlay.setIcon(MediaButton.PAUSE); }
 			repaint();
 
 			if (!wait) {
@@ -67,8 +69,7 @@ public class Host extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getSource() == buttonPlay) {
-			if (wait) { wait = false; buttonPlay.setIcon(MediaButton.PLAY);  }
-			else      { wait = true;  buttonPlay.setIcon(MediaButton.PAUSE); }
+			wait = !wait;
 		}
 		else if (e.getSource() == buttonPrev) {
 			wait = true;

@@ -149,8 +149,9 @@ public class GraphView implements View {
 			s[0] = start.x + (int)Math.round(s[0] * t);
 			s[1] = start.y + (int)Math.round(s[1] * t);
 
-			g.setColor(Color.BLACK);
+			g.setColor(new Color(150, 150, 150));
 			g.drawLine(start.x, start.y, end.x, end.y);
+			g.setColor(Color.BLACK);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
 	}
@@ -161,12 +162,24 @@ public class GraphView implements View {
 		public int radius = 10;
 
 		private ActorView(Actor actor) {
+			if (actor instanceof GraphActor) {
+				radius = 14;
+			}
+
 			this.actor = actor;
 			int x = actor.getClass().hashCode();
+			/*
 			fill = new Color(
-				(x >> 24) & 0xFF,
 				(x >> 16) & 0xFF,
 				(x >>  8) & 0xFF,
+				(x >>  0) & 0xFF,
+				128
+			);
+			*/
+			fill = new Color(
+				((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
+				((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
+				((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
 				128
 			);
 		}
