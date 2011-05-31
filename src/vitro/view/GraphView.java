@@ -12,7 +12,7 @@ import java.awt.geom.*;
 
 public class GraphView implements View {
 
-	private final Graph model;
+	public final Graph model;
 	private final Controller controller;
 
 	private final int width;
@@ -37,6 +37,10 @@ public class GraphView implements View {
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
 		tg = target.getGraphics();
+	}
+
+	public Controller controller() {
+		return controller;
 	}
 
 	public Node createNode(double x, double y) {
@@ -124,7 +128,7 @@ public class GraphView implements View {
 			g.fillOval(x-radius, y-radius, 2*radius, 2*radius);
 			g.setColor(Color.BLACK);
 			g.drawOval(x-radius, y-radius, 2*radius, 2*radius);
-			drawStringCentered(label, x, y, g);
+			drawStringCentered(label, x, y + radius + 5, g);
 		}
 	}
 

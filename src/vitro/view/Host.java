@@ -1,32 +1,82 @@
 package vitro.view;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-public class Host extends JFrame {
+public class Host extends JFrame implements ActionListener {
 
 	private View view;
 	private HostPanel panel;
 
+	private final MediaButton buttonPrev = new MediaButton(MediaButton.STEP_BACK);
+	private final MediaButton buttonPlay = new MediaButton(MediaButton.PLAY);
+	private final MediaButton buttonNext = new MediaButton(MediaButton.STEP_FORWARD);
+
 	public void show(View view) {
-		panel = new HostPanel(view);
-		add(panel);
+		this.view = view;
+
+		buttonPrev.addActionListener(this);
+		buttonNext.addActionListener(this);
+		buttonPlay.addActionListener(this);
+
 		setTitle("Vitro Simulation Host");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		setLayout(new BorderLayout());
+		panel = new HostPanel(view);
+		add(panel, BorderLayout.CENTER);
+
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(buttonPrev);
+		buttons.add(buttonPlay);
+		buttons.add(buttonNext);
+		buttons.setBackground(Color.WHITE);
+		add(buttons, BorderLayout.SOUTH);
+
 		pack();
 		setResizable(false);
 		setVisible(true);
 
 		while(true) {
 			view.draw();
-			panel.repaint();
-			view.tick(.01);
+			buttonPrev.setEnabled(view.controller().hasPrev());
+			buttonNext.setEnabled(view.controller().hasNext());
+			buttonPlay.setEnabled(view.controller().hasNext());
+			repaint();
+
+			if (!wait) {
+				view.tick(.01);
+			}
+
 			if (view.done()) {
 				setTitle("Vitro Simulation Host (Completed)");
-				break;
+				wait = true;
 			}
+
 			try { Thread.sleep(10); }
 			catch(InterruptedException ie) {}
+		}
+	}
+
+	private volatile boolean wait = true;
+
+	public void actionPerformed(ActionEvent e) {
+
+		if (e.getSource() == buttonPlay) {
+			if (wait) { wait = false; buttonPlay.setIcon(MediaButton.PLAY);  }
+			else      { wait = true;  buttonPlay.setIcon(MediaButton.PAUSE); }
+		}
+		else if (e.getSource() == buttonPrev) {
+			wait = true;
+			view.controller().prev();
+			repaint();
+		}
+		else if (e.getSource() == buttonNext) {
+			wait = true;
+			view.controller().next();
+			repaint();
 		}
 	}
 }
