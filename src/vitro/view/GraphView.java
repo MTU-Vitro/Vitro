@@ -155,10 +155,18 @@ public class GraphView implements View {
 		private ActorView(Actor actor) {
 			this.actor = actor;
 			int x = actor.getClass().hashCode();
+			/*
 			fill = new Color(
-				(x >> 24) & 0xFF,
 				(x >> 16) & 0xFF,
 				(x >>  8) & 0xFF,
+				(x >>  0) & 0xFF,
+				128
+			);
+			*/
+			fill = new Color(
+				((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
+				((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
+				((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
 				128
 			);
 		}

@@ -50,7 +50,6 @@ public abstract class Controller {
 			// available choices may allow it to slip through
 			// the cracks. Thus, we perform reference comparisons:
 			if (choice == null) { return null; }
-
 			for(Action action : actions) {
 				if (action == choice) { return action; }
 			}
