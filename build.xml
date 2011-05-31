@@ -66,10 +66,10 @@
 		<javac sourcepath  = ""
 		       srcdir      = "${src}"
 		       destdir     = "${bin}"
-			   debug       = "on"
-			   debuglevel  = "lines, vars, source"
-			   deprecation = "on"
-			   includeantruntime = "false">
+			    debug       = "true"
+			    debuglevel  = "lines,vars,source"
+			    deprecation = "on"
+			    includeantruntime = "false">
 			<!-- show all warnings -->
 			<compilerarg value="-Xlint"/>
 			<!-- compile against libraries -->
@@ -90,9 +90,9 @@
 	<target name="junit" depends="compile">
 		<!-- perform junit tests           -->
 		<junit fork          = "yes" 
-			   printsummary  = "no" 
-			   haltonfailure = "no"
-			   showoutput    = "yes" >
+			    printsummary  = "no" 
+			    haltonfailure = "no"
+			    showoutput    = "yes" >
 			<batchtest fork  = "yes" 
 			           todir = "${test.output}">
 				<!-- testing fileset, should eventually be test package -->
@@ -125,7 +125,13 @@
 	<target name="all" depends="build, junit, javadoc"> 
 	</target>
 	
-	<!-- Launch Demos -->
+	<!-- Launch Demos     -->
+	<target name="wumpusworld-demo" depends="compile">
+		<java classname="demos.WumpusEye" fork="true">
+			<classpath refid = "build.classpath" />
+		</java>
+	</target>
+
 	<target name="vacworld-demo" depends="compile">
 		<java classname="demos.VacEye" fork="true">
 			<classpath refid = "build.classpath" />
