@@ -90,6 +90,17 @@ public class GraphView implements View {
 		synchronized(target) {
 			tg.setColor(Color.WHITE);
 			tg.fillRect(0, 0, width, height);
+
+			if (tg instanceof Graphics2D) {
+				Graphics2D g2 = (Graphics2D)tg;
+				// moar pixels:
+				//g2.setRenderingHint( RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_SPEED);
+				//g2.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+				// moar smoothnesses:
+				g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
+			}
+
 			for(EdgeView edge : edgeViews) {
 				edge.draw(tg);
 			}
