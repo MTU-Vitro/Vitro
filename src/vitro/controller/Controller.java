@@ -75,28 +75,32 @@ public abstract class Controller {
 	public void next() {
 		if (!hasNext()) { return; }
 		
-		// generate a new round:
-		if (cursor == history.size()) {
-			history.add(nextRound());
-			cursor =  history.size();
-			return;
-		}
+		synchronized(model) {
+			// generate a new round:
+			if (cursor == history.size()) {
+				history.add(nextRound());
+				cursor =  history.size();
+				return;
+			}
 
-		// replay a historical round:
-		List<Action> actions = history.get(cursor);
-		for(int x = 0; x < actions.size(); x++) {
-			actions.get(x).apply();
+			// replay a historical round:
+			List<Action> actions = history.get(cursor);
+			for(int x = 0; x < actions.size(); x++) {
+				actions.get(x).apply();
+			}
+			cursor++;
 		}
-		cursor++;
 	}
 
 	public void prev() {
 		if (!hasPrev()) { return; }
 
-		cursor--;
-		List<Action> actions = history.get(cursor);
-		for(int x = actions.size() - 1; x >= 0; x--) {
-			actions.get(x).undo();
+		synchronized(model) {
+			cursor--;
+			List<Action> actions = history.get(cursor);
+			for(int x = actions.size() - 1; x >= 0; x--) {
+				actions.get(x).undo();
+			}
 		}
 	}
 

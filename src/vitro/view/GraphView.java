@@ -88,9 +88,7 @@ public class GraphView implements View {
 	public void tick(double time) {
 		sofar += time;
 		if (sofar >= 1) {
-			synchronized(model) {
-				if (controller.hasNext()) { controller.next(); }
-			}
+			if (controller.hasNext()) { controller.next(); }
 			sofar = 0;
 		}
 	}
