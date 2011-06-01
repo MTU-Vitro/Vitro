@@ -45,6 +45,7 @@ public class VacEye extends Host {
 		roomC.actors.add(model.createDirt());
 
 		view.showKey(true);
+		dockedController(true);
 		show(view);
 	}
 }

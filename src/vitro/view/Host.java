@@ -14,6 +14,11 @@ public class Host extends JFrame implements ActionListener {
 	private final MediaButton buttonNext = new MediaButton(MediaButton.STEP_FORWARD);
 
 	private static final long serialVersionUID = 1L;
+	private boolean dockedController = true;
+
+	public void dockedController(boolean docked) {
+		dockedController = docked;
+	}
 
 	public void show(View view) {
 		this.view = view;
@@ -23,7 +28,7 @@ public class Host extends JFrame implements ActionListener {
 		buttonPlay.addActionListener(this);
 
 		setTitle("Vitro Simulation Host");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		setLayout(new BorderLayout());
 		panel = new HostPanel(view);
@@ -35,7 +40,18 @@ public class Host extends JFrame implements ActionListener {
 		buttons.add(buttonPlay);
 		buttons.add(buttonNext);
 		buttons.setBackground(Color.WHITE);
-		add(buttons, BorderLayout.SOUTH);
+
+		if (dockedController) {
+			add(buttons, BorderLayout.SOUTH);
+		}
+		else {
+			JFrame frame = new JFrame("Controller");
+			frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+			frame.add(buttons);
+			frame.pack();
+			frame.setResizable(false);
+			frame.setVisible(true);
+		}
 
 		pack();
 		setResizable(false);
