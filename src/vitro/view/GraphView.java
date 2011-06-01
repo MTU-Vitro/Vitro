@@ -25,6 +25,9 @@ public class GraphView implements View {
 	private final ReversibleMap<Node, NodeView> nodeToView = new ReversibleMap<Node, NodeView>();
 	private final ReversibleMap<NodeView, Node> viewToNode = nodeToView.reverse();
 
+	private final Map<Class, Color> palette = new HashMap<Class, Color>();
+	private boolean showKey = false;
+
 	private final Set<EdgeView>  edgeViews  = new HashSet<EdgeView>();
 	private final Set<ActorView> actorViews = new HashSet<ActorView>();
 
@@ -57,6 +60,10 @@ public class GraphView implements View {
 		Edge ret = model.createEdge(start, end);
 		edgeViews.add(new EdgeView(nodeToView.get(start), nodeToView.get(end)));
 		return ret;
+	}
+
+	public void showKey(boolean show) {
+		showKey = show;
 	}
 
 	private static int stringWidth(String s, Graphics g) {
@@ -115,30 +122,31 @@ public class GraphView implements View {
 			for(ActorView actor : actorViews) {
 				actor.draw(tg);
 			}
+			if (showKey) { drawKey(tg); }
 		}
+	}
 
+	private void drawKey(Graphics g) {
 		int x = 10;
 		int y = 18;
-
-		Map<Color, String> key = new HashMap<Color, String>();
 		int maxWidth = 0;
-		for(ActorView a : actorViews) {
-			String name = a.actor.getClass().toString().split(" ")[1];
-			key.put(a.fill, name);
-			maxWidth = Math.max(maxWidth, stringWidth(name, tg));
+		for(Class c : palette.keySet()) {
+			String name = c.toString().split(" ")[1];
+			maxWidth = Math.max(maxWidth, stringWidth(name, g));
 		}
-		tg.setColor(Color.WHITE);
-		tg.fillRoundRect(x, y+7, maxWidth + 60, 24 * key.size() + 1, 15, 15);
-		tg.setColor(Color.BLACK);
-		tg.drawRoundRect(x, y+7, maxWidth + 60, 24 * key.size() + 1, 15, 15);
-		tg.drawString("Key:", x+3, 18);
+		g.setColor(Color.WHITE);
+		g.fillRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
+		g.setColor(Color.BLACK);
+		g.drawRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
+		g.drawString("Key:", x+3, 18);
 		y += 8;
-		for(Map.Entry<Color, String> pair : key.entrySet()) {
-			tg.setColor(pair.getKey());
-			tg.fillRoundRect(x+5, y+4, 40, 16, 8, 8);
-			tg.setColor(Color.BLACK);
-			tg.drawRoundRect(x+5, y+4, 40, 16, 8, 8);
-			tg.drawString(pair.getValue(), x+50, y+16);
+		for(Map.Entry<Class, Color> pair : palette.entrySet()) {
+			g.setColor(pair.getValue());
+			g.fillRoundRect(x+5, y+4, 40, 16, 8, 8);
+			g.setColor(Color.BLACK);
+			g.drawRoundRect(x+5, y+4, 40, 16, 8, 8);
+			String name = pair.getKey().toString().split(" ")[1];
+			g.drawString(name, x+50, y+16);
 			y += 24;
 		}
 	}
@@ -192,7 +200,7 @@ public class GraphView implements View {
 
 			g.setColor(new Color(150, 150, 150));
 			g.drawLine(start.x, start.y, end.x, end.y);
-			g.setColor(Color.BLACK);
+			//g.setColor(Color.BLACK);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
 	}
@@ -206,23 +214,22 @@ public class GraphView implements View {
 			if (actor instanceof GraphActor) {
 				radius = 14;
 			}
-
 			this.actor = actor;
-			int x = actor.getClass().hashCode();
-			/*
-			fill = new Color(
-				(x >> 16) & 0xFF,
-				(x >>  8) & 0xFF,
-				(x >>  0) & 0xFF,
-				128
-			);
-			*/
-			fill = new Color(
-				((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
-				((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
-				((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
-				128
-			);
+
+			Class actorClass = actor.getClass();
+			if (palette.containsKey(actorClass)) {
+				fill = palette.get(actorClass);
+			}
+			else {
+				int x = actor.getClass().hashCode();
+				fill = new Color(
+					((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
+					((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
+					((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
+					128
+				);
+				palette.put(actorClass, fill);
+			}
 		}
 
 		public int x() {

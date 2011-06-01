@@ -14,20 +14,19 @@ public class VacEye extends Host {
 	}
 
 	public VacEye() {
-		
+
 		VacWorld model                  = new VacWorld();
 		SequentialController controller = new SequentialController(model);
 		GraphView view                  = new GraphView(model, controller, 640, 480);
 
-		VacWorld.Scrubby scrubby = model.createScrubby();
-		controller.bind(scrubby, new VacBrain());
+		controller.bind(VacWorld.Scrubby.class, new VacBrain());
 
 		Node start = view.createNode(.5, .2, "Start");
 		Node roomA = view.createNode(.2, .5, "Room A");
 		Node roomB = view.createNode(.4, .5, "Room B");
 		Node roomC = view.createNode(.6, .5, "Room C");
 		Node roomE = view.createNode(.5, .8, "End");
-		Node roomF = view.createNode(.8, .5, "");
+		Node roomF = view.createNode(.8, .5, "Loopback");
 
 		view.createEdge(start, roomA);
 		view.createEdge(start, roomB);
@@ -40,11 +39,12 @@ public class VacEye extends Host {
 		view.createEdge(roomF, start);
 		view.createEdge(start, roomF);
 
-		start.actors.add(scrubby);
+		start.actors.add(model.createScrubby());
 		roomA.actors.add(model.createDirt());
 		roomB.actors.add(model.createDirt());
 		roomC.actors.add(model.createDirt());
 
+		view.showKey(true);
 		show(view);
 	}
 }
