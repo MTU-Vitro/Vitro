@@ -50,15 +50,54 @@ public class Graph extends Model {
 	}
 	
 	protected List<Edge> path(Node start, Node destination) {
-		List<Edge> ret = new ArrayList<Edge>();
-		return path(
-			ret,
-			new HashSet<Node>(),
-			start,
-			destination
-		) ? ret : null;
+//		List<Edge> ret = new ArrayList<Edge>();
+//		return path(
+//			ret,
+//			new HashSet<Node>(),
+//			start,
+//			destination
+//		) ? ret : null;
+
+		return pathBFS(start, destination);
 	}
 	
+	private List<Edge> pathBFS(Node start, Node destination) {
+		Queue<Node> frontier = new LinkedList<Node>();
+		frontier.add(start);
+
+		Set<Node> visited = new HashSet<Node>();
+		visited.add(start);
+
+		Map<Node, Edge> tracks = new HashMap<Node, Edge>();
+		tracks.put(start, null);
+
+		while(!frontier.isEmpty()) {
+			Node node = frontier.poll();
+
+			if(node == destination) {
+				List<Edge> path = new ArrayList<Edge>();
+				
+				Edge edge = tracks.get(node);
+				while(edge != null) {
+					path.add(0, edge);
+					edge = tracks.get(edge.start);
+				}
+
+				return path;
+			}
+
+			for(Edge edge : node.edges) {
+				if(!visited.contains(edge.end)) {
+					frontier.add(edge.end);
+					visited.add(edge.end);
+					tracks.put(edge.end, edge);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	// this implementation is recursive for simplicity.
 	// in the future, this should probably be rewritten
 	// iteratively to avoid stack overflows on large graphs.
