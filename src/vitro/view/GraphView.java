@@ -88,7 +88,9 @@ public class GraphView implements View {
 	public void tick(double time) {
 		sofar += time;
 		if (sofar >= 1) {
-			if (controller.hasNext()) { controller.next(); }
+			synchronized(model) {
+				if (controller.hasNext()) { controller.next(); }
+			}
 			sofar = 0;
 		}
 	}
@@ -131,17 +133,18 @@ public class GraphView implements View {
 				// moar smoothnesses:
 				g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
 			}
-
-			for(Edge edge : model.edges) {
-				edgeToView.get(edge).draw(tg);
+			synchronized(model) {
+				for(Edge edge : model.edges) {
+					edgeToView.get(edge).draw(tg);
+				}
+				for(Node node : model.nodes) {
+					nodeToView.get(node).draw(tg);
+				}
+				for(Actor actor : model.actors) {
+					actorToView.get(actor).draw(tg);
+				}
+				if (showKey) { drawKey(tg); }
 			}
-			for(Node node : model.nodes) {
-				nodeToView.get(node).draw(tg);
-			}
-			for(Actor actor : model.actors) {
-				actorToView.get(actor).draw(tg);
-			}
-			if (showKey) { drawKey(tg); }
 		}
 	}
 
