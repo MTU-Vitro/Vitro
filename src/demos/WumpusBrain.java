@@ -67,7 +67,6 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 			if (room.flapping || room.wind || room.scent) { continue; }
 			for(Room other : room.adjacent) {
 				if (!other.visited) {
-					System.out.println("Hey there");
 					return me.moveToward(privateToWorld.get(other), options);
 				}
 			}
