@@ -20,7 +20,7 @@ public class Groups {
 	**/
 	public static <S, C extends S> S firstOfType(Class<C> c, Collection<S> source) {
 		for(S a : source) {
-			if (c.equals(a.getClass())) { return a; }
+			if (c.isInstance(a)) { return a; }
 		}
 		return null;
 	}
@@ -35,7 +35,7 @@ public class Groups {
 	public static <S, C extends S> List<S> ofType(Class<C> c, Collection<S> source) {
 		List<S> ret = new ArrayList<S>();
 		for(S a : source) {
-			if (c.equals(a.getClass())) { ret.add(a); }
+			if (c.isInstance(a)) { ret.add(a); }
 		}
 		return ret;
 	}
@@ -49,7 +49,7 @@ public class Groups {
 	**/
 	public static <S, C extends S> boolean containsType(Class<C> c, Collection<S> source) {
 		for(S a : source) {
-			if (c.equals(a.getClass())) { return true; }
+			if (c.isInstance(a)) { return true; }
 		}
 		return false;
 	}
