@@ -19,7 +19,7 @@ public class GraphActor extends Actor {
 	public MoveAction move(Edge edge, Set<Action> options) {
 		for(Action action : Groups.ofType(MoveAction.class, options)) {
 			MoveAction move = (MoveAction)action;
-			if (move.actor == this && move.edge == edge) { return move; }
+			if (move.actor == this && move.edge.equals(edge)) { return move; }
 		}
 		return null;
 	}
@@ -55,7 +55,7 @@ public class GraphActor extends Actor {
 	public CreateAction create(Class type, Set<Action> options) {
 		for(Action action : Groups.ofType(CreateAction.class, options)) {
 			CreateAction create = (CreateAction)action;
-			if (type.equals(create.actor.getClass())) { return create; }
+			if (type.isInstance(create.actor)) { return create; }
 		}
 		return null;
 	}
@@ -63,7 +63,7 @@ public class GraphActor extends Actor {
 	public CreateAction create(Node node, Class type, Set<Action> options) {
 		for(Action action : Groups.ofType(CreateAction.class, options)) {
 			CreateAction create = (CreateAction)action;
-			if (type.equals(create.actor.getClass()) && node == create.node) { return create; }
+			if (type.isInstance(create.actor) && node == create.node) { return create; }
 		}
 		return null;
 	}
@@ -91,7 +91,7 @@ public class GraphActor extends Actor {
 			DestroyAction destroy = (DestroyAction)action;
 			boolean match = true;
 			for(Actor target : destroy.actors.keySet()) {
-				if (!type.equals(target.getClass())) { match = false; break; }
+				if (!type.isInstance(target)) { match = false; break; }
 			}
 			if (match) { return destroy; }
 		}
