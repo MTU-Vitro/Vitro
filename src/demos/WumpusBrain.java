@@ -41,6 +41,7 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 				worldToPrivate.put(edge.end, new Room());
 			}
 			here.adjacent.add(worldToPrivate.get(edge.end));
+			worldToPrivate.get(edge.end).adjacent.add(here);
 		}
 
 		// find likely wumpus locations:
