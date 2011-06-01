@@ -22,6 +22,9 @@ public class GraphView implements View {
 	private final Graphics bg;
 	private final Graphics tg;
 
+	private final ReversibleMap<Edge, EdgeView> edgeToView = new ReversibleMap<Edge, EdgeView>();
+	private final ReversibleMap<EdgeView, Edge> viewToEdge = edgeToView.reverse();
+
 	private final ReversibleMap<Node, NodeView> nodeToView = new ReversibleMap<Node, NodeView>();
 	private final ReversibleMap<NodeView, Node> viewToNode = nodeToView.reverse();
 
@@ -30,8 +33,6 @@ public class GraphView implements View {
 
 	private final Map<Class, Color> palette = new HashMap<Class, Color>();
 	private boolean showKey = false;
-
-	private final Set<EdgeView>  edgeViews  = new HashSet<EdgeView>();
 
 	public GraphView(Graph model, Controller controller, int width, int height) {
 		this.model = model;
@@ -60,7 +61,7 @@ public class GraphView implements View {
 
 	public Edge createEdge(Node start, Node end) {
 		Edge ret = model.createEdge(start, end);
-		edgeViews.add(new EdgeView(nodeToView.get(start), nodeToView.get(end)));
+		edgeToView.put(ret, new EdgeView(nodeToView.get(start), nodeToView.get(end)));
 		return ret;
 	}
 
@@ -97,9 +98,24 @@ public class GraphView implements View {
 	}
 
 	public void draw() {
-		for(Actor a : model.actors) {
-			if (!actorToView.containsKey(a)) {
-				actorToView.put(a, new ActorView(a));
+		// make sure our view of the model is up-to-date:
+		for(Actor actor : model.actors) {
+			if (!actorToView.containsKey(actor)) {
+				actorToView.put(actor, new ActorView(actor));
+			}
+		}
+		for(Node node : model.nodes) {
+			if (!nodeToView.containsKey(node)) {
+				// TODO: come up with a halfway sane way to choose
+				// locations for new nodes that are created raw:
+				nodeToView.put(node, new NodeView(node, 0, 0, ""));
+			}
+		}
+		for(Edge edge : model.edges) {
+			if (!edgeToView.containsKey(edge)) {
+				NodeView start = nodeToView.get(edge.start);
+				NodeView end   = nodeToView.get(edge.end);
+				edgeToView.put(edge, new EdgeView(start, end));
 			}
 		}
 		synchronized(target) {
@@ -116,11 +132,11 @@ public class GraphView implements View {
 				g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
 			}
 
-			for(EdgeView edge : edgeViews) {
-				edge.draw(tg);
+			for(Edge edge : model.edges) {
+				edgeToView.get(edge).draw(tg);
 			}
-			for(NodeView node : viewToNode.keySet()) {
-				node.draw(tg);
+			for(Node node : model.nodes) {
+				nodeToView.get(node).draw(tg);
 			}
 			for(Actor actor : model.actors) {
 				actorToView.get(actor).draw(tg);
