@@ -25,11 +25,13 @@ public class GraphView implements View {
 	private final ReversibleMap<Node, NodeView> nodeToView = new ReversibleMap<Node, NodeView>();
 	private final ReversibleMap<NodeView, Node> viewToNode = nodeToView.reverse();
 
+	private final ReversibleMap<Actor, ActorView> actorToView = new ReversibleMap<Actor, ActorView>();
+	private final ReversibleMap<ActorView, Actor> viewToActor = actorToView.reverse();
+
 	private final Map<Class, Color> palette = new HashMap<Class, Color>();
 	private boolean showKey = false;
 
 	private final Set<EdgeView>  edgeViews  = new HashSet<EdgeView>();
-	private final Set<ActorView> actorViews = new HashSet<ActorView>();
 
 	public GraphView(Graph model, Controller controller, int width, int height) {
 		this.model = model;
@@ -95,9 +97,10 @@ public class GraphView implements View {
 	}
 
 	public void draw() {
-		actorViews.clear();
 		for(Actor a : model.actors) {
-			actorViews.add(new ActorView(a));
+			if (!actorToView.containsKey(a)) {
+				actorToView.put(a, new ActorView(a));
+			}
 		}
 		synchronized(target) {
 			tg.setColor(Color.WHITE);
@@ -119,8 +122,8 @@ public class GraphView implements View {
 			for(NodeView node : viewToNode.keySet()) {
 				node.draw(tg);
 			}
-			for(ActorView actor : actorViews) {
-				actor.draw(tg);
+			for(Actor actor : model.actors) {
+				actorToView.get(actor).draw(tg);
 			}
 			if (showKey) { drawKey(tg); }
 		}
