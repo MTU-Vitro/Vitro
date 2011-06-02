@@ -63,6 +63,7 @@ public class Groups {
 	public static <S> S any(Collection<S> source) {
 		// this is not the most efficient approach,
 		// but it's simple. Improve it later if necessary.
+		if (source.size() < 1) { return null; }
 		List<S> group = new ArrayList<S>(source);
 		return group.get(rand.nextInt(group.size()));
 	}
