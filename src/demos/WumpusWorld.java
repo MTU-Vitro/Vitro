@@ -27,12 +27,10 @@ public class WumpusWorld extends Graph {
 			if (wumpus != null) {
 				// You bagged a Wumpus!
 				// Hee-Hee-Hee... the Wumpus'll getcha next time!
-				System.out.println("You bagged a Wumpus!  Hee-Hee-Hee... the Wumpus'll getcha next time!");
 				ret.add(new DestroyAction(model, wumpus, this));
 			}
 			else if (hunter != null) {
 				// Thwok- you were ventilated by an arrow!
-				System.out.println("Thwok- you were ventilated by an arrow!");
 				ret.add(new DestroyAction(model, hunter, this));
 			}
 			else {

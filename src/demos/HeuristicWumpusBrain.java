@@ -7,7 +7,9 @@ import vitro.controller.*;
 import java.util.*;
 import static vitro.util.Groups.*;
 
-public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
+
+// Rewrite to hold internal model as subclass of Graph
+public class HeuristicWumpusBrain implements Agent<WumpusWorld.Hunter> {
 
 	private static class Room {
 		public Set<Room> adjacent = new HashSet<Room>();
@@ -58,7 +60,8 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 					return me.create(wumpusPosition, WumpusWorld.Arrow.class, options);
 				}
 				// otherwise, move into position:
-				return me.moveToward(wumpusPosition, options);
+				//return me.moveToward(wumpusPosition, options);
+				return moveToward(me, room, options);
 			}
 		}
 
@@ -67,7 +70,8 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 			if (room.flapping || room.wind || room.scent) { continue; }
 			for(Room other : room.adjacent) {
 				if (!other.visited) {
-					return me.moveToward(privateToWorld.get(other), options);
+					//return me.moveToward(privateToWorld.get(other), options);
+					return moveToward(me, other, options);
 				}
 			}
 		}
@@ -80,11 +84,53 @@ public class WumpusBrain implements Agent<WumpusWorld.Hunter> {
 				if (other.flapping) { batCounter++; }
 			}
 			if (batCounter >= 2) {
-				return me.moveToward(privateToWorld.get(room), options);
+				//return me.moveToward(privateToWorld.get(room), options);
+				return moveToward(me, room, options);
 			}
 		}
 
 		// give up and walk randomly:
 		return any(ofType(MoveAction.class, options));
+	}
+	
+	private MoveAction moveToward(WumpusWorld.Hunter me, Room destination, Set<Action> options) {
+		Room here = worldToPrivate.get(me.location());
+		
+		List<Room> path = path(here, destination);
+		if (path == null || path.size() < 1) { return null; }
+		return me.move(privateToWorld.get(path.get(1)), options);
+	}
+	
+	private List<Room> path(Room start, Room destination) {
+		Queue<Room> frontier = new LinkedList<Room>();
+		frontier.add(start);
+
+		Map<Room, Room> visited = new HashMap<Room, Room>();
+		visited.put(start, null);
+
+		while(!frontier.isEmpty()) {
+			Room current = frontier.poll();
+
+			if(current == destination) {
+				List<Room> path = new ArrayList<Room>();
+				
+				Room next = destination;
+				while(next != null) {
+					path.add(0, next);
+					next = visited.get(next);
+				}
+
+				return path;
+			}
+
+			for(Room next : current.adjacent) {
+				if(!visited.containsKey(next)) {
+					frontier.add(next);
+					visited.put(next, current);
+				}
+			}
+		}
+
+		return null;
 	}
 }

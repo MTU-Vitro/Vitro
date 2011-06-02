@@ -17,12 +17,11 @@ public class WumpusEye extends Host {
 		
 		WumpusWorld model               = new WumpusWorld();
 		SequentialController controller = new SequentialController(model);
-		GraphView view                  = new GraphView(model, controller, 640, 480);
+		GraphView view                  = new GraphView(model, controller, 800, 600);
 
 		WumpusWorld.Hunter hunter = model.createHunter();
-		controller.bind(hunter, new WumpusBrain());
+		controller.bind(hunter, new LogicalWumpusBrain());
 
-		// bear with me... this is a Mobius Strip...
 		Node[][] grid = view.layoutGrid(4, 4);
 		
 		for(int y = 0; y < 3; y++) {
@@ -42,10 +41,11 @@ public class WumpusEye extends Host {
 		}
 
 		grid[0][0].actors.add(hunter);
-		grid[3][3].actors.add(model.createWumpus());
-		//grid[3][1].actors.add(model.createPit());
-		//grid[2][2].actors.add(model.createPit());
-		//grid[0][3].actors.add(model.createBat());
+		grid[3][2].actors.add(model.createWumpus());
+		grid[3][1].actors.add(model.createPit());
+		grid[2][1].actors.add(model.createPit());
+		grid[0][3].actors.add(model.createBat());
+		//grid[2][2].actors.add(model.createWumpus());
 
 		view.showKey(true);
 		show(view);
