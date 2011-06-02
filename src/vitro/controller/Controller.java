@@ -65,7 +65,9 @@ public abstract class Controller {
 	}
 
 	public boolean hasNext() {
-		return !model.done();
+		synchronized(model) {
+			return !model.done();
+		}
 	}
 
 	public boolean hasPrev() {
@@ -74,8 +76,8 @@ public abstract class Controller {
 
 	public void next() {
 		if (!hasNext()) { return; }
-		
-		synchronized(model) {
+
+		synchronized(model) {		
 			// generate a new round:
 			if (cursor == history.size()) {
 				history.add(nextRound());
