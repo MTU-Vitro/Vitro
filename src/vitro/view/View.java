@@ -12,6 +12,4 @@ public interface View {
 	public void draw();
 
 	public void tick(double time);
-
-	public boolean done();
 }

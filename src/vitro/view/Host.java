@@ -70,7 +70,7 @@ public class Host extends JFrame implements ActionListener {
 				view.tick(.01);
 			}
 
-			if (view.done()) {
+			if (!view.controller().hasNext()) {
 				setTitle("Vitro Simulation Host (Completed)");
 				wait = true;
 			}
