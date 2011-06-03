@@ -68,21 +68,6 @@ public class GraphView implements View {
 	public void showKey(boolean show) {
 		showKey = show;
 	}
-
-	private static int stringWidth(String s, Graphics g) {
-		Font font = g.getFont();
-		return (int)font.getStringBounds(s, g.getFontMetrics().getFontRenderContext()).getWidth();
-	}
-
-	public static void drawStringCentered(String s, int x, int y, Graphics g) {
-		Font font = g.getFont();
-		Rectangle2D bounds = font.getStringBounds(s, g.getFontMetrics().getFontRenderContext());
-		g.drawString(
-			s,
-			x-((int)bounds.getWidth()/2),
-			y+((int)bounds.getHeight()/2)
-		);
-	}
 	
 	private double sofar = 0;
 	public void tick(double time) {
@@ -121,16 +106,7 @@ public class GraphView implements View {
 		synchronized(target) {
 			tg.setColor(Color.WHITE);
 			tg.fillRect(0, 0, width, height);
-
-			if (tg instanceof Graphics2D) {
-				Graphics2D g2 = (Graphics2D)tg;
-				// moar pixels:
-				//g2.setRenderingHint( RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_SPEED);
-				//g2.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
-				// moar smoothnesses:
-				g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
-			}
+			Drawing.configureVector(tg);
 			synchronized(model) {
 				for(Edge edge : model.edges) {
 					edgeToView.get(edge).draw(tg);
@@ -151,7 +127,7 @@ public class GraphView implements View {
 		int y = 18;
 		int maxWidth = 0;
 		for(Class c : palette.keySet()) {
-			maxWidth = Math.max(maxWidth, stringWidth(normalizedName(c), g));
+			maxWidth = Math.max(maxWidth, Drawing.stringWidth(g, normalizedName(c)));
 		}
 		g.setColor(Color.WHITE);
 		g.fillRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
@@ -202,11 +178,8 @@ public class GraphView implements View {
 		}
 
 		public void draw(Graphics g) {
-			g.setColor(Color.WHITE);
-			g.fillOval(x-radius, y-radius, 2*radius, 2*radius);
-			g.setColor(Color.BLACK);
-			g.drawOval(x-radius, y-radius, 2*radius, 2*radius);
-			drawStringCentered(label, x, y + radius + 5, g);
+			Drawing.drawCircleCentered(g, x, y, radius, Color.BLACK, Color.WHITE);
+			Drawing.drawStringCentered(g, label, x, y + radius + 5);
 		}
 	}
 
@@ -229,7 +202,6 @@ public class GraphView implements View {
 
 			g.setColor(new Color(150, 150, 150));
 			g.drawLine(start.x, start.y, end.x, end.y);
-			//g.setColor(Color.BLACK);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
 	}
@@ -271,26 +243,7 @@ public class GraphView implements View {
 
 		public void draw(Graphics g) {
 			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
-			g.setColor(fill);
-			g.fillOval(x()-radius, y()-radius, 2*radius, 2*radius);
-			g.setColor(Color.BLACK);
-			g.drawOval(x()-radius, y()-radius, 2*radius, 2*radius);
-		}
-	}
-
-	private static class Arrow {
-		public double headWidth;
-		public double headLength;
-		public double width;
-		public Color fill;
-		public Color outline;
-		public int startx;
-		public int starty;
-		public int endx;
-		public int endy;
-
-		public void draw(Graphics g) {
-			
+			Drawing.drawCircleCentered(g, x(), y(), radius, Color.BLACK, fill);
 		}
 	}
 	
@@ -299,7 +252,7 @@ public class GraphView implements View {
 		
 		for(int y = 0; y < ySize; y++) {
 			for(int x = 0; x < xSize; x++) {
-				array[x][y] = createNode((double)(x + 1) / (xSize + 1), (double)(y + 1) / (ySize + 1), "");
+				array[x][y] = createNode((double)(x + 1) / (xSize + 1), (double)(y + 1) / (ySize + 1));
 			}
 		}
 		
