@@ -14,6 +14,7 @@ public class GraphView implements View {
 
 	public final Graph model;
 	private final Controller controller;
+	private final ColorScheme palette;
 
 	private final int width;
 	private final int height;
@@ -31,7 +32,7 @@ public class GraphView implements View {
 	private final ReversibleMap<Actor, ActorView> actorToView = new ReversibleMap<Actor, ActorView>();
 	private final ReversibleMap<ActorView, Actor> viewToActor = actorToView.reverse();
 
-	private final Map<Class, Color> palette = new HashMap<Class, Color>();
+	private final Map<Class, Color> keycolors = new HashMap<Class, Color>();
 	private boolean showKey = false;
 
 	public GraphView(Graph model, Controller controller, int width, int height) {
@@ -39,6 +40,8 @@ public class GraphView implements View {
 		this.controller = controller;
 		this.width = width;
 		this.height = height;
+
+		palette = new ColorScheme();
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
@@ -104,7 +107,7 @@ public class GraphView implements View {
 			}
 		}
 		synchronized(target) {
-			tg.setColor(Color.WHITE);
+			tg.setColor(palette.background);
 			tg.fillRect(0, 0, width, height);
 			Drawing.configureVector(tg);
 			synchronized(model) {
@@ -126,20 +129,22 @@ public class GraphView implements View {
 		int x = 10;
 		int y = 18;
 		int maxWidth = 0;
-		for(Class c : palette.keySet()) {
+		for(Class c : keycolors.keySet()) {
 			maxWidth = Math.max(maxWidth, Drawing.stringWidth(g, normalizedName(c)));
 		}
-		g.setColor(Color.WHITE);
-		g.fillRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
-		g.setColor(Color.BLACK);
-		g.drawRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
+		Drawing.drawRoundRect(
+			g, x, y+7, maxWidth + 60, 24 * keycolors.size() + 1, 15,
+			palette.outline,
+			palette.background
+		);
 		g.drawString("Key:", x+3, 18);
 		y += 8;
-		for(Map.Entry<Class, Color> pair : palette.entrySet()) {
-			g.setColor(pair.getValue());
-			g.fillRoundRect(x+5, y+4, 40, 16, 8, 8);
-			g.setColor(Color.BLACK);
-			g.drawRoundRect(x+5, y+4, 40, 16, 8, 8);
+		for(Map.Entry<Class, Color> pair : keycolors.entrySet()) {
+			Drawing.drawRoundRect(
+				g, x+5, y+4, 40, 16, 8,
+				palette.outline,
+				pair.getValue()
+			);
 			g.drawString(normalizedName(pair.getKey()), x+50, y+16);
 			y += 24;
 		}
@@ -163,7 +168,7 @@ public class GraphView implements View {
 		return buffer;
 	}
 
-	private static class NodeView {
+	private class NodeView {
 		public final Node node;
 		public int x;
 		public int y;
@@ -178,12 +183,12 @@ public class GraphView implements View {
 		}
 
 		public void draw(Graphics g) {
-			Drawing.drawCircleCentered(g, x, y, radius, Color.BLACK, Color.WHITE);
+			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, palette.background);
 			Drawing.drawStringCentered(g, label, x, y + radius + 5);
 		}
 	}
 
-	private static class EdgeView {
+	private class EdgeView {
 		private final NodeView start;
 		private final NodeView end;
 
@@ -200,7 +205,8 @@ public class GraphView implements View {
 			s[0] = start.x + (int)Math.round(s[0] * t);
 			s[1] = start.y + (int)Math.round(s[1] * t);
 
-			g.setColor(new Color(150, 150, 150));
+			//g.setColor(new Color(150, 150, 150));
+			g.setColor(palette.secondary);
 			g.drawLine(start.x, start.y, end.x, end.y);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
@@ -218,8 +224,8 @@ public class GraphView implements View {
 			this.actor = actor;
 
 			Class actorClass = actor.getClass();
-			if (palette.containsKey(actorClass)) {
-				fill = palette.get(actorClass);
+			if (keycolors.containsKey(actorClass)) {
+				fill = keycolors.get(actorClass);
 			}
 			else {
 				int x = actor.getClass().hashCode();
@@ -229,7 +235,7 @@ public class GraphView implements View {
 					((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
 					128
 				);
-				palette.put(actorClass, fill);
+				keycolors.put(actorClass, fill);
 			}
 		}
 
@@ -243,7 +249,7 @@ public class GraphView implements View {
 
 		public void draw(Graphics g) {
 			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
-			Drawing.drawCircleCentered(g, x(), y(), radius, Color.BLACK, fill);
+			Drawing.drawCircleCentered(g, x(), y(), radius, palette.outline, fill);
 		}
 	}
 	

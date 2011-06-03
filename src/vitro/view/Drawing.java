@@ -36,6 +36,13 @@ public class Drawing {
 		g.drawOval(x-radius, y-radius, 2*radius, 2*radius);
 	}
 
+	public static void drawRoundRect(Graphics g, int x, int y, int width, int height, int radius, Color outline, Color fill) {
+		g.setColor(fill);
+		g.fillRoundRect(x, y, width, height, radius, radius);
+		g.setColor(outline);
+		g.drawRoundRect(x, y, width, height, radius, radius);
+	}
+
 	public static void configureRaster(Graphics g) {
 		if (g instanceof Graphics2D) {
 			Graphics2D g2 = (Graphics2D)g;
