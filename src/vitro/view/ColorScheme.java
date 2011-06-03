@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Random;
 
 public class ColorScheme {
 
@@ -32,16 +33,40 @@ public class ColorScheme {
 
 	public Color unique(Object o) {
 		if (!uniqueColors.containsKey(o)) {
-			int x = o.hashCode();
-			Color unique = new Color(
-				((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
-				((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
-				((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
-				128
-			);
-			uniqueColors.put(o, unique);
+			Random rand = new Random();
+			Color  bestColor = null;
+			double bestDelta = -1;
+
+			for(int x = 0; x < 10; x++) {
+				Color unique = colorFromHash(rand.nextInt());
+				int   delta  = 0;
+				for(Color other : uniqueColors.values()) {
+					delta += colorDelta(unique, other);
+				}
+				if (delta > bestDelta) {
+					bestDelta = delta;
+					bestColor = unique;
+				}
+			}
+			uniqueColors.put(o, bestColor);
 		}
 		return uniqueColors.get(o);
+	}
+
+	private Color colorFromHash(int x) {
+		return new Color(
+			(x >> 24) & 0xFF,
+			(x >> 16) & 0xFF,
+			(x >>  8) & 0xFF,
+			128
+		);
+	}
+
+	private double colorDelta(Color a, Color b) {
+		double dr = a.getRed()   - b.getRed();
+		double dg = a.getGreen() - b.getGreen();
+		double db = a.getBlue()  - b.getBlue();
+		return (dr*dr) + (dg*dg) + (db*db);
 	}
 
 	public void drawKey(Graphics g, int x, int y) {
@@ -73,6 +98,9 @@ public class ColorScheme {
 		String name = c.toString();
 		if (name.indexOf(' ') >= 0 && name.indexOf(' ') < name.length()-1) {
 			name = name.substring(name.lastIndexOf(' ')+1);
+		}
+		if (name.indexOf('.') >= 0 && name.indexOf('.') < name.length()-1) {
+			name = name.substring(name.lastIndexOf('.')+1);
 		}
 		if (name.indexOf('$') >= 0 && name.indexOf('$') < name.length()-1) {
 			name = name.substring(name.lastIndexOf('$')+1);

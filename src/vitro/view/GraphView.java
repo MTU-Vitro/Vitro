@@ -120,7 +120,9 @@ public class GraphView implements View {
 				for(Actor actor : model.actors) {
 					actorToView.get(actor).draw(tg);
 				}
-				if (showKey) { palette.drawKey(tg, 10, 18); }
+				if (showKey) {
+					palette.drawKey(tg, 10, 18);
+				}
 			}
 		}
 	}
