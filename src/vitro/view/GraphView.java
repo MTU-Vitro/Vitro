@@ -151,8 +151,7 @@ public class GraphView implements View {
 		int y = 18;
 		int maxWidth = 0;
 		for(Class c : palette.keySet()) {
-			String name = c.toString().split(" ")[1];
-			maxWidth = Math.max(maxWidth, stringWidth(name, g));
+			maxWidth = Math.max(maxWidth, stringWidth(normalizedName(c), g));
 		}
 		g.setColor(Color.WHITE);
 		g.fillRoundRect(x, y+7, maxWidth + 60, 24 * palette.size() + 1, 15, 15);
@@ -165,10 +164,20 @@ public class GraphView implements View {
 			g.fillRoundRect(x+5, y+4, 40, 16, 8, 8);
 			g.setColor(Color.BLACK);
 			g.drawRoundRect(x+5, y+4, 40, 16, 8, 8);
-			String name = pair.getKey().toString().split(" ")[1];
-			g.drawString(name, x+50, y+16);
+			g.drawString(normalizedName(pair.getKey()), x+50, y+16);
 			y += 24;
 		}
+	}
+
+	private String normalizedName(Class c) {
+		String name = c.toString();
+		if (name.indexOf(' ') >= 0 && name.indexOf(' ') < name.length()-1) {
+			name = name.substring(name.lastIndexOf(' ')+1);
+		}
+		if (name.indexOf('$') >= 0 && name.indexOf('$') < name.length()-1) {
+			name = name.substring(name.lastIndexOf('$')+1);
+		}
+		return name;
 	}
 
 	public Image getBuffer() {
