@@ -32,7 +32,6 @@ public class GraphView implements View {
 	private final ReversibleMap<Actor, ActorView> actorToView = new ReversibleMap<Actor, ActorView>();
 	private final ReversibleMap<ActorView, Actor> viewToActor = actorToView.reverse();
 
-	private final Map<Class, Color> keycolors = new HashMap<Class, Color>();
 	private boolean showKey = false;
 
 	public GraphView(Graph model, Controller controller, int width, int height) {
@@ -42,6 +41,7 @@ public class GraphView implements View {
 		this.height = height;
 
 		palette = new ColorScheme();
+		//palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
@@ -120,45 +120,9 @@ public class GraphView implements View {
 				for(Actor actor : model.actors) {
 					actorToView.get(actor).draw(tg);
 				}
-				if (showKey) { drawKey(tg); }
+				if (showKey) { palette.drawKey(tg, 10, 18); }
 			}
 		}
-	}
-
-	private void drawKey(Graphics g) {
-		int x = 10;
-		int y = 18;
-		int maxWidth = 0;
-		for(Class c : keycolors.keySet()) {
-			maxWidth = Math.max(maxWidth, Drawing.stringWidth(g, normalizedName(c)));
-		}
-		Drawing.drawRoundRect(
-			g, x, y+7, maxWidth + 60, 24 * keycolors.size() + 1, 15,
-			palette.outline,
-			palette.background
-		);
-		g.drawString("Key:", x+3, 18);
-		y += 8;
-		for(Map.Entry<Class, Color> pair : keycolors.entrySet()) {
-			Drawing.drawRoundRect(
-				g, x+5, y+4, 40, 16, 8,
-				palette.outline,
-				pair.getValue()
-			);
-			g.drawString(normalizedName(pair.getKey()), x+50, y+16);
-			y += 24;
-		}
-	}
-
-	private String normalizedName(Class c) {
-		String name = c.toString();
-		if (name.indexOf(' ') >= 0 && name.indexOf(' ') < name.length()-1) {
-			name = name.substring(name.lastIndexOf(' ')+1);
-		}
-		if (name.indexOf('$') >= 0 && name.indexOf('$') < name.length()-1) {
-			name = name.substring(name.lastIndexOf('$')+1);
-		}
-		return name;
 	}
 
 	public Image getBuffer() {
@@ -205,7 +169,6 @@ public class GraphView implements View {
 			s[0] = start.x + (int)Math.round(s[0] * t);
 			s[1] = start.y + (int)Math.round(s[1] * t);
 
-			//g.setColor(new Color(150, 150, 150));
 			g.setColor(palette.secondary);
 			g.drawLine(start.x, start.y, end.x, end.y);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
@@ -222,21 +185,7 @@ public class GraphView implements View {
 				radius = 14;
 			}
 			this.actor = actor;
-
-			Class actorClass = actor.getClass();
-			if (keycolors.containsKey(actorClass)) {
-				fill = keycolors.get(actorClass);
-			}
-			else {
-				int x = actor.getClass().hashCode();
-				fill = new Color(
-					((x >> 24) & 0xF0) | ((x >>  0) & 0x0F),
-					((x >> 16) & 0xF0) | ((x >>  8) & 0x0F),
-					((x >>  8) & 0xF0) | ((x >> 16) & 0x0F),
-					128
-				);
-				keycolors.put(actorClass, fill);
-			}
+			fill = palette.unique(actor.getClass());
 		}
 
 		public int x() {
