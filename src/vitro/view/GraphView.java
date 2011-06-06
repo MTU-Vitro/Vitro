@@ -34,6 +34,9 @@ public class GraphView implements View {
 
 	private boolean showKey = false;
 
+	private GraphFrame previousFrame = null;
+	private GraphFrame currentFrame  = null;
+
 	public GraphView(Graph model, Controller controller, int width, int height) {
 		this.model = model;
 		this.controller = controller;
@@ -190,17 +193,12 @@ public class GraphView implements View {
 			fill = palette.unique(actor.getClass());
 		}
 
-		public int x() {
-			return nodeToView.get(model.getLocation(actor)).x;
-		}
-
-		public int y() {
-			return nodeToView.get(model.getLocation(actor)).y;
-		}
 
 		public void draw(Graphics g) {
 			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
-			Drawing.drawCircleCentered(g, x(), y(), radius, palette.outline, fill);
+			int x = nodeToView.get(model.getLocation(actor)).x;
+			int y = nodeToView.get(model.getLocation(actor)).y;
+			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, fill);
 		}
 	}
 	
@@ -214,5 +212,52 @@ public class GraphView implements View {
 		}
 		
 		return array;
+	}
+
+	private class GraphFrame {
+
+		private final double FRAME_INTERVAL = 1.0;
+
+		private GraphFrame previous;
+		private final Map<Actor, Tweener> locations = new HashMap<Actor, Tweener>();
+		
+		public GraphFrame() {
+			this(null);
+		}
+
+		public GraphFrame(GraphFrame previous) {
+			this.previous = previous;
+		}
+
+		public void setLocation(Actor actor, Point location) {
+			locations.put(actor, new Tweener(
+				(previous != null) ? previous.getLocation(actor) : location,
+				location,
+				FRAME_INTERVAL
+			));
+		}
+
+		public void tick(double time) {
+			// Once we've started animating, we want to
+			// stop hanging on to the previous frame,
+			// or else we'll have a big 'ol linked list
+			// of these suckers floating around in memory.
+			previous = null;
+
+			for(Tweener t : locations.values()) {
+				t.tick(time);
+			}
+		}
+
+		public boolean done() {
+			for(Tweener t : locations.values()) {
+				if (!t.done()) { return false; }
+			}
+			return true;
+		}
+
+		public Point getLocation(Actor actor) {
+			return locations.get(actor).position();
+		}
 	}
 }
