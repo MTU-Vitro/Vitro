@@ -86,27 +86,28 @@ public class GraphView implements View {
 	}
 
 	public void draw() {
-		// make sure our view of the model is up-to-date:
-		for(Actor actor : model.actors) {
-			if (!actorToView.containsKey(actor)) {
-				actorToView.put(actor, new ActorView(actor));
-			}
-		}
-		for(Node node : model.nodes) {
-			if (!nodeToView.containsKey(node)) {
-				// TODO: come up with a halfway sane way to choose
-				// locations for new nodes that are created raw:
-				nodeToView.put(node, new NodeView(node, 0, 0, ""));
-			}
-		}
-		for(Edge edge : model.edges) {
-			if (!edgeToView.containsKey(edge)) {
-				NodeView start = nodeToView.get(edge.start);
-				NodeView end   = nodeToView.get(edge.end);
-				edgeToView.put(edge, new EdgeView(start, end));
-			}
-		}
 		synchronized(target) {
+			// make sure our view of the model is up-to-date:
+			for(Actor actor : model.actors) {
+				if (!actorToView.containsKey(actor)) {
+					actorToView.put(actor, new ActorView(actor));
+				}
+			}
+			for(Node node : model.nodes) {
+				if (!nodeToView.containsKey(node)) {
+					// TODO: come up with a halfway sane way to choose
+					// locations for new nodes that are created raw:
+					nodeToView.put(node, new NodeView(node, 0, 0, ""));
+				}
+			}
+			for(Edge edge : model.edges) {
+				if (!edgeToView.containsKey(edge)) {
+					NodeView start = nodeToView.get(edge.start);
+					NodeView end   = nodeToView.get(edge.end);
+					edgeToView.put(edge, new EdgeView(start, end));
+				}
+			}
+	
 			tg.setColor(palette.background);
 			tg.fillRect(0, 0, width, height);
 			Drawing.configureVector(tg);
