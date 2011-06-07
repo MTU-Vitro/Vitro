@@ -51,6 +51,7 @@ public class LogicalWumpusBrain implements Agent<WumpusWorld.Hunter> {
 					Set<Room> rooms = new HashSet<Room>(safeRooms);
 					rooms.add(room);
 					targetPath = path(here, room, rooms);
+					//targetPath = path(here, rooms);
 					targetPath.remove(room);
 					return moveAlong(hunter, options, targetPath);
 				}
@@ -63,7 +64,8 @@ public class LogicalWumpusBrain implements Agent<WumpusWorld.Hunter> {
 			rooms.removeAll(visitedRooms);
 			
 			if(!rooms.isEmpty()) {
-				targetPath = path(here, Groups.any(rooms), safeRooms);
+				//targetPath = path(here, Groups.any(rooms), safeRooms);
+				targetPath = path(here, safeRooms);
 				return moveAlong(hunter, options, targetPath);
 			}
 		}
@@ -98,7 +100,7 @@ public class LogicalWumpusBrain implements Agent<WumpusWorld.Hunter> {
 				worldToPrivate.put(edge.end, new Room());
 			}
 			here.adjacent.add(worldToPrivate.get(edge.end));
-			worldToPrivate.get(edge.end).adjacent.add(here);
+			worldToPrivate.get(edge.end).adjacent.add(here); // necessary?
 		}
 
 		// update knowledge base regarding adjacent rooms
@@ -142,6 +144,40 @@ public class LogicalWumpusBrain implements Agent<WumpusWorld.Hunter> {
 		if(path == null || path.isEmpty()) { return null; }
 		Room next = path.remove(0);
 		return hunter.move(privateToWorld.get(next), options);
+	}
+	
+	/* */
+	private List<Room> path(Room start, Set<Room> travelable) {
+		Queue<Room> frontier = new LinkedList<Room>();
+		frontier.add(start);
+
+		Map<Room, Room> visited = new HashMap<Room, Room>();
+		visited.put(start, null);
+
+		while(!frontier.isEmpty()) {
+			Room current = frontier.poll();
+
+			if(current.visited == false) {
+				List<Room> path = new ArrayList<Room>();
+				
+				Room next = current;
+				while(visited.get(next) != null) {
+					path.add(0, next);
+					next = visited.get(next);
+				}
+
+				return path;
+			}
+
+			for(Room next : current.adjacent) {
+				if(!visited.containsKey(next) && travelable.contains(next)) {
+					frontier.add(next);
+					visited.put(next, current);
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	/* */
