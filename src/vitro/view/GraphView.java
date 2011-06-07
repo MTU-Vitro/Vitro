@@ -112,6 +112,7 @@ public class GraphView implements View {
 	}
 
 	private void updateViews() {
+		// make sure our view of the model is up-to-date:
 		for(Actor actor : model.actors) {
 			if (!actorToView.containsKey(actor)) {
 				actorToView.put(actor, new ActorView(actor));
