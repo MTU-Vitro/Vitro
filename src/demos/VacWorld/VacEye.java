@@ -44,9 +44,6 @@ public class VacEye extends Host {
 		roomB.actors.add(model.createDirt());
 		roomC.actors.add(model.createDirt());
 
-		model.actors.add(new Actor());
-		model.actors.add(new GraphActor(model));
-
 		view.showKey(true);
 		dockedController(true);
 		show(view);

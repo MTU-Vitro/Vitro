@@ -79,7 +79,7 @@ public class Tweener {
 
 	// by default, a sigmoid eased tween
 	protected int tween(double a, double b, double t) {
-		double sig = 1/(1 + Math.pow(Math.E, -12*(t-.5))); 
-		return (int) ((a * (1-sig)) + (b * sig));
+		double sig = 1/(1 + Math.pow(Math.E, -12*(t-.5)));
+		return (int) Math.round((a * (1-sig)) + (b * sig));
 	}
 }

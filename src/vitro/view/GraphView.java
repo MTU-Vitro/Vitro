@@ -71,16 +71,39 @@ public class GraphView implements View {
 		return ret;
 	}
 
+	public Node[][] layoutGrid(int xSize, int ySize) {
+		Node[][] array = new Node[xSize][ySize];
+		
+		for(int y = 0; y < ySize; y++) {
+			for(int x = 0; x < xSize; x++) {
+				array[x][y] = createNode((double)(x + 1) / (xSize + 1), (double)(y + 1) / (ySize + 1));
+			}
+		}
+		
+		return array;
+	}
+
 	public void showKey(boolean show) {
 		showKey = show;
 	}
 	
-	private double sofar = 0;
 	public void tick(double time) {
-		sofar += time;
-		if (sofar >= 1) {
-			if (controller.hasNext()) { controller.next(); }
-			sofar = 0;
+		if (currentFrame == null) { flush(); }
+		currentFrame.tick(time);
+		if (currentFrame.done() && controller.hasNext()) {
+			controller.next();
+			synchronized(model) {
+				updateViews();
+				previousFrame = currentFrame;
+				currentFrame = new GraphFrame(previousFrame, model);
+			}
+		}
+	}
+
+	public void flush() {
+		synchronized(model) {
+			updateViews();
+			currentFrame = new GraphFrame(null, model);
 		}
 	}
 
@@ -88,8 +111,7 @@ public class GraphView implements View {
 		return (!controller.hasNext());
 	}
 
-	public void draw() {
-		// make sure our view of the model is up-to-date:
+	private void updateViews() {
 		for(Actor actor : model.actors) {
 			if (!actorToView.containsKey(actor)) {
 				actorToView.put(actor, new ActorView(actor));
@@ -109,11 +131,17 @@ public class GraphView implements View {
 				edgeToView.put(edge, new EdgeView(start, end));
 			}
 		}
+	}
+
+	public void draw() {
+		if (currentFrame == null) { flush(); }
 		synchronized(target) {
 			tg.setColor(palette.background);
 			tg.fillRect(0, 0, width, height);
 			Drawing.configureVector(tg);
+			
 			synchronized(model) {
+				updateViews();
 				for(Edge edge : model.edges) {
 					edgeToView.get(edge).draw(tg);
 				}
@@ -193,48 +221,47 @@ public class GraphView implements View {
 			fill = palette.unique(actor.getClass());
 		}
 
-
 		public void draw(Graphics g) {
 			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
-			int x = nodeToView.get(model.getLocation(actor)).x;
-			int y = nodeToView.get(model.getLocation(actor)).y;
+			int x = currentFrame.getLocation(actor).x;
+			int y = currentFrame.getLocation(actor).y;
 			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, fill);
 		}
-	}
-	
-	public Node[][] layoutGrid(int xSize, int ySize) {
-		Node[][] array = new Node[xSize][ySize];
-		
-		for(int y = 0; y < ySize; y++) {
-			for(int x = 0; x < xSize; x++) {
-				array[x][y] = createNode((double)(x + 1) / (xSize + 1), (double)(y + 1) / (ySize + 1));
-			}
-		}
-		
-		return array;
-	}
+	}	
 
 	private class GraphFrame {
 
-		private final double FRAME_INTERVAL = 1.0;
+		private final double FRAME_INTERVAL = 0.75;
 
 		private GraphFrame previous;
 		private final Map<Actor, Tweener> locations = new HashMap<Actor, Tweener>();
-		
-		public GraphFrame() {
-			this(null);
-		}
 
-		public GraphFrame(GraphFrame previous) {
+		public GraphFrame(GraphFrame previous, Graph model) {
 			this.previous = previous;
+			for(Actor actor : model.actors) {
+				NodeView node = nodeToView.get(model.getLocation(actor));
+				if (node != null) {
+					setLocation(actor, new Point(node.x, node.y));
+				}
+			}
+			locations.put(null, new Tweener(0, 1, FRAME_INTERVAL));
 		}
 
 		public void setLocation(Actor actor, Point location) {
-			locations.put(actor, new Tweener(
-				(previous != null) ? previous.getLocation(actor) : location,
-				location,
-				FRAME_INTERVAL
-			));
+			if (previous == null) {
+				locations.put(actor, new Tweener(
+					location,
+					location,
+					FRAME_INTERVAL
+				));
+			}
+			else {
+				locations.put(actor, new Tweener(
+					previous.getLocation(actor),
+					location,
+					FRAME_INTERVAL
+				));
+			}
 		}
 
 		public void tick(double time) {
@@ -257,7 +284,11 @@ public class GraphView implements View {
 		}
 
 		public Point getLocation(Actor actor) {
-			return locations.get(actor).position();
+			if (locations.containsKey(actor)) {
+				return locations.get(actor).position();
+			}
+			NodeView node = nodeToView.get(model.getLocation(actor));
+			return new Point(node.x, node.y);
 		}
 	}
 }

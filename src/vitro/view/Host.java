@@ -90,11 +90,13 @@ public class Host extends JFrame implements ActionListener {
 		else if (e.getSource() == buttonPrev) {
 			wait = true;
 			view.controller().prev();
+			view.flush();
 			repaint();
 		}
 		else if (e.getSource() == buttonNext) {
 			wait = true;
 			view.controller().next();
+			view.flush();
 			repaint();
 		}
 	}

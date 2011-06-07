@@ -31,6 +31,10 @@ public class ColorScheme {
 
 	public final Map<Object, Color> uniqueColors = new HashMap<Object, Color>();
 
+	public void setColor(Object o, Color color) {
+		uniqueColors.put(o, color);
+	}
+
 	public Color unique(Object o) {
 		if (!uniqueColors.containsKey(o)) {
 			Random rand = new Random();
