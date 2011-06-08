@@ -9,12 +9,15 @@ public class Host extends JFrame implements ActionListener {
 	private View view;
 	private HostPanel panel;
 
-	private final MediaButton buttonPrev = new MediaButton(MediaButton.STEP_BACK);
-	private final MediaButton buttonPlay = new MediaButton(MediaButton.PLAY);
-	private final MediaButton buttonNext = new MediaButton(MediaButton.STEP_FORWARD);
+	private final MediaButton buttonPrev  = new MediaButton(MediaButton.STEP_BACK,    90, 70);
+	private final MediaButton buttonPlay  = new MediaButton(MediaButton.PLAY,         90, 70);
+	private final MediaButton buttonNext  = new MediaButton(MediaButton.STEP_FORWARD, 90, 70);
+	private final MediaButton buttonKey   = new MediaButton(MediaButton.KEY,          50, 40);
+	private final MediaButton buttonReset = new MediaButton(MediaButton.RESET,        50, 40);
 
 	private static final long serialVersionUID = 1L;
 	private boolean dockedController = true;
+	private boolean showKey = false;
 
 	public void dockedController(boolean docked) {
 		dockedController = docked;
@@ -26,6 +29,7 @@ public class Host extends JFrame implements ActionListener {
 		buttonPrev.addActionListener(this);
 		buttonNext.addActionListener(this);
 		buttonPlay.addActionListener(this);
+		buttonReset.addActionListener(this);
 
 		setTitle("Vitro Simulation Host");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -35,10 +39,17 @@ public class Host extends JFrame implements ActionListener {
 		add(panel, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
-		buttons.setLayout(new FlowLayout());
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignOnBaseline(true); 
+		buttons.setLayout(layout);
+		buttons.add(buttonReset);
 		buttons.add(buttonPrev);
 		buttons.add(buttonPlay);
 		buttons.add(buttonNext);
+		if (view instanceof GraphView) {
+			buttonKey.addActionListener(this);
+			buttons.add(buttonKey);
+		}
 		buttons.setBackground(Color.WHITE);
 
 		if (dockedController) {
@@ -98,6 +109,16 @@ public class Host extends JFrame implements ActionListener {
 			view.controller().next();
 			view.flush();
 			repaint();
+		}
+		else if (e.getSource() == buttonReset) {
+			wait = true;
+			view.controller().reset();
+			view.flush();
+			repaint();
+		}
+		else if (e.getSource() == buttonKey) {
+			showKey = !showKey;
+			((GraphView)view).showKey(showKey);
 		}
 	}
 }
