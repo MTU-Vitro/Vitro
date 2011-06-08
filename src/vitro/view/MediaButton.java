@@ -10,33 +10,25 @@ public class MediaButton extends JButton {
 	public static final int STOP         = 2;
 	public static final int PAUSE        = 3;
 	public static final int PLAY         = 4;
+	public static final int RESET        = 5;
+	public static final int KEY          = 6;
 
 	private static final long serialVersionUID = 1L;
-
-	private static Image mediaControls;
-	{
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		ClassLoader loader = MediaButton.class.getClassLoader();
-		mediaControls = toolkit.getImage(loader.getResource("vitro/view/mediaControls.png"));
-		while(mediaControls.getWidth(null) < 1) {
-			try { Thread.sleep(1); }
-			catch(InterruptedException ie) {}
-		}
-	}
 
 	private int id;
 	private final int w;
 	private final int h;
 
-	public MediaButton(int id) {
+	public MediaButton(int id, int w, int h) {
 		this.id = id;
-		w = mediaControls.getWidth(null)  / 5;
-		h = mediaControls.getHeight(null) / 3;
+		this.w = w;
+		this.h = h;
 
 		setFocusPainted(true);
 		setBorderPainted(false);
 		setContentAreaFilled(false);
 		setPreferredSize(new Dimension(w, h));
+		setAlignmentY(BOTTOM_ALIGNMENT);
 	}
 
 	public void setIcon(int id) {
@@ -83,6 +75,21 @@ public class MediaButton extends JButton {
 				3
 			);
 		}
+		else if (id == KEY) {
+			g2.fillPolygon(
+				new int[] { ew/2 + margin, 3*ew/4 + margin,   ew/2 + margin, ew/4 + margin },
+				new int[] { eh/4 + margin,   eh/2 + margin, 3*eh/4 + margin, eh/2 + margin },
+				4
+			);
+		}
+		else if (id == RESET) {
+			g2.fillRect(
+				  ew/3 + margin,
+				2*eh/5 + margin,
+				ew/3,
+				eh/5
+			);
+		}
 		else if (id == PAUSE) {
 			g2.fillRect(
 				2*ew/7 + margin,
@@ -94,6 +101,14 @@ public class MediaButton extends JButton {
 				4*ew/7 + margin,
 				  eh/4 + margin,
 				ew/7,
+				eh/2
+			);
+		}
+		else if (id == STOP) {
+			g2.fillRect(
+				2*ew/7 + margin,
+				  eh/4 + margin,
+				3*ew/7,
 				eh/2
 			);
 		}

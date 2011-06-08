@@ -59,8 +59,10 @@ public abstract class Controller {
 	}
 
 	public void flush() {
-		while(history.size() > cursor) {
-			history.remove(history.size()-1);
+		synchronized(model) {
+			while(history.size() > cursor) {
+				history.remove(history.size()-1);
+			}
 		}
 	}
 
@@ -104,6 +106,11 @@ public abstract class Controller {
 				actions.get(x).undo();
 			}
 		}
+	}
+
+	public void reset() {
+		while(hasPrev()) { prev(); }
+		flush();
 	}
 
 	protected abstract List<Action> nextRound();

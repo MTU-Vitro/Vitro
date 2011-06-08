@@ -83,7 +83,6 @@ public class ColorScheme {
 			outline,
 			background
 		);
-		g.drawString("Key:", x+3, 18);
 		y += 8;
 		for(Map.Entry<Object, Color> pair : uniqueColors.entrySet()) {
 			Drawing.drawRoundRect(
