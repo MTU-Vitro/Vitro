@@ -12,13 +12,15 @@ public class ColorScheme {
 	public Color secondary;
 	public Color background;
 
+	public Color inactive;
+
 	// heading
 	// label
 
 	public ColorScheme() {
 		this(
 			Color.BLACK,
-			Color.LIGHT_GRAY,
+			Color.GRAY,
 			Color.WHITE
 		);
 	}
@@ -27,6 +29,7 @@ public class ColorScheme {
 		this.outline    = outline;
 		this.secondary  = secondary;
 		this.background = background;
+		this.inactive   = Color.LIGHT_GRAY;
 	}
 
 	public final Map<Object, Color> uniqueColors = new HashMap<Object, Color>();
