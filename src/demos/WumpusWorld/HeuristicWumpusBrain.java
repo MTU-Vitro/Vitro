@@ -1,9 +1,8 @@
 package demos;
 
+import vitro.*;
+import vitro.graph.*;
 import vitro.util.*;
-import vitro.model.*;
-import vitro.model.graph.*;
-import vitro.controller.*;
 import java.util.*;
 import static vitro.util.Groups.*;
 

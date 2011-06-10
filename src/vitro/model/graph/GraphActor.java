@@ -1,7 +1,7 @@
-package vitro.model.graph;
+package vitro.graph;
 
+import vitro.*;
 import vitro.util.*;
-import vitro.model.*;
 import java.util.*;
 
 public class GraphActor extends Actor {

@@ -1,6 +1,5 @@
-package vitro.view;
+package vitro;
 
-import vitro.controller.*;
 import java.awt.Image;
 
 public interface View {

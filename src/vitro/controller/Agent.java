@@ -1,6 +1,5 @@
-package vitro.controller;
+package vitro;
 
-import vitro.model.*;
 import java.util.*;
 
 public interface Agent<A extends Actor> {

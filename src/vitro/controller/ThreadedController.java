@@ -1,7 +1,6 @@
-package vitro.controller;
+package vitro;
 
 import vitro.util.*;
-import vitro.model.*;
 import java.util.*;
 
 public class ThreadedController extends Controller {

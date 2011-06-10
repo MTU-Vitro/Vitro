@@ -1,4 +1,4 @@
-package vitro.model;
+package vitro;
 
 /**
 * Actions encapsulate atomic mutations of a Model.

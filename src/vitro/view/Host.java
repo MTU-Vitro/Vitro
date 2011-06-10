@@ -1,4 +1,6 @@
-package vitro.view;
+package vitro;
+
+import vitro.graph.*;
 
 import java.awt.*;
 import java.awt.event.*;

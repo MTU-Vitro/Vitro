@@ -1,4 +1,4 @@
-package vitro.view;
+package vitro;
 
 import java.awt.Point;
 

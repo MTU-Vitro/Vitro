@@ -1,4 +1,6 @@
-package vitro.model.graph;
+package vitro.graph;
+
+import vitro.*;
 
 public abstract class Edge {
 	public final Node start;

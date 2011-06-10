@@ -1,9 +1,7 @@
-package vitro.view;
+package vitro.graph;
 
+import vitro.*;
 import vitro.util.*;
-import vitro.model.*;
-import vitro.model.graph.*;
-import vitro.controller.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.image.*;

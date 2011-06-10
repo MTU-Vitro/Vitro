@@ -1,4 +1,4 @@
-package vitro.model;
+package vitro;
 import java.util.*;
 
 /**

@@ -55,14 +55,9 @@
 		<mkdir dir = "${test.reports}"  />
 		<mkdir dir = "${javadoc}"       />
 	</target>
-	
-	<!--Stage Assets -->
-	<target name = "stage-assets" depends="mkdir">
-		<copy file="${src}/vitro/view/mediaControls.png" todir="${bin}/vitro/view/"/>
-	</target>
 
 	<!-- Compile          -->
-	<target name = "compile" depends = "stage-assets">
+	<target name = "compile" depends = "mkdir">
 		<javac sourcepath  = ""
 		       srcdir      = "${src}"
 		       destdir     = "${bin}"

@@ -1,7 +1,7 @@
 package tests;
 
-import vitro.model.*;
-import vitro.model.graph.*;
+import vitro.*;
+import vitro.graph.*;
 import java.util.*;
 
 import org.junit.Test;

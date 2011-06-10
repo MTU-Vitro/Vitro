@@ -1,9 +1,7 @@
 package demos;
 
-import vitro.model.*;
-import vitro.model.graph.*;
-import vitro.controller.*;
-import vitro.view.*;
+import vitro.*;
+import vitro.graph.*;
 
 public class WumpusEye extends Host {
 	

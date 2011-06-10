@@ -1,6 +1,5 @@
-package vitro.controller;
+package vitro;
 
-import vitro.model.*;
 import java.util.*;
 
 public class TextAgent<A extends Actor> implements Agent<A> {

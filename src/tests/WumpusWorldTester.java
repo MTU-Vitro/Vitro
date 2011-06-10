@@ -2,8 +2,8 @@ package tests;
 
 import demos.WumpusWorld;
 
-import vitro.model.*;
-import vitro.model.graph.*;
+import vitro.*;
+import vitro.graph.*;
 import vitro.util.*;
 import java.util.*;
 

@@ -1,8 +1,8 @@
 package demos;
 
+import vitro.*;
 import vitro.util.*;
-import vitro.model.*;
-import vitro.model.graph.*;
+import vitro.graph.*;
 import java.util.*;
 
 public class VacWorld extends Graph {
