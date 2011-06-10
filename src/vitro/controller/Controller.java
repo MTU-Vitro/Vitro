@@ -62,15 +62,6 @@ public abstract class Controller {
 		return Groups.first(actions);
 	}
 
-	public void flush() {
-		synchronized(model) {
-			while(history.size() > cursor) {
-				history.remove(history.size()-1);
-				footnotes.remove(footnotes.size()-1);
-			}
-		}
-	}
-
 	public boolean hasNext() {
 		synchronized(model) {
 			return !model.done();
@@ -125,11 +116,6 @@ public abstract class Controller {
 	public Map<Annotation, Agent> annotations() {
 		if (cursor < 1) { return new HashMap<Annotation, Agent>(); }
 		return footnotes.get(cursor-1);
-	}
-
-	public void reset() {
-		while(hasPrev()) { prev(); }
-		flush();
 	}
 
 	protected abstract List<Action> nextRound();

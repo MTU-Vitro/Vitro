@@ -118,9 +118,20 @@ public class Host extends JFrame implements ActionListener {
 		}
 		else if (e.getSource() == buttonReset) {
 			wait = true;
-			view.controller().reset();
-			view.flush();
-			repaint();
+
+			throw new Error("Reset is not implemented!");
+			/*
+			// we basically need to do this,
+			// except reflectively.
+			view = new GraphView(view);
+			remove(panel);
+			panel = new HostPanel(view);
+			add(panel, BorderLayout.CENTER);
+			pack();
+			*/
+
+			//view.flush();
+			//repaint();
 		}
 		else if (e.getSource() == buttonKey) {
 			showKey = !showKey;

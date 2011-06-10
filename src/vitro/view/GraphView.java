@@ -37,19 +37,27 @@ public class GraphView implements View {
 	private GraphFrame previousFrame = null;
 	private GraphFrame currentFrame  = null;
 
-	public GraphView(Graph model, Controller controller, int width, int height) {
+	public GraphView(Graph model, Controller controller, int width, int height, ColorScheme palette) {
 		this.model = model;
 		this.controller = controller;
 		this.width = width;
 		this.height = height;
+		this.palette = palette;
 
-		palette = new ColorScheme();
 		//palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
 		//palette.inactive = new Color(70, 0, 0);
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
 		tg = target.getGraphics();
+	}
+
+	public GraphView(Graph model, Controller controller, int width, int height) {
+		this(model, controller, width, height, new ColorScheme());
+	}
+
+	public GraphView(GraphView other) {
+		this(other.model, other.controller, other.width, other.height, other.palette);
 	}
 
 	public ColorScheme colorScheme() {
