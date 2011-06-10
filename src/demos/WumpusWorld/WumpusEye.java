@@ -15,9 +15,9 @@ public class WumpusEye extends Host {
 
 	public WumpusEye() {
 		
-		WumpusWorld model               = new WumpusWorld();
-		SequentialController controller = new SequentialController(model);
-		GraphView view                  = new GraphView(model, controller, 800, 600);
+		WumpusWorld model     = new WumpusWorld();
+		Controller controller = new SimultaneousController(model);
+		GraphView view        = new GraphView(model, controller, 800, 600);
 
 		WumpusWorld.Hunter hunter = model.createHunter();
 		controller.bind(hunter, new LogicalWumpusBrain());
@@ -30,6 +30,18 @@ public class WumpusEye extends Host {
 				view.createEdge(grid[x + 1][y], grid[x][y]);
 				view.createEdge(grid[x][y], grid[x][y + 1]);
 				view.createEdge(grid[x][y + 1], grid[x][y]);
+				/*
+				if(Math.random() > 0.4) {
+					if(Math.random() > 0.5) {
+						view.createEdge(grid[x][y], grid[x + 1][y + 1]);
+						view.createEdge(grid[x + 1][y + 1], grid[x][y]);
+					}
+					else {
+						view.createEdge(grid[x + 1][y], grid[x][y + 1]);
+						view.createEdge(grid[x][y + 1], grid[x + 1][y]);
+					}
+				}
+				*/
 			}
 		}
 		
@@ -42,6 +54,7 @@ public class WumpusEye extends Host {
 
 		grid[0][0].actors.add(hunter);
 		grid[3][2].actors.add(model.createWumpus());
+		grid[3][0].actors.add(model.createWumpus());
 		grid[3][1].actors.add(model.createPit());
 		grid[2][1].actors.add(model.createPit());
 		grid[0][3].actors.add(model.createBat());
