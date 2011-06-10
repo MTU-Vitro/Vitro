@@ -43,9 +43,9 @@ public class GraphView implements View {
 		this.width = width;
 		this.height = height;
 
-		//palette = new ColorScheme();
-		palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
-		palette.inactive = new Color(50, 0, 0);
+		palette = new ColorScheme();
+		//palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
+		//palette.inactive = new Color(70, 0, 0);
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
@@ -157,6 +157,18 @@ public class GraphView implements View {
 				for(Actor actor : model.actors) {
 					actorToView.get(actor).draw(tg);
 				}
+				for(Annotation a : controller.annotations().keySet()) {
+					if (a instanceof ActorAnnotation) {
+						ActorAnnotation aa = (ActorAnnotation)a;
+						if (!model.actors.contains(aa.actor)) { continue; }
+						actorToView.get(aa.actor).annotation(tg, aa);
+					}
+					if (a instanceof EdgeAnnotation) {
+						EdgeAnnotation ea = (EdgeAnnotation)a;
+						if (!model.edges.contains(ea.edge)) { continue; }
+						edgeToView.get(ea.edge).annotation(tg, ea);
+					}
+				}
 				if (showKey) {
 					palette.drawKey(tg, 10, 18);
 				}
@@ -212,6 +224,22 @@ public class GraphView implements View {
 			g.drawLine(start.x, start.y, end.x, end.y);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
+
+		public void annotation(Graphics g, EdgeAnnotation e) {
+			Graphics2D g2 = (Graphics2D)g;
+			Stroke oldStroke = g2.getStroke();
+			g2.setStroke(new BasicStroke(
+				4,
+				BasicStroke.CAP_ROUND,
+				BasicStroke.JOIN_ROUND,
+				0,
+				new float[] {8, 8},
+				0
+			));
+			g2.setColor(palette.unique(e.label));
+			g.drawLine(start.x, start.y, end.x, end.y);
+			g2.setStroke(oldStroke);
+		}
 	}
 
 	private class ActorView {
@@ -232,6 +260,25 @@ public class GraphView implements View {
 			int x = currentFrame.getLocation(actor).x;
 			int y = currentFrame.getLocation(actor).y;
 			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, fill);
+		}
+
+		public void annotation(Graphics g, ActorAnnotation a) {
+			Graphics2D g2 = (Graphics2D)g;
+			Stroke oldStroke = g2.getStroke();
+			g2.setStroke(new BasicStroke(
+				2,
+				BasicStroke.CAP_ROUND,
+				BasicStroke.JOIN_ROUND,
+				0,
+				new float[] {4, 4},
+				0
+			));
+			g2.setColor(palette.unique(a.label));
+			int x = currentFrame.getLocation(actor).x;
+			int y = currentFrame.getLocation(actor).y;
+			int r = radius + 3;
+			g2.drawOval(x-r, y-r, 2*r, 2*r);
+			g2.setStroke(oldStroke);
 		}
 	}	
 

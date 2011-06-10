@@ -8,10 +8,12 @@ public abstract class Controller {
 	
 	public final Model model;
 
+	protected final Set<Agent> agents = new HashSet<Agent>();
 	protected final Map<Class, Agent> classAgents = new HashMap<Class, Agent>();
 	protected final Map<Actor, Agent> actorAgents = new HashMap<Actor, Agent>();
 
-	private List<List<Action>> history = new ArrayList<List<Action>>();
+	private List<List<Action>>           history   = new ArrayList<List<Action>>();
+	private List<Map<Annotation, Agent>> footnotes = new ArrayList<Map<Annotation, Agent>>();
 	private int cursor = 0;
 
 	public Controller(Model model) {
@@ -20,10 +22,12 @@ public abstract class Controller {
 
 	public void bind(Class c, Agent agent) {
 		classAgents.put(c, agent);
+		agents.add(agent);
 	}
 
 	public void bind(Actor actor, Agent agent) {
 		actorAgents.put(actor, agent);
+		agents.add(agent);
 	}
 
 	// As far as I can tell, there is no type-safe way to extract Agents
@@ -62,6 +66,7 @@ public abstract class Controller {
 		synchronized(model) {
 			while(history.size() > cursor) {
 				history.remove(history.size()-1);
+				footnotes.remove(footnotes.size()-1);
 			}
 		}
 	}
@@ -83,6 +88,15 @@ public abstract class Controller {
 			// generate a new round:
 			if (cursor == history.size()) {
 				history.add(nextRound());
+				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();
+				for(Agent agent : agents) {
+					if (agent instanceof Annotated) {
+						for(Annotation a : ((Annotated)agent).annotations()) {
+							annotations.put(a, agent);
+						}
+					}
+				}
+				footnotes.add(annotations);
 				cursor =  history.size();
 				return;
 			}
@@ -106,6 +120,11 @@ public abstract class Controller {
 				actions.get(x).undo();
 			}
 		}
+	}
+
+	public Map<Annotation, Agent> annotations() {
+		if (cursor < 1) { return new HashMap<Annotation, Agent>(); }
+		return footnotes.get(cursor-1);
 	}
 
 	public void reset() {
