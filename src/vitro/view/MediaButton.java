@@ -18,17 +18,22 @@ public class MediaButton extends JButton {
 	private int id;
 	private final int w;
 	private final int h;
+	private ColorScheme colorScheme = new ColorScheme();
 
 	public MediaButton(int id, int w, int h) {
 		this.id = id;
 		this.w = w;
 		this.h = h;
 
-		setFocusPainted(true);
+		setFocusPainted(false);
 		setBorderPainted(false);
 		setContentAreaFilled(false);
 		setPreferredSize(new Dimension(w, h));
 		setAlignmentY(BOTTOM_ALIGNMENT);
+	}
+
+	public void setColorScheme(ColorScheme colorScheme) {
+		this.colorScheme = colorScheme;
 	}
 
 	public void setIcon(int id) {
@@ -40,33 +45,35 @@ public class MediaButton extends JButton {
 
 		Graphics2D g2 = (Graphics2D)g;
 		Drawing.configureVector(g2);
-		g2.setColor(Color.GRAY);
+		g2.setColor(colorScheme.secondary);
 
 		g.setColor(
-			(!model.isEnabled()) ? (Color.LIGHT_GRAY) :
-			(model.isRollover()) ? (Color.BLACK) :
-			Color.GRAY
+			(!model.isEnabled()) ? (colorScheme.inactive) :
+			(model.isRollover()) ? (colorScheme.outline) :
+			colorScheme.secondary
 		);
 		final int margin = 5;
 		Stroke oldStroke = g2.getStroke();
-		g2.setStroke(new BasicStroke(margin));	
+		Stroke newStroke = new BasicStroke(margin, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND );
+		g2.setStroke(newStroke);	
 		g2.drawRoundRect(3, 3, w-6, h-6, 10, 10);
 		g2.setStroke(oldStroke);
-
+		
 		if(model.isEnabled()) {
-			g2.setColor(Color.BLACK);
+			g2.setColor(colorScheme.outline);
 			g2.drawRoundRect(1, 1, w-2, h-2, 8, 8);
 		}
-
 
 		final int ew = w - 2*margin;
 		final int eh = h - 2*margin;
 
 		g.setColor(
-			(!model.isEnabled()) ? (Color.LIGHT_GRAY) :
-			(model.isRollover()) ? (Color.BLACK) :
-			Color.GRAY
+			(!model.isEnabled()) ? (colorScheme.inactive) :
+			(model.isRollover()) ? (colorScheme.outline) :
+			colorScheme.secondary
 		);
+
+		g2.setStroke(newStroke);
 
 		if (id == PLAY) {
 			g2.fillPolygon(
@@ -138,6 +145,8 @@ public class MediaButton extends JButton {
 				3
 			);
 		}
+
+		g2.setStroke(oldStroke);
 
 		/*
 		int index = 

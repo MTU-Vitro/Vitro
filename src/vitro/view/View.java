@@ -7,6 +7,8 @@ public interface View {
 
 	public Controller controller();
 
+	public ColorScheme colorScheme();
+
 	public Image getBuffer();
 
 	public void draw();

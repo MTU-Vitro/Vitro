@@ -26,6 +26,12 @@ public class Host extends JFrame implements ActionListener {
 	public void show(View view) {
 		this.view = view;
 
+		buttonPrev.setColorScheme(view.colorScheme());
+		buttonPlay.setColorScheme(view.colorScheme());
+		buttonNext.setColorScheme(view.colorScheme());
+		buttonKey.setColorScheme(view.colorScheme());
+		buttonReset.setColorScheme(view.colorScheme());
+
 		buttonPrev.addActionListener(this);
 		buttonNext.addActionListener(this);
 		buttonPlay.addActionListener(this);
@@ -50,7 +56,7 @@ public class Host extends JFrame implements ActionListener {
 			buttonKey.addActionListener(this);
 			buttons.add(buttonKey);
 		}
-		buttons.setBackground(Color.WHITE);
+		buttons.setBackground(view.colorScheme().background);
 
 		if (dockedController) {
 			add(buttons, BorderLayout.SOUTH);

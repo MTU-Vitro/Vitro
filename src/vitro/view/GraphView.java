@@ -43,12 +43,17 @@ public class GraphView implements View {
 		this.width = width;
 		this.height = height;
 
-		palette = new ColorScheme();
-		//palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
+		//palette = new ColorScheme();
+		palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
+		palette.inactive = new Color(50, 0, 0);
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bg = buffer.getGraphics();
 		tg = target.getGraphics();
+	}
+
+	public ColorScheme colorScheme() {
+		return palette;
 	}
 
 	public Controller controller() {
@@ -203,7 +208,7 @@ public class GraphView implements View {
 			s[0] = start.x + (int)Math.round(s[0] * t);
 			s[1] = start.y + (int)Math.round(s[1] * t);
 
-			g.setColor(palette.secondary);
+			g.setColor(palette.inactive);
 			g.drawLine(start.x, start.y, end.x, end.y);
 			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
 		}
