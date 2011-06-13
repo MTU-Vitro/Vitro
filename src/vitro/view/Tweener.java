@@ -31,7 +31,7 @@ public class Tweener {
 	}
 
 	public Tweener(int x1, int x2, double length) {
-		this(x1, x2, 0, 0, length);
+		this(x1, 0, x2, 0, length);
 	}
 
 	public Tweener(Point start, Point end, double length) {
@@ -59,13 +59,21 @@ public class Tweener {
 	}
 
 	public int x() {
-		return (sofar <= length) ? tween(x1, x2, sofar/length) :
-			      (next != null) ? next.x() : x2;
+		return (int)Math.round(xd());
 	}
 
 	public int y() {
+		return (int)Math.round(yd());
+	}
+
+	public double xd() {
+		return (sofar <= length) ? tween(x1, x2, sofar/length) :
+			      (next != null) ? next.xd() : x2;
+	}
+
+	public double yd() {
 		return (sofar <= length) ? tween(y1, y2, sofar/length) :
-			      (next != null) ? next.y() : y2;
+			      (next != null) ? next.yd() : y2;
 	}
 
 	public Point position() {
@@ -78,8 +86,8 @@ public class Tweener {
 	}
 
 	// by default, a sigmoid eased tween
-	protected int tween(double a, double b, double t) {
+	protected double tween(double a, double b, double t) {
 		double sig = 1/(1 + Math.pow(Math.E, -12*(t-.5)));
-		return (int) Math.round((a * (1-sig)) + (b * sig));
+		return (a * (1-sig)) + (b * sig);
 	}
 }

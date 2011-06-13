@@ -10,6 +10,10 @@ import java.awt.geom.*;
 
 public class GraphView implements View {
 
+	private static final double FRAME_INTERVAL = 0.75;
+	private final Tweener globalTween = new Tweener(0, 1, FRAME_INTERVAL);
+	private final Tweener globalPulse = new Tweener(0, FRAME_INTERVAL/2, new Tweener(1, 0, FRAME_INTERVAL/2));
+
 	public final Graph model;
 	private final Controller controller;
 	private final ColorScheme palette;
@@ -101,7 +105,11 @@ public class GraphView implements View {
 	public void tick(double time) {
 		if (currentFrame == null) { flush(); }
 		currentFrame.tick(time);
+		globalTween.tick(time);
+		globalPulse.tick(time);
 		if (currentFrame.done() && controller.hasNext()) {
+			globalTween.reset();
+			globalPulse.reset();
 			controller.next();
 			synchronized(model) {
 				updateViews();
@@ -218,32 +226,40 @@ public class GraphView implements View {
 			this.end = end;
 		}
 
-		public void draw(Graphics g) {
-			// get desired parametric displacement
-			int[] s = { end.x - start.x, end.y - start.y };
-			double t = 1 - (end.radius / Math.sqrt(s[0] * s[0] + s[1] * s[1]));
-			
-			s[0] = start.x + (int)Math.round(s[0] * t);
-			s[1] = start.y + (int)Math.round(s[1] * t);
+		private Point endPoint(int x1, int y1, int x2, int y2, int r) {
+			int dx = x2-x1;
+			int dy = y2-y1;
+			double t = 1 - (r / Math.sqrt(dx*dx + dy*dy));
+			return new Point(
+				x1 + (int)Math.round(dx * t),
+				y1 + (int)Math.round(dy * t)
+			);
+		}
 
+		public void draw(Graphics g) {
 			g.setColor(palette.inactive);
-			g.drawLine(start.x, start.y, end.x, end.y);
-			g.fillOval(s[0] - 4, s[1] - 4, 8, 8);
+			Point a = endPoint(end.x, end.y, start.x, start.y, start.radius);
+			Point b = endPoint(start.x, start.y, end.x, end.y, end.radius);
+			g.drawLine(a.x, a.y, b.x, b.y);
+			g.fillOval(b.x-4, b.y-4, 8, 8);
 		}
 
 		public void annotation(Graphics g, EdgeAnnotation e) {
 			Graphics2D g2 = (Graphics2D)g;
 			Stroke oldStroke = g2.getStroke();
 			g2.setStroke(new BasicStroke(
-				4,
+				4 + (float)(globalPulse.xd()),
 				BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND,
 				0,
 				new float[] {8, 8},
-				0
+				16 - (float)(globalTween.xd()) * 16
 			));
 			g2.setColor(palette.unique(e.label));
-			g.drawLine(start.x, start.y, end.x, end.y);
+			Point a = endPoint(end.x, end.y, start.x, start.y, start.radius);
+			Point b = endPoint(start.x, start.y, end.x, end.y, end.radius);
+			g.drawLine(a.x, a.y, b.x, b.y);
+			g.fillOval(b.x-6, b.y-6, 12, 12);
 			g2.setStroke(oldStroke);
 		}
 	}
@@ -272,12 +288,12 @@ public class GraphView implements View {
 			Graphics2D g2 = (Graphics2D)g;
 			Stroke oldStroke = g2.getStroke();
 			g2.setStroke(new BasicStroke(
-				2,
+				2 + (float)(globalPulse.xd()),
 				BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND,
 				0,
 				new float[] {4, 4},
-				0
+				(float)(globalTween.xd()) * 8
 			));
 			g2.setColor(palette.unique(a.label));
 			int x = currentFrame.getLocation(actor).x;
@@ -289,8 +305,6 @@ public class GraphView implements View {
 	}	
 
 	private class GraphFrame {
-
-		private final double FRAME_INTERVAL = 0.75;
 
 		private GraphFrame previous;
 		private final Map<Actor, Tweener> locations = new HashMap<Actor, Tweener>();
