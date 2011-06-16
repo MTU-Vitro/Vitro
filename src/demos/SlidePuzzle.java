@@ -80,6 +80,10 @@ public class SlidePuzzle extends Grid {
 			return numbers;
 		}
 
+		public SlidePuzzle model() {
+			return (SlidePuzzle)model;
+		}
+
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
 			for(Location location : neighbors(ORTHOGONAL)) {

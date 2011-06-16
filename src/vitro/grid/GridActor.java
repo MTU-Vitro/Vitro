@@ -2,6 +2,7 @@ package vitro.grid;
 
 import vitro.*;
 import java.util.*;
+import static vitro.util.Groups.*;
 
 public class GridActor extends Actor {
 	
@@ -52,7 +53,14 @@ public class GridActor extends Actor {
 		return ret;
 	}
 
-	void move() {}
+	public MoveAction move(Location location, Set<Action> options) {
+		for(Action action : ofType(MoveAction.class, options)) {
+			MoveAction move = (MoveAction)action;
+			if (move.actor == this && move.end.equals(location)) { return move; }
+		}
+		return null;
+	}
+
 	void moveToward() {}
 	void create() {}
 	void destroy() {}
