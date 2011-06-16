@@ -23,7 +23,7 @@ public class MoveAction extends GridAction {
 	}
 
 	public void undo() {
-		if (!start.equals(model.locations.get(actor))) {
+		if (!end.equals(model.locations.get(actor))) {
 			throw new Error(String.format("Postcondition for MoveAction '%s' not satisfied.", this));
 		}
 		model.locations.put(actor, start);

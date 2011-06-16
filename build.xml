@@ -132,5 +132,11 @@
 			<classpath refid = "build.classpath" />
 		</java>
 	</target>
+	
+	<target name="slidepuzzle-demo" depends="compile">
+		<java classname="demos.SlidePuzzleEye" fork="true">
+			<classpath refid = "build.classpath" />
+		</java>
+	</target>
 
 </project>
