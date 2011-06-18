@@ -3,8 +3,11 @@
 
 	<!-- Clean Target(s) -->
 	<target name = "clean">
-		<delete dir = "${bin}" />
-		<delete dir = "${dist}"/>
+		<delete dir = "${bin}"      />
+		<delete dir = "${dist}"     />
+		<delete dir = "${test.bin}" />
+		<delete dir = "${test.dist}"/>
+		<delete dir = "${docs.dist}"/>
 	</target>
 
 	<!-- Stage Target(s) -->
