@@ -60,6 +60,9 @@
 		<document/>
 	</target>
 
+	<!-- Default Target -->
+	<target name = "all" depends = "vitro:build, junit, javadoc"/>
+
 	<!-- Demo Target(s) -->
 	<target name="demo:wumpusworld" depends="demos:compile">
 		<demo class = "demos.WumpusEye"/>
