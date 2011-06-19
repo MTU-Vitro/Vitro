@@ -50,7 +50,7 @@
 
 	<!-- JUnit Target(s) -->
 	<target name = "junit" depends = "junit:stage, tests:compile">
-		<test files = "tests/**"/>
+		<test files = "tests/**/*Tester.class"/>
 	</target>
 
 	<target name = "dev" depends = "compile, junit"/>
