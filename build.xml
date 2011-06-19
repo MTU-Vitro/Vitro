@@ -1,5 +1,5 @@
 <project name="aiViz" default="all">
-	<include file = "common.xml"/>
+	<import file = "common.xml"/>
 
 	<!-- Clean Target(s) -->
 	<target name = "clean">
