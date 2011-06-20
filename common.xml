@@ -38,7 +38,7 @@
 				includes    = "@{files}"
 				deprecation = "on"
 				debug       = "on"
-				debuglevel  = "on"
+				debuglevel  = "lines,vars,source"
 				listfiles   = "yes"
 			>
 				<!-- show all warnings -->
