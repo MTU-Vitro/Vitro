@@ -34,12 +34,12 @@ public class Location {
 	}
 
 	public String toString() {
-		return String.format("(%s, %s)", x, y);
+		return String.format("(%d, %d)", x, y);
 	}
 
 	public Location add(int x, int y) {
 		int nx = Math.min(g.width  - 1, Math.max(this.x + x, 0));
-		int ny = Math.max(g.height - 1, Math.max(this.y + y, 0));
+		int ny = Math.min(g.height - 1, Math.max(this.y + y, 0));
 		return new Location(g, nx, ny);
 	}
 

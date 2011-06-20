@@ -53,7 +53,7 @@ public class Grid extends Model {
 				ret.add(new Location(this, x, y));
 			}
 		}
-		ret.removeAll(locations.entrySet());
+		ret.removeAll(locations.values());
 		return ret;
 	}
 
