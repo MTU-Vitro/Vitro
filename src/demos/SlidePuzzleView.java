@@ -54,6 +54,7 @@ public class SlidePuzzleView implements View {
 			g.setColor(colors.background);
 			g.fillRect(0, 0, width, height);
 			Drawing.configureVector(g);
+			g.setFont(g.getFont().deriveFont(30.0f));
 
 			for(int y = 0; y < model.height; y++) {
 				for(int x = 0; x < model.height; x++) {

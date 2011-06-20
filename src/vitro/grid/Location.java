@@ -38,7 +38,9 @@ public class Location {
 	}
 
 	public Location add(int x, int y) {
-		return new Location(g, this.x + x, this.y + y);
+		int nx = Math.min(g.width  - 1, Math.max(this.x + x, 0));
+		int ny = Math.max(g.height - 1, Math.max(this.y + y, 0));
+		return new Location(g, nx, ny);
 	}
 
 	public boolean passable(Actor a) {

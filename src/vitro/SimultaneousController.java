@@ -11,7 +11,7 @@ public class SimultaneousController extends Controller {
 
 	public List<Action> nextRound() {
 		List<Action> actions = new ArrayList<Action>();
-		for(Actor a : model.actors) {
+		for(Actor a : actors()) {
 			Action action = getAction(a);
 			if (action != null) {
 				actions.add(action);

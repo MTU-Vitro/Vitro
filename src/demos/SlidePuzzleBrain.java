@@ -13,7 +13,7 @@ public class SlidePuzzleBrain implements Agent<SlidePuzzle.Gap> {
 		if (path.size() < 1) {
 			visited.clear();
 			depthFirstSearch(actor);
-			//System.out.format("Found path: %s %n", path);
+			System.out.format("Found path: %s %n", path);
 		}
 		return actor.move(path.pop(), options);
 	}
@@ -36,7 +36,7 @@ public class SlidePuzzleBrain implements Agent<SlidePuzzle.Gap> {
 		return false;
 	}
 
-	// by building a string representation of the board state
+	// by building a String representation of the board state
 	// we can take advantage of the existing equals() and
 	// hashcode() methods.
 	String snapshot(SlidePuzzle model) {

@@ -38,6 +38,7 @@ public class Host extends JFrame implements ActionListener {
 		buttonNext.addActionListener(this);
 		buttonPlay.addActionListener(this);
 		buttonReset.addActionListener(this);
+		buttonKey.addActionListener(this);
 
 		setTitle("Vitro Simulation Host");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -54,10 +55,9 @@ public class Host extends JFrame implements ActionListener {
 		buttons.add(buttonPrev);
 		buttons.add(buttonPlay);
 		buttons.add(buttonNext);
-		if (view instanceof GraphView) {
-			buttonKey.addActionListener(this);
-			buttons.add(buttonKey);
-		}
+		buttons.add(buttonKey);
+		
+		if (!(view instanceof GraphView)) { buttonKey.setEnabled(false); }
 		buttons.setBackground(view.colorScheme().background);
 
 		if (dockedController) {

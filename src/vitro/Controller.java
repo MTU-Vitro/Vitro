@@ -117,5 +117,23 @@ public abstract class Controller {
 		return footnotes.get(cursor-1);
 	}
 
+	protected List<Actor> actors() {
+		if (!(model instanceof Factional)) {
+			return new ArrayList<Actor>(model.actors);
+		}
+		// If we're interacting with a Factional model,
+		// only neutral actors and actors from the current
+		// team should have a chance to act:
+		List<Actor> ret = new ArrayList<Actor>();
+		int currentTeam = ((Factional)model).team();
+		for(Actor a : model.actors) {
+			if (a instanceof Factional) {
+				if (((Factional)a).team() != currentTeam) { continue; }
+			}
+			ret.add(a);
+		}
+		return ret;
+	}
+
 	protected abstract List<Action> nextRound();
 }
