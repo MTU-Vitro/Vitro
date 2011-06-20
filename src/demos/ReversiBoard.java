@@ -46,11 +46,10 @@ public class ReversiBoard extends Grid implements Factional {
 		if (actorAt(location) != null) { return ret; }
 		for(int[] delta : ADJACENT) {
 			Set<Piece> swath = new HashSet<Piece>();
-			Location oldScan = location;
+			Location scan = location;
 			while(true) {
-				Location scan = oldScan.add(delta[0],delta[1]);
-				if (scan.equals(oldScan)) { break; }
-				oldScan = scan;
+				scan = scan.add(delta[0],delta[1]);
+				if (!scan.valid()) { break; }
 				Piece target = (Piece)model.actorAt(scan);
 				if (target == null) { break; }
 				if (target.team == team) { ret.addAll(swath); break; }
