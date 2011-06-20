@@ -11,7 +11,7 @@
 	</target>
 
 	<!-- Stage Target(s) -->
-	<target name = "stage">
+	<target name = "stage" depends = "clean">
 		<mkdir dir = "${bin}"      />
 		<mkdir dir = "${dist}"     />
 		<mkdir dir = "${test.bin}" />
