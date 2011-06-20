@@ -12,31 +12,24 @@
 
 	<!-- Stage Target(s) -->
 	<target name = "stage">
-		<mkdir dir = "${bin}" />
-		<mkdir dir = "${dist}"/>
-	</target>
-
-	<target name = "vitro:stage" depends = "stage"/>
-	<target name = "demos:stage" depends = "stage"/>
-	<target name = "tests:stage" depends = "stage"/>
-
-	<target name = "junit:stage">
+		<mkdir dir = "${bin}"      />
+		<mkdir dir = "${dist}"     />
 		<mkdir dir = "${test.bin}" />
 		<mkdir dir = "${test.dist}"/>
 	</target>
 
 	<!-- Compile Target(s) -->
-	<target name = "vitro:compile" depends = "vitro:stage">
+	<target name = "vitro:compile" depends = "stage">
 		<!-- add file staging for vitro here -->
 		<compile files = "vitro/**"/>
 	</target>
 
-	<target name = "demos:compile" depends = "demos:stage, vitro:compile">
+	<target name = "demos:compile" depends = "stage, vitro:compile">
 		<!-- add file staging for demos here -->
 		<compile files = "demos/**"/>
 	</target>
 
-	<target name = "tests:compile" depends = "tests:stage, vitro:compile, demos:compile">
+	<target name = "tests:compile" depends = "stage, vitro:compile, demos:compile">
 		<!-- add file staging for tests here -->
 		<compile files = "tests/**"/>
 	</target>
@@ -49,7 +42,7 @@
 	</target>
 
 	<!-- JUnit Target(s) -->
-	<target name = "junit" depends = "junit:stage, tests:compile">
+	<target name = "junit" depends = "stage, tests:compile">
 		<test files = "tests/**/*Tester.class"/>
 	</target>
 

@@ -7,8 +7,8 @@
 	<property name = "bin"  value = "bin" />
 	<property name = "dist" value = "dist"/>
 
-	<property name = "test.bin"  value = "test/bin"/>
-	<property name = "test.dist" value = "test/"   />
+	<property name = "test.bin"  value = "test/output"/>
+	<property name = "test.dist" value = "test/"      />
 
 	<property name = "docs.dist" value = "doc"/>
 
