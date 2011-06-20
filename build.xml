@@ -1,142 +1,79 @@
 <project name="aiViz" default="all">
+	<import file = "common.xml"/>
 
-	<!-- Source Code   -->
-	<property name = "src"           value = "src"                    />
-	<property name = "bin"           value = "bin"                    />
-	<property name = "dist"          value = "dist"                   />
-
-	<path id = "build.classpath">
-		<pathelement path = "${bin}" />
-	</path>
-
-	<!-- Libraries     -->
-	<property name = "lib"           value = "lib"                    />
-
-	<path id = "lib.classpath">
-		<fileset dir = "${lib}">
-			<include name = "**/*.jar" />
-		</fileset>
-	</path>
-
-	<!-- Test Code     -->
-	<property name = "test.src"      value = "${src}/test"            />
-	<property name = "test.reports"  value = "test"                   />
-	<property name = "test.output"   value = "${test.reports}/output" />
-
-	<path id = "test.classpath">
-		<pathelement location = "${bin}"          />
-		<pathelement location = "${test.reports}" />
-		<pathelement location = "${test.output}"  />
-		<fileset dir = "${lib}">
-			<include name = "**/*.jar" />
-		</fileset>
-	</path>
-
-	<!-- Documentation -->
-	<property name = "doc"           value = "doc"                    />
-	<property name = "javadoc"       value = "${doc}/javadoc"         />
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-	<!-- Clean            -->
+	<!-- Clean Target(s) -->
 	<target name = "clean">
-		<delete dir = "${bin}"          />
-		<delete dir = "${dist}"         />
-		<delete dir = "${test.output}"  />
-		<delete dir = "${test.reports}" />
-		<delete dir = "${javadoc}"      />
+		<delete dir = "${bin}"      />
+		<delete dir = "${dist}"     />
+		<delete dir = "${test.bin}" />
+		<delete dir = "${test.dist}"/>
+		<delete dir = "${docs.dist}"/>
 	</target>
 
-	<!-- Make Directories -->
-	<target name = "mkdir" depends="clean">
-		<mkdir dir = "${bin}"           />
-		<mkdir dir = "${dist}"          />
-		<mkdir dir = "${test.output}"   />
-		<mkdir dir = "${test.reports}"  />
-		<mkdir dir = "${javadoc}"       />
+	<!-- Stage Target(s) -->
+	<target name = "stage">
+		<mkdir dir = "${bin}" />
+		<mkdir dir = "${dist}"/>
 	</target>
 
-	<!-- Compile          -->
-	<target name = "compile" depends = "mkdir">
-		<javac sourcepath  = ""
-		       srcdir      = "${src}"
-		       destdir     = "${bin}"
-			    debug       = "true"
-			    debuglevel  = "lines,vars,source"
-			    deprecation = "on"
-			    includeantruntime = "false">
-			<!-- show all warnings -->
-			<compilerarg value="-Xlint"/>
-			<!-- compile against libraries -->
-			<classpath refid = "lib.classpath" />
-			<!-- compile default package files, which should eventually be removed  -->
-			<include name = "**/*.java" />
-		</javac>
+	<target name = "vitro:stage" depends = "stage"/>
+	<target name = "demos:stage" depends = "stage"/>
+	<target name = "tests:stage" depends = "stage"/>
+
+	<target name = "junit:stage">
+		<mkdir dir = "${test.bin}" />
+		<mkdir dir = "${test.dist}"/>
 	</target>
 
-	<!-- Build JAR        -->
-	<target name="build" depends="compile">
-		<jar destfile = "${dist}/aiViz.jar"
-		     basedir  = "${bin}"
-			 excludes = "*.class" />
+	<!-- Compile Target(s) -->
+	<target name = "vitro:compile" depends = "vitro:stage">
+		<!-- add file staging for vitro here -->
+		<compile files = "vitro/**"/>
 	</target>
 
-	<!-- JUnit Test       -->
-	<target name="junit" depends="compile">
-		<!-- perform junit tests           -->
-		<junit fork          = "yes" 
-			    printsummary  = "no" 
-			    haltonfailure = "no"
-			    showoutput    = "yes" >
-			<batchtest fork  = "yes" 
-			           todir = "${test.output}">
-				<!-- testing fileset, should eventually be test package -->
-				<fileset dir = "${bin}">
-					<include name = "**/*Tester.class" />
-				</fileset>
-			</batchtest>
-			<formatter type = "xml" />
-			<classpath refid = "test.classpath" />
-		</junit>
-
-		<!-- produce html output for tests -->
-		<junitreport todir = "${test.reports}">
-			<fileset dir = "${test.output}">
-				<include name = "TEST-*.xml" />
-			</fileset>
-			<report todir = "${test.reports}" />
-		</junitreport>
+	<target name = "demos:compile" depends = "demos:stage, vitro:compile">
+		<!-- add file staging for demos here -->
+		<compile files = "demos/**"/>
 	</target>
 
-	<!-- Javadocs         -->
-	<target name="javadoc" depends="compile">
-		<javadoc destdir     = "${javadoc}"
-				 sourcepath  = "${src}"
-				 link        = "http://download.oracle.com/javase/6/docs/api/">
-			<classpath refid = "test.classpath" />
-		</javadoc>
+	<target name = "tests:compile" depends = "tests:stage, vitro:compile, demos:compile">
+		<!-- add file staging for tests here -->
+		<compile files = "tests/**"/>
 	</target>
 
-	<target name="all" depends="build, junit, javadoc"> 
-	</target>
-	
-	<!-- Launch Demos     -->
-	<target name="wumpusworld-demo" depends="compile">
-		<java classname="demos.WumpusEye" fork="true">
-			<classpath refid = "build.classpath" />
-		</java>
+	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile"/>
+
+	<!-- Build Target(s) -->
+	<target name = "vitro:build" depends = "vitro:compile">
+		<build files = "vitro/**" jar.name = "vitro.jar"/>
 	</target>
 
-	<target name="vacworld-demo" depends="compile">
-		<java classname="demos.VacEye" fork="true">
-			<classpath refid = "build.classpath" />
-		</java>
+	<!-- JUnit Target(s) -->
+	<target name = "junit" depends = "junit:stage, tests:compile">
+		<test files = "tests/**/*Tester.class"/>
 	</target>
-	
-	<target name="slidepuzzle-demo" depends="compile">
-		<java classname="demos.SlidePuzzleEye" fork="true">
-			<classpath refid = "build.classpath" />
-		</java>
+
+	<target name = "dev" depends = "compile, junit"/>
+
+	<!-- JavaDoc Target(s) -->
+	<target name = "javadoc" depends = "compile">
+		<document/>
+	</target>
+
+	<!-- Default Target -->
+	<target name = "all" depends = "vitro:build, junit, javadoc"/>
+
+	<!-- Demo Target(s) -->
+	<target name="demo:wumpusworld" depends="demos:compile">
+		<demo class = "demos.WumpusEye"/>
+	</target>
+
+	<target name="demo:vacworld" depends="demos:compile">
+		<demo class = "demos.VacEye"/>
+	</target>
+
+	<target name="demo:slidepuzzle" depends="demos:compile">
+		<demo class = "demos.SlidePuzzleEye"/>
 	</target>
 
 </project>
