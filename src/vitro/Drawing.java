@@ -17,6 +17,12 @@ public class Drawing {
 	}
 
 	public static int stringHeight(Graphics g, String s) {
+
+		//Font font = g.getFont();
+		//TextLayout layout = new TextLayout(s, font, g.getFontMetrics().getFontRenderContext());
+		//Rectangle2D bounds = layout.getBounds();
+		//this.base = Math.round(layout.getDescent()) + 1;
+
 		Font font = g.getFont();
 		return (int)font.getStringBounds(s, g.getFontMetrics().getFontRenderContext()).getHeight();
 	}

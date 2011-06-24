@@ -14,9 +14,12 @@ public class DataView {
 		root = StructWrapper.build(o, colorScheme);
 	}
 
-	public void draw(Graphics g) { root.draw(g, 0, 0); }
-	public int width()           { return root.width(); }
-	public int height()          { return root.height(); }
+	public void draw(Graphics g) {
+		Drawing.configureVector(g);
+		root.draw(g, 0, 0);
+	}
+	public int width()  { return root.width(); }
+	public int height() { return root.height(); }
 
 	private static abstract class StructWrapper {
 		public final List<StructWrapper> children = new ArrayList<StructWrapper>();

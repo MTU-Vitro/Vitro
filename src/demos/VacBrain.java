@@ -35,6 +35,7 @@ public class VacBrain implements Agent<VacWorld.Scrubby>, Annotated {
 		for(Edge edge : visited) {
 			ret.add(new EdgeAnnotation(edge, "Visited Edge"));
 		}
+		ret.add(new DataAnnotation(new HashSet<Edge>(visited), "Visited Edges"));
 		return ret;
 	}
 	

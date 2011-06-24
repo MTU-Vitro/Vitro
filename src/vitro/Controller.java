@@ -113,8 +113,10 @@ public abstract class Controller {
 	}
 
 	public Map<Annotation, Agent> annotations() {
-		if (cursor < 1) { return new HashMap<Annotation, Agent>(); }
-		return footnotes.get(cursor-1);
+		synchronized(model) {
+			if (cursor < 1) { return new HashMap<Annotation, Agent>(); }
+			return footnotes.get(cursor-1);
+		}
 	}
 
 	protected List<Actor> actors() {

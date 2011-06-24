@@ -5,6 +5,7 @@ import vitro.graph.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 public class Host extends JFrame implements ActionListener {
 
@@ -21,12 +22,23 @@ public class Host extends JFrame implements ActionListener {
 	private boolean dockedController = true;
 	private boolean showKey = false;
 
+	private AnnotationPanel annotations;
+
 	public void dockedController(boolean docked) {
 		dockedController = docked;
 	}
 
 	public void show(View view) {
 		this.view = view;
+
+		JFrame annotationWindow = new JFrame("Data Annotations");
+		JLabel annotationHeading = new JLabel();
+		annotationHeading.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		annotationHeading.setBorder(new EmptyBorder(5, 5, 0, 5));
+		annotations = new AnnotationPanel(annotationWindow, annotationHeading, view.colorScheme());
+		annotationWindow.setLayout(new BorderLayout());
+		annotationWindow.add(annotations, BorderLayout.CENTER);
+		annotationWindow.add(annotationHeading, BorderLayout.NORTH);
 
 		buttonPrev.setColorScheme(view.colorScheme());
 		buttonPlay.setColorScheme(view.colorScheme());
@@ -72,8 +84,8 @@ public class Host extends JFrame implements ActionListener {
 			frame.setVisible(true);
 		}
 
-		pack();
 		setResizable(false);
+		pack();
 		setVisible(true);
 
 		while(true) {
@@ -87,6 +99,12 @@ public class Host extends JFrame implements ActionListener {
 
 			if (!wait) {
 				view.tick(.01);
+			}
+
+			for(Annotation a : view.controller().annotations().keySet()) {
+				if (a instanceof DataAnnotation) {
+					annotations.setAnnotation((DataAnnotation)a);
+				}
 			}
 
 			if (!view.controller().hasNext()) {
@@ -159,13 +177,47 @@ class HostPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		/*
-		Graphics2D g2 = (Graphics2D)g;
-		g2.setRenderingHint( RenderingHints.KEY_RENDERING,     RenderingHints.VALUE_RENDER_SPEED);
-		g2.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		g2.drawImage(view.getBuffer(), 0, 0,   w,   h,
-		                               0, 0, 320, 240, this);
-		*/
 		g.drawImage(view.getBuffer(), 0, 0, this);
+	}
+}
+
+class AnnotationPanel extends JPanel {
+	private static final int margin = 10;
+	private final JFrame window;
+	private final JLabel heading;
+	private final ColorScheme colorScheme;
+	private DataAnnotation annotation;
+	private DataView view;
+
+	private static final long serialVersionUID = 1L;
+
+	public AnnotationPanel(JFrame window, JLabel heading, ColorScheme colorScheme) {
+		this.window = window;
+		this.heading = heading;
+		this.colorScheme = colorScheme;
+	}
+
+	public void setAnnotation(DataAnnotation annotation) {
+		if (annotation == null) {
+			view = null;
+			window.setVisible(false);
+			this.annotation = null;
+		}
+		else if (!annotation.equals(this.annotation)) {
+			view = new DataView(annotation.data, colorScheme);
+			setPreferredSize(new Dimension(view.width() + (2*margin), view.height() + (2*margin)));
+			heading.setText(annotation.label);
+			window.setResizable(false);
+			window.pack();
+			window.setVisible(true);
+			window.repaint();
+			this.annotation = annotation;
+		}
+	}
+
+	public void paint(Graphics g) {
+		super.paint(g);
+		g.translate(margin, margin);
+		if (view != null) { view.draw(g); }
 	}
 }
