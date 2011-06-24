@@ -42,7 +42,8 @@ public class MoveAction extends GridAction {
 		MoveAction other = (MoveAction)o;
 		return (other.model == this.model) &&
 		       (other.start.equals(start)) &&
-		       (other.actor.equals(end));
+		       (other.actor.equals(actor)) &&
+		       (other.end.equals(end));
 	}
 
 	@Override
