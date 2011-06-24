@@ -56,7 +56,7 @@ public class ReversiView implements View {
 			g.setColor(colors.background);
 			g.fillRect(0, 0, width, height);
 			Drawing.configureVector(g);
-			g.setFont(g.getFont().deriveFont(30.0f));
+			g.setFont(new Font("Monospaced", Font.BOLD, 36));
 
 			for(int y = 0; y < model.height; y++) {
 				for(int x = 0; x < model.height; x++) {
@@ -79,6 +79,30 @@ public class ReversiView implements View {
 
 			synchronized(model) {
 				for(Actor a : model.actors) {
+					if (a instanceof ReversiBoard.Player) {
+						ReversiBoard.Player p = (ReversiBoard.Player)a;
+						if (p.team() != model.team()) { continue; }
+						for(Action act : p.actions()) {
+							if (!(act instanceof ReversiBoard.ReversiMove)) { continue; }
+							ReversiBoard.ReversiMove move = (ReversiBoard.ReversiMove)act;
+							Location moveLocation = move.location;
+							g.setColor(colors.unique(new Integer(p.team())));
+							g.drawOval(
+								horizontalMargin + cellMargin + (moveLocation.x * cellSize) + 1,
+								verticalMargin   + cellMargin + (moveLocation.y * cellSize) + 1,
+								cellSize - (cellMargin * 2) - 1,
+								cellSize - (cellMargin * 2)
+							);
+							g.setColor(colors.unique(new Integer(p.team())).darker());
+							Drawing.drawStringCentered(
+								g,
+								""+move.captured.size(),
+								horizontalMargin + cellSize/2 + (moveLocation.x * cellSize),
+								verticalMargin   + cellSize/2 + (moveLocation.y * cellSize)
+							);
+						}
+						continue;
+					}
 					Location location = model.locations.get(a);
 					if (location == null) { continue; }
 					if (a instanceof Factional) {

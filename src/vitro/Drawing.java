@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.Font;
+import java.awt.font.*;
+
 
 public class Drawing {
 	
@@ -21,11 +23,15 @@ public class Drawing {
 
 	public static void drawStringCentered(Graphics g, String s, int x, int y) {
 		Font font = g.getFont();
-		Rectangle2D bounds = font.getStringBounds(s, g.getFontMetrics().getFontRenderContext());
+		//Rectangle2D bounds = font.getStringBounds(s, g.getFontMetrics().getFontRenderContext());
+
+		TextLayout layout = new TextLayout(s, font, g.getFontMetrics().getFontRenderContext());
+		Rectangle2D bounds = layout.getBounds();
+ 
 		g.drawString(
 			s,
-			x-((int)bounds.getWidth()/2),
-			y+((int)bounds.getHeight()/2)
+			x-(int)((bounds.getX() + bounds.getWidth())  / 2),
+			y+(int)(bounds.getHeight() / 2)
 		);
 	}
 
