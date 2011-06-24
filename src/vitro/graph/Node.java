@@ -6,6 +6,9 @@ import java.util.*;
 
 public abstract class Node {
 
+	private static int globalIdCounter = 0;
+	private final int globalId;
+
 	public final Set<Edge>  edges;
 	public final Set<Actor> actors;
 
@@ -15,6 +18,7 @@ public abstract class Node {
 
 	public Node(Set<Edge> edges, Set<Actor> actors, boolean modifiable, Graph model) {
 		this.model = model;
+		this.globalId = globalIdCounter++;
 		if (modifiable) {
 			this.edges  = edges;
 			this.actors = actors;
@@ -86,5 +90,9 @@ public abstract class Node {
 			ret.addAll(v.actors);
 		}
 		return ret;
+	}
+
+	public String toString() {
+		return String.format("Node %d", globalId);
 	}
 }
