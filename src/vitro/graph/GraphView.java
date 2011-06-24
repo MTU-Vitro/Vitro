@@ -34,8 +34,6 @@ public class GraphView implements View {
 	private final ReversibleMap<Actor, ActorView> actorToView = new ReversibleMap<Actor, ActorView>();
 	private final ReversibleMap<ActorView, Actor> viewToActor = actorToView.reverse();
 
-	private boolean showKey = false;
-
 	private GraphFrame previousFrame = null;
 	private GraphFrame currentFrame  = null;
 
@@ -96,10 +94,6 @@ public class GraphView implements View {
 		}
 		
 		return array;
-	}
-
-	public void showKey(boolean show) {
-		showKey = show;
 	}
 	
 	public void tick(double time) {
@@ -182,9 +176,6 @@ public class GraphView implements View {
 						if (!model.edges.contains(ea.edge)) { continue; }
 						edgeToView.get(ea.edge).annotation(tg, ea);
 					}
-				}
-				if (showKey) {
-					palette.drawKey(tg, 10, 18);
 				}
 			}
 		}

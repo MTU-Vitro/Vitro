@@ -13,17 +13,17 @@ public class ReversiEye extends Host {
 
 	public ReversiEye() {
 
-		ReversiBoard model              = new ReversiBoard(8, 8);
+		Reversi model                   = new Reversi(8, 8);
 		SequentialController controller = new SequentialController(model);
 		ReversiView view                = new ReversiView(model, controller, 640, 480, new ColorScheme());
 
-		ReversiBoard.Player black = model.createPlayer(ReversiBoard.BLACK);
-		ReversiBoard.Player white = model.createPlayer(ReversiBoard.WHITE);
+		Reversi.Player black = model.createPlayer(Reversi.BLACK);
+		Reversi.Player white = model.createPlayer(Reversi.WHITE);
 
 		model.actors.add(black);
 		model.actors.add(white);
 
-		controller.bind(black, new RandomAgent());
+		controller.bind(black, new ReversiBrain());
 		controller.bind(white, new RandomAgent());
 
 		show(view);

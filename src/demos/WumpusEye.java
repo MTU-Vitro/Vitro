@@ -58,7 +58,6 @@ public class WumpusEye extends Host {
 		grid[0][3].actors.add(model.createBat());
 		//grid[2][2].actors.add(model.createWumpus());
 
-		view.showKey(true);
 		show(view);
 	}
 }

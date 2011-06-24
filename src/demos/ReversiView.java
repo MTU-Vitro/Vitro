@@ -14,14 +14,14 @@ public class ReversiView implements View {
 	private final int horizontalMargin;
 	private final int verticalMargin;
 
-	private final ReversiBoard model;
+	private final Reversi model;
 	private final Controller controller;
 	private final ColorScheme colors;
 
 	private final Image buffer;
 	private final Image target;
 
-	public ReversiView(ReversiBoard model, Controller controller, int width, int height, ColorScheme colors) {
+	public ReversiView(Reversi model, Controller controller, int width, int height, ColorScheme colors) {
 		this.model      = model;
 		this.controller = controller;
 		this.width      = width;
@@ -79,12 +79,12 @@ public class ReversiView implements View {
 
 			synchronized(model) {
 				for(Actor a : model.actors) {
-					if (a instanceof ReversiBoard.Player) {
-						ReversiBoard.Player p = (ReversiBoard.Player)a;
+					if (a instanceof Reversi.Player) {
+						Reversi.Player p = (Reversi.Player)a;
 						if (p.team() != model.team()) { continue; }
 						for(Action act : p.actions()) {
-							if (!(act instanceof ReversiBoard.ReversiMove)) { continue; }
-							ReversiBoard.ReversiMove move = (ReversiBoard.ReversiMove)act;
+							if (!(act instanceof Reversi.Move)) { continue; }
+							Reversi.Move move = (Reversi.Move)act;
 							Location moveLocation = move.location;
 							g.setColor(colors.unique(new Integer(p.team())));
 							g.drawOval(

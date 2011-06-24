@@ -5,10 +5,10 @@ import vitro.grid.*;
 import java.util.*;
 import static vitro.util.Groups.*;
 
-public class ReversiBoard extends Grid implements Factional {
+public class Reversi extends Grid implements Factional {
 
-	public static final int WHITE = 1;
-	public static final int BLACK = 2;
+	public static final int BLACK = 1;
+	public static final int WHITE = 2;
 
 	protected int team = BLACK;
 	public int team() {
@@ -18,7 +18,7 @@ public class ReversiBoard extends Grid implements Factional {
 	public Piece  createPiece(int team)  { return new Piece(team);  }
 	public Player createPlayer(int team) { return new Player(team); }
 
-	public ReversiBoard(int width, int height) {
+	public Reversi(int width, int height) {
 		super(width, height);
 		locations.put(new Piece(WHITE), new Location(this, width/2-1, height/2-1));
 		locations.put(new Piece(BLACK), new Location(this, width/2-1, height/2  ));
@@ -27,7 +27,11 @@ public class ReversiBoard extends Grid implements Factional {
 	}
 
 	public boolean done() {
-		return emptyCells().size() == 0;
+		if (emptyCells().size() == 0) { return true; }
+		for(Actor a : ofType(Player.class, actors)) {
+			if (a.actions().size() > 1) { return false; }
+		}
+		return true;
 	}
 
 	public class Piece extends Actor implements Factional {
@@ -59,11 +63,15 @@ public class ReversiBoard extends Grid implements Factional {
 		return ret;
 	}
 
-	public class ReversiMove extends CreateAction {
+	private void nextTeam() {
+		team = (team == BLACK) ? WHITE : BLACK;
+	}
+
+	public class Move extends CreateAction {
 		public final int team;
 		public final Map<Piece, Integer> captured = new HashMap<Piece, Integer>();
 
-		public ReversiMove(ReversiBoard model, Location location, Piece actor) {
+		public Move(Reversi model, Location location, Piece actor) {
 			super(model, location, actor);
 			this.team = actor.team;
 			for(Piece piece : captured(team, location)) {
@@ -76,15 +84,34 @@ public class ReversiBoard extends Grid implements Factional {
 			for(Piece piece : captured.keySet()) {
 				piece.team = team;
 			}
-			((ReversiBoard)model).team = (team == BLACK) ? WHITE : BLACK;			
+			((Reversi)model).nextTeam();
 		}
 
 		public void undo() {
-			((ReversiBoard)model).team = team;
+			((Reversi)model).team = team;
 			for(Map.Entry<Piece, Integer> entry : captured.entrySet()) {
 				entry.getKey().team = entry.getValue();
 			}
 			super.undo();
+		}
+	}
+
+	public class Pass implements Action {
+		public final Reversi model;
+		public final int team;
+
+		public Pass(Reversi model, int team) {
+			this.model = model;
+			this.team = team;
+		}
+
+		public void apply() {
+			model.nextTeam();
+			System.out.println("Player "+team+" passed their turn.");
+		}
+
+		public void undo() {
+			model.team = team;
 		}
 	}
 
@@ -101,9 +128,10 @@ public class ReversiBoard extends Grid implements Factional {
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
+			ret.add(new Pass((Reversi)model, team));
 			for(Location location : emptyCells()) {
 				if (captured(team, location).size() > 0) {
-					ret.add(new ReversiMove((ReversiBoard)model, location, new Piece(team)));
+					ret.add(new Move((Reversi)model, location, new Piece(team)));
 				}
 			}
 			return ret;

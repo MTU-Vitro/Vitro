@@ -20,7 +20,6 @@ public class Host extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private boolean dockedController = true;
-	private boolean showKey = false;
 
 	private AnnotationPanel annotations;
 
@@ -69,7 +68,6 @@ public class Host extends JFrame implements ActionListener {
 		buttons.add(buttonNext);
 		buttons.add(buttonKey);
 		
-		if (!(view instanceof GraphView)) { buttonKey.setEnabled(false); }
 		buttons.setBackground(view.colorScheme().background);
 
 		if (dockedController) {
@@ -154,8 +152,7 @@ public class Host extends JFrame implements ActionListener {
 			//repaint();
 		}
 		else if (e.getSource() == buttonKey) {
-			showKey = !showKey;
-			((GraphView)view).showKey(showKey);
+			panel.toggleKey();
 		}
 	}
 }
@@ -164,6 +161,7 @@ class HostPanel extends JPanel {
 	private final View view;
 	private final int w;
 	private final int h;
+	private boolean showKey = false;
 
 	private static final long serialVersionUID = 1L;
 
@@ -175,9 +173,16 @@ class HostPanel extends JPanel {
 		setPreferredSize(new Dimension(w, h));
 	}
 
+	public void toggleKey() {
+		showKey = !showKey;
+	}
+
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.drawImage(view.getBuffer(), 0, 0, this);
+		if (showKey) {
+			view.colorScheme().drawKey(g, 10, 10);
+		}
 	}
 }
 

@@ -77,6 +77,7 @@ public class ColorScheme {
 	}
 
 	public void drawKey(Graphics g, int x, int y) {
+		Drawing.configureVector(g);
 		int maxWidth = 0;
 		for(Object o : uniqueColors.keySet()) {
 			maxWidth = Math.max(maxWidth, Drawing.stringWidth(g, normalizedName(o)));
