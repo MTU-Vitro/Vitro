@@ -46,6 +46,7 @@ public class BoidWorld extends Plane {
 			}
 
 			// calculate!
+			
 			Vector2 centerMass = Vector2.ZERO;
 			Vector2 centerHead = Vector2.ZERO;
 			Vector2 repulsion  = Vector2.ZERO;
@@ -73,44 +74,10 @@ public class BoidWorld extends Plane {
 			Position newPos = myPos.translate(heading.normalize().mul(0.1));
 			newPos = new Position(Math.min(Math.max(newPos.x, 0.0), width), Math.min(Math.max(newPos.y, 0.0), height));
 			ret.add(new MoveAction(model, newPos, this));
-
-			// here we compute the new location (position + heading)
-			/*
-			Vector2 centerMass = Vector2.ZERO;
-			Vector2 centerHead = Vector2.ZERO;
-			Vector2 repulsion  = Vector2.ZERO;
-
-			for(Boid boid : flock()) {
-				Frame frame = frames.get(boid);
-
-				Vector2 position = new Vector2(frame.x, frame.y);
-				double angle = frame.angle;
-
-				centerMass = centerMass.add(position);
-				centerHead = centerHead.add(new Vector2(Math.cos(angle), Math.sin(angle)));
-
-				Vector2 displace = (new Vector2(frames.get(this).x, frames.get(this).y)).sub(position);
-				if(displace.normSq() != 0.0) {
-					repulsion = repulsion.add(displace.normalize().mul(1.0 / displace.normSq()));
-				}
-			}
-			centerMass = centerMass.mul(1.0 / flock().size()).sub(new Vector2(frames.get(this).x, frames.get(this).y));
-			centerHead = centerHead.mul(1.0 / flock().size());
-			repulsion  = repulsion.mul(1.0 / flock().size());
-
-			Vector2 heading = Vector2.ZERO;
-			heading = heading.add(centerMass.normalize());
-			heading = heading.add(centerHead.normalize());
-			heading = heading.add(repulsion.mul(2.0));
-			heading = heading.normalize().mul(0.1);
-
-			Frame newFrame = reference();
-			newFrame = newFrame.translate(heading.x, heading.y);
-			newFrame = newFrame.rotate(Math.atan2(-reference().y + newFrame.y, -reference().x + newFrame.x) - newFrame.angle);
-			newFrame = new Frame(Math.min(Math.max(newFrame.x, 0.0), width), Math.min(Math.max(newFrame.y, 0.0), height), newFrame.angle);
-
-			ret.add(new MoveAction(model, newFrame, this));
-			*/
+			
+			
+			//ret.add(new MoveAction(model, myPos.translate(0.1, 0.0), this));
+			
 			return ret;
 		}
 	}

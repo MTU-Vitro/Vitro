@@ -51,6 +51,7 @@ public class BoidView implements View {
 
 	public void draw() {
 		Graphics g = target.getGraphics();
+		Drawing.configureVector(g);
 		synchronized(target) {
 			g.setColor(colors.background);
 			g.fillRect(0, 0, width, height);

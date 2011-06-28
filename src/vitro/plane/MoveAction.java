@@ -11,7 +11,7 @@ public class MoveAction extends PlaneAction {
 	public MoveAction(Plane model, Position destination, Actor actor) {
 		super(model);
 		this.start = model.positions.get(actor);
-		this.end   = destination;
+		this.end   = new Position(Math.min(Math.max(destination.x, 0.0), model.width), Math.min(Math.max(destination.y, 0.0), model.height));
 		this.actor = actor;
 	}
 	
