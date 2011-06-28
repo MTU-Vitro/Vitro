@@ -87,7 +87,7 @@ public class Host extends JFrame implements ActionListener {
 		setVisible(true);
 
 		while(true) {
-			view.draw();
+			//view.draw();
 			buttonPrev.setEnabled(view.controller().hasPrev());
 			buttonNext.setEnabled(view.controller().hasNext());
 			buttonPlay.setEnabled(view.controller().hasNext());
@@ -96,7 +96,7 @@ public class Host extends JFrame implements ActionListener {
 			repaint();
 
 			if (!wait) {
-				view.tick(.1);
+				view.tick(.01);
 			}
 
 			for(Annotation a : view.controller().annotations().keySet()) {
@@ -167,9 +167,8 @@ class HostPanel extends JPanel {
 
 	public HostPanel(View view) {
 		this.view = view;
-		Image buffer = view.getBuffer();
-		w = buffer.getWidth(this);
-		h = buffer.getHeight(this);
+		w = view.width();
+		h = view.height();
 		setPreferredSize(new Dimension(w, h));
 	}
 
@@ -179,7 +178,7 @@ class HostPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.drawImage(view.getBuffer(), 0, 0, this);
+		view.draw(g);
 		if (showKey) {
 			view.colorScheme().drawKey(g, 10, 10);
 		}
