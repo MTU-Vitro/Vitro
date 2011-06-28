@@ -15,8 +15,13 @@ public class Reversi extends Grid implements Factional {
 		return team;
 	}
 
-	public Piece  createPiece(int team)  { return new Piece(team);  }
 	public Player createPlayer(int team) { return new Player(team); }
+
+	public Piece  createPiece(int team, int x, int y)  {
+		Piece ret = new Piece(team);
+		locations.put(ret, new Location(this, x, y));
+		return ret;
+	}
 
 	public Reversi(int width, int height) {
 		super(width, height);
@@ -64,7 +69,33 @@ public class Reversi extends Grid implements Factional {
 	}
 
 	private void nextTeam() {
-		team = (team == BLACK) ? WHITE : BLACK;
+		List<Integer> teams = new ArrayList<Integer>(teams());
+		int curr = teams.indexOf(team);
+		team = teams.get((curr + 1) % teams.size());
+	}
+
+	public int pieces(int team) {
+		int ret = 0;
+		for(Actor a : actors) {
+			if (a instanceof Piece && ((Piece)a).team() == team) { ret++; }
+		}
+		return ret;
+	}
+
+	public Set<Integer> teams() {
+		Set<Integer> ret = new TreeSet<Integer>();
+		for(Actor a : actors) {
+			if (a instanceof Factional) { ret.add(((Factional)a).team()); }
+		}
+		return ret;
+	}
+
+	public Map<Integer, Integer> scores() {
+		Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+		for(int team : teams()) {
+			ret.put(team, pieces(team));
+		}
+		return ret;
 	}
 
 	public class Move extends CreateAction {

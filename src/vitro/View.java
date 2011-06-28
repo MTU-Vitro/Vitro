@@ -1,6 +1,6 @@
 package vitro;
 
-import java.awt.Image;
+import java.awt.Graphics;
 
 public interface View {
 
@@ -8,9 +8,11 @@ public interface View {
 
 	public ColorScheme colorScheme();
 
-	public Image getBuffer();
+	public int width();
 
-	public void draw();
+	public int height();
+
+	public void draw(Graphics g);
 
 	public void tick(double time);
 

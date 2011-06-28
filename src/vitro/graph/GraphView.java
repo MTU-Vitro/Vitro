@@ -4,7 +4,6 @@ import vitro.*;
 import vitro.util.*;
 import java.util.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.geom.*;
 
 
@@ -20,10 +19,6 @@ public class GraphView implements View {
 
 	private final int width;
 	private final int height;
-	private final BufferedImage buffer;
-	private final BufferedImage target;
-	private final Graphics bg;
-	private final Graphics tg;
 
 	private final ReversibleMap<Edge, EdgeView> edgeToView = new ReversibleMap<Edge, EdgeView>();
 	private final ReversibleMap<EdgeView, Edge> viewToEdge = edgeToView.reverse();
@@ -46,10 +41,6 @@ public class GraphView implements View {
 
 		//palette = new ColorScheme(Color.RED, new Color(100, 0, 0), Color.BLACK);
 		//palette.inactive = new Color(70, 0, 0);
-		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		bg = buffer.getGraphics();
-		tg = target.getGraphics();
 	}
 
 	public GraphView(Graph model, Controller controller, int width, int height) {
@@ -66,6 +57,14 @@ public class GraphView implements View {
 
 	public Controller controller() {
 		return controller;
+	}
+
+	public int width() {
+		return width;
+	}
+
+	public int height() {
+		return height;
 	}
 
 	public Node createNode(double x, double y) {
@@ -147,45 +146,36 @@ public class GraphView implements View {
 		}
 	}
 
-	public void draw() {
+	public void draw(Graphics g) {
 		if (currentFrame == null) { flush(); }
-		synchronized(target) {
-			tg.setColor(palette.background);
-			tg.fillRect(0, 0, width, height);
-			Drawing.configureVector(tg);
-			
-			synchronized(model) {
-				updateViews();
-				for(Edge edge : model.edges) {
-					edgeToView.get(edge).draw(tg);
+		g.setColor(palette.background);
+		g.fillRect(0, 0, width, height);
+		Drawing.configureVector(g);
+		
+		synchronized(model) {
+			updateViews();
+			for(Edge edge : model.edges) {
+				edgeToView.get(edge).draw(g);
+			}
+			for(Node node : model.nodes) {
+				nodeToView.get(node).draw(g);
+			}
+			for(Actor actor : model.actors) {
+				actorToView.get(actor).draw(g);
+			}
+			for(Annotation a : controller.annotations().keySet()) {
+				if (a instanceof ActorAnnotation) {
+					ActorAnnotation aa = (ActorAnnotation)a;
+					if (!model.actors.contains(aa.actor)) { continue; }
+					actorToView.get(aa.actor).annotation(g, aa);
 				}
-				for(Node node : model.nodes) {
-					nodeToView.get(node).draw(tg);
-				}
-				for(Actor actor : model.actors) {
-					actorToView.get(actor).draw(tg);
-				}
-				for(Annotation a : controller.annotations().keySet()) {
-					if (a instanceof ActorAnnotation) {
-						ActorAnnotation aa = (ActorAnnotation)a;
-						if (!model.actors.contains(aa.actor)) { continue; }
-						actorToView.get(aa.actor).annotation(tg, aa);
-					}
-					if (a instanceof EdgeAnnotation) {
-						EdgeAnnotation ea = (EdgeAnnotation)a;
-						if (!model.edges.contains(ea.edge)) { continue; }
-						edgeToView.get(ea.edge).annotation(tg, ea);
-					}
+				if (a instanceof EdgeAnnotation) {
+					EdgeAnnotation ea = (EdgeAnnotation)a;
+					if (!model.edges.contains(ea.edge)) { continue; }
+					edgeToView.get(ea.edge).annotation(g, ea);
 				}
 			}
 		}
-	}
-
-	public Image getBuffer() {
-		synchronized(target) {
-			bg.drawImage(target, 0, 0, null);
-		}
-		return buffer;
 	}
 
 	private class NodeView {
