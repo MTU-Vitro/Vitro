@@ -56,17 +56,17 @@ public class BoidWorld extends Plane {
 				centerMass = centerMass.add(Position.ZERO.displace(theirPos).mul(1.0 / flock().size()));
 				centerHead = centerHead.add(new Vector2(Math.cos(boid.angle), Math.sin(boid.angle)).mul(1.0 / flock().size()));
 
-				Vector2 repulse = myPos.displace(theirPos);
-				if(repulse.normSq() > 0) {
+				Vector2 repulse = theirPos.displace(myPos);
+				if(0.25 > repulse.normSq() && repulse.normSq() > 0) {
 					repulsion = repulsion.add(repulse.normalize().mul(1.0 / repulse.normSq()));
 				}
 			}
-			repulsion  = repulsion.mul(1.0 / flock().size());
+			//repulsion  = repulsion.mul(1.0 / flock().size());
 
 			Vector2 heading = Vector2.ZERO;
 			heading = heading.add(myPos.displace(new Position(centerMass)).normalize());
-			heading = heading.add(centerHead.normalize());
-			heading = heading.add(repulsion.mul(10.0));
+			heading = heading.add(centerHead.normalize().mul(5.0));
+			heading = heading.add(repulsion);
 
 			angle = Math.atan2(heading.y, heading.x);
 
