@@ -3,6 +3,7 @@ package demos;
 import vitro.*;
 import vitro.grid.*;
 import java.awt.*;
+import static vitro.util.Groups.*;
 
 public class GridView implements View {
 
@@ -54,18 +55,13 @@ public class GridView implements View {
 				);
 			}
 		}
-		/*
-		g.setColor(colors.secondary);
-		g.fillRect(
-			horizontalMargin,
-			verticalMargin + (model.height * cellSize) + 1,
-			(model.width * cellSize) + 1,
-			(cellSize / 10)
-		);
-		*/
-
 		synchronized(model) {
-			for(Actor a : model.actors) { drawActor(g, a); }
+			for(Actor actor : model.actors) { drawActor(g, actor); }
+			for(Annotation a : controller.annotations().keySet()) {
+				if (a instanceof ActorAnnotation) {
+					drawActorAnnotation((Graphics2D)g, (ActorAnnotation)a);
+				}
+			}
 		}
 	}
 
@@ -91,6 +87,29 @@ public class GridView implements View {
 			cellSize - (cellMargin * 2) - 1,
 			cellSize - (cellMargin * 2)
 		);
+	}
+
+	protected void drawActorAnnotation(Graphics2D g, ActorAnnotation a) {
+		Location location = model.locations.get(a.actor);
+		if (location == null) { return; }
+
+		Stroke oldStroke = g.getStroke();
+		g.setStroke(new BasicStroke(
+			2,
+			BasicStroke.CAP_ROUND,
+			BasicStroke.JOIN_ROUND,
+			0,
+			new float[] {4, 4},
+			0
+		));
+		g.setColor(colors.unique(a.label));
+		g.drawOval(
+			horizontalMargin + cellMargin/2 + (location.x * cellSize),
+			verticalMargin   + cellMargin/2 + (location.y * cellSize),
+			cellSize - cellMargin,
+			cellSize - cellMargin
+		);
+		g.setStroke(oldStroke);
 	}
 
 	private double sofar = 0;
