@@ -4,29 +4,29 @@ import vitro.*;
 
 public class MoveAction extends PlaneAction {
 
-	public final Frame start;
-	public final Frame end;
-	public final Actor actor;
+	public final Position start;
+	public final Position end;
+	public final Actor    actor;
 	
-	public MoveAction(Plane model, Frame destination, Actor actor) {
+	public MoveAction(Plane model, Position destination, Actor actor) {
 		super(model);
-		this.start = model.frames.get(actor);
+		this.start = model.positions.get(actor);
 		this.end   = destination;
 		this.actor = actor;
 	}
 	
 	public void apply() {
-		if(!start.equals(model.frames.get(actor))) {
+		if(!start.equals(model.positions.get(actor))) {
 			throw new Error(String.format("Precondition for MoveAction '%s' not satisfied.", this));
 		}
-		model.frames.put(actor, end);
+		model.positions.put(actor, end);
 	}
 	
 	public void undo() {
-		if(!end.equals(model.frames.get(actor))) {
+		if(!end.equals(model.positions.get(actor))) {
 			throw new Error(String.format("Postcondition for MoveAction '%s' not satisfied.", this));
 		}
-		model.frames.put(actor, start);
+		model.positions.put(actor, start);
 	}
 	
 	@Override

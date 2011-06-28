@@ -73,4 +73,8 @@
 		<demo class = "demos.ReversiEye"/>
 	</target>
 
+	<target name="demo:boids" depends="demos:compile">
+		<demo class = "demos.BoidEye"/>
+	</target>
+
 </project>

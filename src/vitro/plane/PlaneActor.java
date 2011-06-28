@@ -12,8 +12,8 @@ public class PlaneActor extends Actor {
 		this.model = model;
 	}
 	
-	public Frame reference() {
-		return model.frames.get(this);
+	public Position position() {
+		return model.positions.get(this);
 	}
 	
 	void moves() {}

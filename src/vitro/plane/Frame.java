@@ -28,4 +28,9 @@ public class Frame {
 	private static double normalize(double angle) {
 		return (angle > 0 ? 0 : 2 * Math.PI) + (angle % (2 * Math.PI));
 	}
+
+	@Override
+	public String toString() {
+		return String.format("[(%f, %f)  %f]", x, y, angle);
+	}
 }

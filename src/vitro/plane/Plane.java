@@ -10,17 +10,19 @@ public class Plane extends Model {
 	
 	public final double width;
 	public final double height;
-	public final Map<Actor, Frame> frames;
+	public final Map<Actor, Position> positions;
 
-	private final CollectionObserver<Actor>                   actorObserver = new ActorObserver();
-	private final CollectionObserver<Map.Entry<Actor, Frame>> frameObserver = new FrameObserver();
+	private final CollectionObserver<Actor>                      actorObserver
+		= new ActorObserver();
+	private final CollectionObserver<Map.Entry<Actor, Position>> positionObserver
+		= new PositionObserver();
 	
 	public Plane(double width, double height) {
 		super(new ObservableSet<Actor>());
-		frames = new ObservableMap<Actor, Frame>();
+		positions = new ObservableMap<Actor, Position>();
 		
 		((ObservableSet<Actor>)actors).addObserver(actorObserver);
-		((ObservableMap<Actor, Frame>)frames).addObserver(frameObserver);
+		((ObservableMap<Actor, Position>)positions).addObserver(positionObserver);
 		
 		this.width  = width;
 		this.height = height;
@@ -38,16 +40,16 @@ public class Plane extends Model {
 		}
 		
 		public void removed(ObservableCollection sender, Actor e) {
-			((ObservableMap<Actor, Frame>)frames).store().remove(e);
+			((ObservableMap<Actor, Position>)positions).store().remove(e);
 		}
 	}
 	
-	private class FrameObserver implements CollectionObserver<Map.Entry<Actor, Frame>> {
-		public void added(ObservableCollection sender, Map.Entry<Actor, Frame> e) {
+	private class PositionObserver implements CollectionObserver<Map.Entry<Actor, Position>> {
+		public void added(ObservableCollection sender, Map.Entry<Actor, Position> e) {
 			((ObservableSet<Actor>)actors).store().add(e.getKey());
 		}
 		
-		public void removed(ObservableCollection sender, Map.Entry<Actor, Frame> e) {
+		public void removed(ObservableCollection sender, Map.Entry<Actor, Position> e) {
 			((ObservableSet<Actor>)actors).store().remove(e.getKey());
 		}
 	}

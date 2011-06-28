@@ -96,7 +96,7 @@ public class Host extends JFrame implements ActionListener {
 			repaint();
 
 			if (!wait) {
-				view.tick(.01);
+				view.tick(.1);
 			}
 
 			for(Annotation a : view.controller().annotations().keySet()) {
