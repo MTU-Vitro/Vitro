@@ -120,7 +120,7 @@ public abstract class Controller {
 	}
 
 	public List<Action> previousActions() {
-		return history.get(cursor);
+		return history.get(cursor - 1);
 	}
 
 	protected List<Actor> actors() {

@@ -5,27 +5,21 @@ import vitro.util.*;
 import java.util.*;
 
 public class Plane extends Model {
-
 	protected final Plane model;
-	
-	public final double width;
-	public final double height;
-	public final Map<Actor, Position> positions;
+	public    final Map<Actor, Position> positions;
 
-	private final CollectionObserver<Actor>                      actorObserver
+	private final CollectionObserver<Actor> actorObserver
 		= new ActorObserver();
 	private final CollectionObserver<Map.Entry<Actor, Position>> positionObserver
 		= new PositionObserver();
 	
-	public Plane(double width, double height) {
+	public Plane() {
 		super(new ObservableSet<Actor>());
 		positions = new ObservableMap<Actor, Position>();
 		
 		((ObservableSet<Actor>)actors).addObserver(actorObserver);
 		((ObservableMap<Actor, Position>)positions).addObserver(positionObserver);
 		
-		this.width  = width;
-		this.height = height;
 		model = this;
 	}
 	

@@ -102,4 +102,11 @@ public class Vector2 {
 		int mul = (cos1 >= 0 ? +1 : -1);
 		return this.mul(ratio).add(normal.mul(ratio * cos1 - mul * cos2));
 	}
+	
+	/**
+	 *
+	 **/
+	public String toString() {
+		return String.format("%f, %f", x, y);
+	}
 }
