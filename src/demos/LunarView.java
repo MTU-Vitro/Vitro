@@ -3,10 +3,9 @@ package demos;
 import vitro.*;
 import vitro.plane.*;
 import vitro.util.*;
-import static vitro.util.Groups.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.util.*;
+import static vitro.util.Groups.*;
 
 public class LunarView implements View {
 
@@ -16,13 +15,9 @@ public class LunarView implements View {
 	private final LunarWorld model;
 	private final Controller controller;
 	private final ColorScheme colors;
-
-	private final Image buffer;
-	private final Image target;
 	
-	//private final Polygon mountains;
-	double[] heightmap;
-	LanderView landerView;
+	private final LanderView landerView;
+	private final Set<Point> stars;
 
 	public LunarView(LunarWorld model, Controller controller, int width, int height) {
 		this.model      = model;
@@ -30,11 +25,16 @@ public class LunarView implements View {
 		this.width      = width;
 		this.height     = height;
 		this.colors     = new ColorScheme(Color.WHITE, new Color(75, 75, 75), Color.BLACK);
-
-		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		target = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		
 		landerView = new LanderView(model.lander);
+
+		stars = new HashSet<Point>();
+		for(int x = 0; x < 40; x++) {
+			stars.add(new Point(
+				(int)(Math.random() * width),
+				(int)(Math.random() * height)
+			));
+		}
 	}
 
 	public Controller  controller()  { return controller; }
@@ -49,15 +49,31 @@ public class LunarView implements View {
 		g.setColor(colors.outline);
 		g.drawLine(0, height - 20, width, height - 20);
 
+		g.setColor(colors.outline);
+		for(Point star : stars) {
+			g.drawLine(star.x, star.y, star.x, star.y);
+		}
+
 		synchronized(model) {
-			landerView.draw(g, (int)model.positions.get(model.lander).x, (int)model.positions.get(model.lander).y);
+			g.setColor(colors.outline);
+			g.setFont(new Font("Monospaced", Font.BOLD, 20));
+			Drawing.configureVector(g);
+			g.drawString(String.format("vx: % 2.3f", model.lander.velocity.x), 10, 20);
+			g.drawString(String.format("vy: % 2.3f", model.lander.velocity.y), 10, 40);
+
+			Position position = model.positions.get(model.lander);
+			landerView.draw(
+				(Graphics2D)g,
+				(int)position.x,
+				(int)position.y
+			);
 		}
 	}
 
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if(sofar > .75) {
+		if(sofar > .10) {
 			controller.next();
 			sofar = 0;
 		}
@@ -74,11 +90,7 @@ public class LunarView implements View {
 			this.lander = lander;
 		}
 
-		public boolean thrusterRight = true;
-		public boolean thrusterLeft  = true;
-		public boolean thrusterMain  = true;
-
-		protected void draw(Graphics g, int x, int y) {
+		protected void draw(Graphics2D g, int x, int y) {
 			g.setColor(Color.WHITE);
 			LunarWorld.ThrusterAction lastThrust = null;
 			
@@ -107,45 +119,60 @@ public class LunarView implements View {
 					g.drawLine(x - 16, y - 11, x - 16 - w, y - 13 + dy);
 				}
 			}
-
-			g.setColor(new Color(100, 100, 100));
 	
 			// base
-			g.drawRect(x - 15, y - 3, 30, 6);
+			fill(g, new Rectangle(x - 15, y - 3, 30, 6));
 
 			// left leg
-			g.drawLine(x - 13, y +  3, x - 17, y + 13);
-			g.drawLine(x -  9, y +  3, x - 17, y + 13);
+			fill(g, new Polygon(
+				new int[] { x - 13, x - 9, x - 17 },
+				new int[] { y +  3, y + 3, y + 13 },
+				3
+			));
 			g.drawLine(x - 19, y + 13, x - 15, y + 13);
 
 			// right leg
-			g.drawLine(x + 13, y +  3, x + 17, y + 13);
-			g.drawLine(x +  9, y +  3, x + 17, y + 13);
+			fill(g, new Polygon(
+				new int[] { x + 13, x + 9, x + 17 },
+				new int[] { y +  3, y + 3, y + 13 },
+				3
+			));
 			g.drawLine(x + 19, y + 13, x + 15, y + 13);
 
 			// crew module
-			g.drawLine(x -  7, y -  3, x - 13, y - 10);
-			g.drawLine(x +  7, y -  3, x + 13, y - 10);
-			g.drawLine(x - 13, y - 10, x - 13, y - 17);
-			g.drawLine(x + 13, y - 10, x + 13, y - 17);
-			g.drawLine(x - 13, y - 17, x -  7, y - 24);
-			g.drawLine(x + 13, y - 17, x +  7, y - 24);
-			g.drawLine(x -  7, y - 24, x +  7, y - 24);
+			fill(g, new Polygon(
+				new int[] { x - 7, x - 13, x - 13, x -  7, x +  7, x + 13, x + 13, x + 7 },
+				new int[] { y - 3, y - 10, y - 17, y - 24, y - 24, y - 17, y - 10, y - 3 },
+				8
+			));
 
 			// main thruster
-			g.drawLine(x - 5, y +  3, x - 8, y + 10);
-			g.drawLine(x + 5, y +  3, x + 8, y + 10);
-			g.drawLine(x - 8, y + 10, x + 8, y + 10);
+			fill(g, new Polygon(
+				new int[] { x - 5, x -  8, x +  8, x + 5 },
+				new int[] { y + 3, y + 10, y + 10, y + 3 },
+				4
+			));
 
 			// right thruster
-			g.drawLine(x + 13, y - 14, x + 16, y - 17);
-			g.drawLine(x + 13, y - 12, x + 16, y -  9);
-			g.drawLine(x + 16, y - 17, x + 16, y -  9);
+			fill(g, new Polygon(
+				new int[] { x + 13, x + 16, x + 16, x + 13 },
+				new int[] { y - 14, y - 17, y -  9, y - 12 },
+				4
+			));
 
 			// left thruster
-			g.drawLine(x - 13, y - 14, x - 16, y - 17);
-			g.drawLine(x - 13, y - 12, x - 16, y -  9);
-			g.drawLine(x - 16, y - 17, x - 16, y -  9);
+			fill(g, new Polygon(
+				new int[] { x - 13, x - 16, x - 16, x - 13 },
+				new int[] { y - 14, y - 17, y -  9, y - 12 },
+				4
+			));
+		}
+
+		void fill(Graphics2D g, Shape shape) {
+			g.setColor(colors.background);
+			g.fill(shape);
+			g.setColor(new Color(100, 100, 100));
+			g.draw(shape);
 		}
 	}
 }
