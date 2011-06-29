@@ -24,7 +24,7 @@ public class Plane extends Model {
 	}
 	
 	protected boolean collides(Actor actor0, Actor actor1) {
-		return false;
+		return true;
 	}
 	
 	private class ActorObserver implements CollectionObserver<Actor> {

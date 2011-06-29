@@ -1,6 +1,9 @@
 package vitro.plane;
 
 import vitro.*;
+import vitro.util.*;
+import static vitro.util.Groups.*;
+import java.util.*;
 
 public class MoveAction extends PlaneAction {
 
@@ -11,8 +14,21 @@ public class MoveAction extends PlaneAction {
 	public MoveAction(Plane model, Position destination, Actor actor) {
 		super(model);
 		this.start = model.positions.get(actor);
-		this.end   = destination;
+		this.end   = this.start.translate(collision(actor, start.displace(destination)));
 		this.actor = actor;
+	}
+	
+	private Vector2 collision(Actor actor, Vector2 moveVector) {
+		if(actor instanceof Collidable) {
+			Set<Collidable> collidableActors = new HashSet<Collidable>();
+			for(Actor a : model.actors) {
+				if(a instanceof Collidable) {
+					collidableActors.add((Collidable)a);
+				}
+			}
+			return Collision.earliestCollision(collidableActors, (Collidable)actor, moveVector);
+		}
+		return moveVector;
 	}
 	
 	public void apply() {

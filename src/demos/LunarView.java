@@ -46,8 +46,8 @@ public class LunarView implements View {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
-		g.setColor(colors.outline);
-		g.drawLine(0, height - 20, width, height - 20);
+		//g.setColor(colors.outline);
+		//g.drawLine(0, height - 20, width, height - 20);
 
 		g.setColor(colors.outline);
 		for(Point star : stars) {
@@ -60,6 +60,18 @@ public class LunarView implements View {
 			Drawing.configureVector(g);
 			g.drawString(String.format("vx: % 2.3f", model.lander.velocity.x), 10, 20);
 			g.drawString(String.format("vy: % 2.3f", model.lander.velocity.y), 10, 40);
+
+			for(Actor actor : model.actors) {
+				if(actor instanceof Collidable) {
+					AlignedBox bound = ((Collidable)actor).bound();
+					g.drawRect(
+						(int)bound.point0.x,
+						(int)bound.point0.y,
+						(int)(bound.point1.x - bound.point0.x),
+						(int)(bound.point1.y - bound.point0.y)
+					);
+				}
+			}
 
 			Position position = model.positions.get(model.lander);
 			landerView.draw(

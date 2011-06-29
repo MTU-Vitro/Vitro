@@ -8,13 +8,29 @@ import java.util.*;
 public class LunarWorld extends Plane {
 
 	public final LunarLander lander = new LunarLander(this);
+	public final Gravitron   planet = new Gravitron(this, new Vector2(0.0, 6.0));
 	
 	public LunarWorld() {
-		actors.add(new Gravitron(this, new Vector2(0.0, 1.0)));
+		actors.add(planet);
 	}
 	
 	public boolean done() {
 		return false;
+	}
+	
+	protected boolean collides(Actor actor0, Actor actor1) {
+		// We know its only one or the other
+		
+		if(actor0 instanceof LunarLander) { 
+			((LunarLander)actor0).isDead = true;
+			((LunarLander)actor0).velocity = Vector2.ZERO;
+		}
+		if(actor1 instanceof LunarLander) { 
+			((LunarLander)actor1).isDead = true;
+			((LunarLander)actor1).velocity = Vector2.ZERO;
+		}
+		
+		return true;
 	}
 	
 	
@@ -47,7 +63,7 @@ public class LunarWorld extends Plane {
 		public final Vector2 initVelocity;
 		public final Vector2 endVelocity;
 		
-		public final MoveAction   moveAction;
+		public final MoveAction moveAction;
 		
 		public ForceAction(Plane model, Vector2 force, PhysicsActor actor) {
 			super(model);
@@ -127,26 +143,26 @@ public class LunarWorld extends Plane {
 		}
 	}
 	
-	public class Gravitron extends PlaneActor {
-		public final Vector2 direction;
+	public class Gravitron extends PlaneActor implements Collidable {
+		public final Vector2 force;
 	
-		public Gravitron(Plane model, Vector2 direction) {
+		public Gravitron(Plane model, Vector2 force) {
 			super(model);
-			this.direction = direction;
+			this.force = force;
 		}
 		
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
 			
-			Set<Action> actions = new HashSet<Action>();
-			for(Actor actor : actors) {
-				if(actor instanceof PhysicsActor) {
-					actions.add(new ForceAction(model, direction, (PhysicsActor)actor));
-				}
+			if(!lander.isDead) {
+				ret.add(new ForceAction(model, force, lander));
 			}
-			ret.add(new MultiAction(actions));
 			
 			return ret;
+		}
+		
+		public AlignedBox bound() {
+			return new AlignedBox(-10000, 460, 10000, 479);
 		}
 	}
 	
@@ -168,15 +184,15 @@ public class LunarWorld extends Plane {
 			Vector2 force = Vector2.ZERO;
 			int fuelDiff = 0;
 			if(thrusterLeft) { 
-				force = force.add(new Vector2( 1.0, 0.0)); 
+				force = force.add(new Vector2( 5.0,   0.0)); 
 				fuelDiff++;
 			}
 			if(thrusterRight) { 
-				force = force.add(new Vector2(-1.0, 0.0)); 
+				force = force.add(new Vector2(-5.0,   0.0)); 
 				fuelDiff++;
 			}
 			if(thrusterMain) { 
-				force = force.add(new Vector2( 0.0, 0.0));
+				force = force.add(new Vector2( 0.0, -10.0));
 				fuelDiff++;
 			}
 			
@@ -196,8 +212,9 @@ public class LunarWorld extends Plane {
 		}
 	}
 	
-	public class LunarLander extends PhysicsActor {
-		public int fuel = 100;
+	public class LunarLander extends PhysicsActor implements Collidable {
+		public boolean isDead = false;
+		public int     fuel   = 200;
 	
 		public LunarLander(Plane model) {
 			super(model, 1.0);
@@ -206,22 +223,35 @@ public class LunarWorld extends Plane {
 		public Set<Action> actions() {
 			Set<Action> ret = new HashSet<Action>();
 			
-			ret.add(new ThrusterAction(model, false, false, false, this));
-			if(fuel > 0) {
-				ret.add(new ThrusterAction(model, true , false, false, this));
-				ret.add(new ThrusterAction(model, false, true , false, this));
-				ret.add(new ThrusterAction(model, false, false, true , this));
+			/*
+			if(model.positions.get(this).y >= 445) {
+				isDead = true;
+				velocity = Vector2.ZERO;
 			}
-			if(fuel > 1) {
-				ret.add(new ThrusterAction(model, true , true , false, this));
-				ret.add(new ThrusterAction(model, true , false, true , this));
-				ret.add(new ThrusterAction(model, false, true , true , this));
-			}
-			if(fuel > 2) {
-				ret.add(new ThrusterAction(model, true , true , true , this));
+			*/
+			if(!isDead) {
+				ret.add(new ThrusterAction(model, false, false, false, this));
+				if(fuel > 0) {
+					ret.add(new ThrusterAction(model, true , false, false, this));
+					ret.add(new ThrusterAction(model, false, true , false, this));
+					ret.add(new ThrusterAction(model, false, false, true , this));
+				}
+				if(fuel > 1) {
+					ret.add(new ThrusterAction(model, true , true , false, this));
+					ret.add(new ThrusterAction(model, true , false, true , this));
+					ret.add(new ThrusterAction(model, false, true , true , this));
+				}
+				if(fuel > 2) {
+					ret.add(new ThrusterAction(model, true , true , true , this));
+				}
 			}
 			
 			return ret;
+		}
+		
+		public AlignedBox bound() {
+			Position p = model.positions.get(this);
+			return new AlignedBox(p.x - 19, p.y - 26, p.x + 19, p.y + 15);
 		}
 	}
 }
