@@ -119,6 +119,10 @@ public abstract class Controller {
 		}
 	}
 
+	public List<Action> previousActions() {
+		return history.get(cursor);
+	}
+
 	protected List<Actor> actors() {
 		if (!(model instanceof Factional)) {
 			return new ArrayList<Actor>(model.actors);

@@ -51,21 +51,10 @@ public class GraphView implements View {
 		this(other.model, other.controller, other.width, other.height, other.palette);
 	}
 
-	public ColorScheme colorScheme() {
-		return palette;
-	}
-
-	public Controller controller() {
-		return controller;
-	}
-
-	public int width() {
-		return width;
-	}
-
-	public int height() {
-		return height;
-	}
+	public ColorScheme colorScheme() { return palette;    }
+	public Controller  controller()  { return controller; }
+	public int         width()       { return width;      }
+	public int         height()      { return height;     }
 
 	public Node createNode(double x, double y) {
 		return createNode(x, y, "");
