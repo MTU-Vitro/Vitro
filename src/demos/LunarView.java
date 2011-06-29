@@ -18,6 +18,7 @@ public class LunarView implements View {
 	
 	private final LanderView landerView;
 	private final Set<Point> stars;
+	private final Polygon mountains;
 
 	public LunarView(LunarWorld model, Controller controller, int width, int height) {
 		this.model      = model;
@@ -35,6 +36,20 @@ public class LunarView implements View {
 				(int)(Math.random() * height)
 			));
 		}
+
+		int[] x = new int[50];
+		int[] y = new int[50];
+		int xp = -10;
+		int yp = height / 2;
+		for(int i = 1; i < 49; i++) {
+			x[i] = xp;
+			y[i] = yp;
+			xp += (int)(Math.random() * 10) + (width / 40);
+			yp += (int)(Math.random() * 40) - 20;
+		}
+		x[ 0] = -20;       y[ 0] = 2 * height;
+		x[49] = 2 * width; y[49] = 2 * height;
+		mountains = new Polygon(x, y, 50);
 	}
 
 	public Controller  controller()  { return controller; }
@@ -43,6 +58,8 @@ public class LunarView implements View {
 	public int         height()      { return height;     }
 
 	public void draw(Graphics g) {
+		Drawing.configureVector(g);
+
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
@@ -54,10 +71,14 @@ public class LunarView implements View {
 			g.drawLine(star.x, star.y, star.x, star.y);
 		}
 
+		g.setColor(colors.background);
+		g.fillPolygon(mountains);
+		g.setColor(new Color(50, 50, 50));
+		g.drawPolygon(mountains);
+
 		synchronized(model) {
 			g.setColor(colors.outline);
 			g.setFont(new Font("Monospaced", Font.BOLD, 20));
-			Drawing.configureVector(g);
 			g.drawString(String.format("vx: % 2.3f", model.lander.velocity.x), 10, 20);
 			g.drawString(String.format("vy: % 2.3f", model.lander.velocity.y), 10, 40);
 
