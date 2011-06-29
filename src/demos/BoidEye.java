@@ -12,7 +12,7 @@ public class BoidEye extends Host {
 	}
 
 	public BoidEye() {
-		BoidWorld model                 = new BoidWorld(10.0, 15.0);
+		BoidWorld model                 = new BoidWorld();
 		SequentialController controller = new SequentialController(model);
 		BoidView view                   = new BoidView(model, controller, 640, 480, new ColorScheme());
 

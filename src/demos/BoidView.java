@@ -24,12 +24,17 @@ public class BoidView implements View {
 		this.height     = height;
 		this.colors     = colors;
 
-		modelScale = Math.min(
+		modelScale = 1;
+		/*
+		Math.min(
 			width  * .8 / model.width,
 			height * .8 / model.height
 		);
-		horizontalMargin = (int)((width  - (model.width  * modelScale)) / 2);
-		verticalMargin   = (int)((height - (model.height * modelScale)) / 2);
+		*/
+		//horizontalMargin = (int)((width  - (model.width  * modelScale)) / 2);
+		//verticalMargin   = (int)((height - (model.height * modelScale)) / 2);
+		horizontalMargin = 100;
+		verticalMargin   = 100;
 	}
 
 	public Controller  controller()  { return controller; }
@@ -41,6 +46,7 @@ public class BoidView implements View {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
+		/*
 		g.setColor(colors.outline);
 		g.drawRect(
 			horizontalMargin,
@@ -65,8 +71,10 @@ public class BoidView implements View {
 					(int)(verticalMargin   + (position.y * modelScale) - 4),
 					8, 8
 				);
+				
 			}
 		}
+		*/
 	}
 
 	private double sofar = 0;

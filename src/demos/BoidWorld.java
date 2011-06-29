@@ -9,9 +9,7 @@ public class BoidWorld extends Plane {
 
 	public Boid createBoid() { return new Boid(this); }
 
-	public BoidWorld(double width, double height) {
-		super(width, height);
-	}
+	public BoidWorld() { }
 	
 	public boolean done() {
 		return false;
@@ -72,7 +70,7 @@ public class BoidWorld extends Plane {
 			angle = Math.atan2(heading.y, heading.x);
 
 			Position newPos = myPos.translate(heading.normalize().mul(0.1));
-			newPos = new Position(Math.min(Math.max(newPos.x, 0.0), width), Math.min(Math.max(newPos.y, 0.0), height));
+			//newPos = new Position(Math.min(Math.max(newPos.x, 0.0), width), Math.min(Math.max(newPos.y, 0.0), height));
 			ret.add(new MoveAction(model, newPos, this));
 			
 			
