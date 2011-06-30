@@ -102,7 +102,15 @@ public class Vector2 {
 		int mul = (cos1 >= 0 ? +1 : -1);
 		return this.mul(ratio).add(normal.mul(ratio * cos1 - mul * cos2));
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Vector2)) { return false; }
+		Vector2 other = (Vector2)o;
+		return (other.x == x) &&
+		       (other.y == y);
+	}
+
 	/**
 	 *
 	 **/
