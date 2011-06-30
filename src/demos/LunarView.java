@@ -134,19 +134,19 @@ public class LunarView implements View {
 			}
 			
 			if(lastThrust != null) {
-				if(lastThrust.thrusterMain) {
+				if(lastThrust.mThrusterFired) {
 					int  h = (int)(Math.random() * 10) + 20;
 					int dx = (int)(Math.random() *  2)  - 1;
 					g.drawLine(x - 6, y + 10, x + dx, y + 10 + h);
 					g.drawLine(x + 6, y + 10, x + dx, y + 10 + h);
 				}
-				if(lastThrust.thrusterRight) {
+				if(lastThrust.rThrusterFired) {
 					int  w = (int)(Math.random() * 7) + 10;
 					int dy = (int)(Math.random() * 2) - 1;
 					g.drawLine(x + 16, y - 15, x + 16 + w, y - 13 + dy);
 					g.drawLine(x + 16, y - 11, x + 16 + w, y - 13 + dy);
 				}
-				if(lastThrust.thrusterLeft) {
+				if(lastThrust.lThrusterFired) {
 					int  w = (int)(Math.random() * 7) + 10;
 					int dy = (int)(Math.random() * 2) - 1;
 					g.drawLine(x - 16, y - 15, x - 16 - w, y - 13 + dy);
