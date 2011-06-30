@@ -8,27 +8,42 @@ import java.util.*;
 public class LunarWorld extends Plane {
 
 	public final LunarLander lander = new LunarLander(this);
-	public final Gravitron   planet = new Gravitron(this, new Vector2(0.0, 5.0));
+	public final Gravitron   planet = new Gravitron(this, new Vector2(0.0, 3.0));
+	public final Target      target = new Target(this);
 	
 	public LunarWorld() {
 		actors.add(planet);
 	}
 	
+	public static boolean results = false;
 	public boolean done() {
+		if(lander.isDead && !results) { 
+			System.out.format("Simulation Complete. You have failed!%n");
+			results = true;
+		}
+		if(lander.landed && !results) {
+			System.out.format("Simulation Complete. You have succeeded! Your score is: %f%n",
+				Math.abs(model.positions.get(lander).x - model.positions.get(target).x) < 20 ? 100.0 : 10.0);
+			results = true;
+		}
+		
+		if(lander.isDead || lander.landed) { return true; }
 		return false;
 	}
 	
 	public boolean collides(Collidable actor0, Collidable actor1) {
 		// We know its only one or the other
 
-		System.out.println("Collision Detected");
-		if(actor0 instanceof LunarLander) {
-			System.out.println("Actor0 is Dead!");
-			((LunarLander)actor0).isDead = true;
-		}
-		if(actor1 instanceof LunarLander) {
-			System.out.println("Actor1 is Dead!");
-			((LunarLander)actor1).isDead = true;
+		if(lander == actor0 || lander == actor1) {
+			//System.out.println("Collision Detected");
+			if(lander.velocity.norm() > 10) {
+				//System.out.println("The Lander has Crashed!");
+				lander.isDead = true;
+			}
+			else {
+				//System.out.println("The Lander has Landed!");
+				lander.landed = true;
+			}
 		}
 
 		return true;
@@ -158,7 +173,7 @@ public class LunarWorld extends Plane {
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
 			
-			if(!lander.isDead) {
+			if(!lander.isDead && !lander.landed) {
 				ret.add(new ForceAction(model, force, lander));
 			}
 			
@@ -170,34 +185,116 @@ public class LunarWorld extends Plane {
 		}
 	}
 	
+	public class Target extends PlaneActor implements Collidable {
+	
+		public Target(Plane model) {
+			super(model);
+			model.positions.put(this, new Position(425, 470));
+		}
+	
+		public AlignedBox bound() {
+			Position p = model.positions.get(this);
+			return new AlignedBox(p.x - 25, p.y - 10, p.x + 25, p.y + 10);
+		}
+	}
+	
+	public class LunarLander extends PhysicsActor implements Collidable {
+		public final Thruster lThruster = new Thruster(new Vector2( 5.0,   0.0), 1);
+		public final Thruster rThruster = new Thruster(new Vector2(-5.0,   0.0), 1);
+		public final Thruster mThruster = new Thruster(new Vector2( 0.0, -10.0), 1);
+		
+		public boolean isDead = false;
+		public boolean landed = false;
+		
+		public int     fuel   = 100;
+	
+		public LunarLander(Plane model) {
+			super(model, 1.0);
+		}
+		
+		public Set<Action> actions() {
+			Set<Action> ret = new HashSet<Action>();
+			
+			if(!isDead && !landed) {
+				//if(velocity.x < 4) ret.add(new ThrusterAction(model, true , false, false, this));
+				//if(velocity.y > 5) ret.add(new ThrusterAction(model, false, false, true , this));
+			
+				
+				ret.add(new ThrusterAction(model, false, false, false, this));
+				if(fuel > 0) {
+					ret.add(new ThrusterAction(model, true , false, false, this));
+					ret.add(new ThrusterAction(model, false, true , false, this));
+					ret.add(new ThrusterAction(model, false, false, true , this));
+				}
+				if(fuel > 1) {
+					ret.add(new ThrusterAction(model, true , true , false, this));
+					ret.add(new ThrusterAction(model, true , false, true , this));
+					ret.add(new ThrusterAction(model, false, true , true , this));
+				}
+				if(fuel > 2) {
+					ret.add(new ThrusterAction(model, true , true , true , this));
+				}
+			}
+			
+			return ret;
+		}
+		
+		public AlignedBox bound() {
+			Position p = model.positions.get(this);
+			return new AlignedBox(p.x - 19, p.y - 26, p.x + 19, p.y + 15);
+		}
+		
+		public class Thruster {
+			private static final double timeDiff = 0.1;
+			private double time = 0.0;
+			
+			public final Vector2 maxThrust;
+			public final int     fuelCost;
+			
+			public Thruster(Vector2 maxThrust, int fuelCost) {
+				this.maxThrust = maxThrust;
+				this.fuelCost  = fuelCost;
+			}
+			
+			public Vector2 fire(boolean fired) {
+				if(!fired || fuel < fuelCost) { time = 0.0; return Vector2.ZERO; }
+				
+				time += timeDiff;
+				return maxThrust.mul(Math.atan(10 * time + 1) / (Math.PI / 2.0));
+			}
+		}
+	}
+	
 	public class ThrusterAction extends PlaneAction {
-		public final boolean thrusterLeft;
-		public final boolean thrusterRight;
-		public final boolean thrusterMain;
+		public final boolean lThrusterFired;
+		public final boolean rThrusterFired;
+		public final boolean mThrusterFired;
 		public final int     fuelCost;
 		
 		public final LunarLander lander;
 		public final ForceAction forceAction;
 		
-		public ThrusterAction(Plane model, boolean left, boolean right, boolean main, LunarLander lander) {
+		public ThrusterAction(Plane model, boolean lThrust, boolean rThrust, boolean mThrust, LunarLander lander) {
 			super(model);
-			this.thrusterLeft  = left;
-			this.thrusterRight = right;
-			this.thrusterMain  = main;
 			
-			Vector2 force = Vector2.ZERO;
-			int fuelDiff = 0;
-			if(thrusterLeft) { 
-				force = force.add(new Vector2( 5.0,   0.0)); 
-				fuelDiff++;
+			this.lThrusterFired = lThrust;
+			this.rThrusterFired = rThrust;
+			this.mThrusterFired = mThrust;
+			
+			int     fuelDiff = 0;
+			Vector2 force    = Vector2.ZERO;
+			
+			if(lThrust) { 
+				force = force.add(lander.lThruster.fire(lThrust));
+				fuelDiff += lander.lThruster.fuelCost;
 			}
-			if(thrusterRight) { 
-				force = force.add(new Vector2(-5.0,   0.0)); 
-				fuelDiff++;
+			if(rThrust) {
+				force = force.add(lander.rThruster.fire(rThrust));
+				fuelDiff += lander.rThruster.fuelCost;
 			}
-			if(thrusterMain) { 
-				force = force.add(new Vector2( 0.0, -10.0));
-				fuelDiff++;
+			if(mThrust) { 
+				force = force.add(lander.mThruster.fire(mThrust));
+				fuelDiff += lander.mThruster.fuelCost;
 			}
 			
 			this.fuelCost    = fuelDiff;
@@ -213,49 +310,6 @@ public class LunarWorld extends Plane {
 		public void undo() {
 			forceAction.undo();
 			lander.fuel += fuelCost;
-		}
-	}
-	
-	public class LunarLander extends PhysicsActor implements Collidable {
-		public boolean isDead = false;
-		public int     fuel   = 100;
-	
-		public LunarLander(Plane model) {
-			super(model, 1.0);
-		}
-		
-		public Set<Action> actions() {
-			Set<Action> ret = new HashSet<Action>();
-			
-			/*
-			if(model.positions.get(this).y >= 445) {
-				isDead = true;
-				velocity = Vector2.ZERO;
-			}
-			*/
-			if(!isDead) {
-				ret.add(new ThrusterAction(model, false, false, false, this));
-				if(fuel > 0) {
-					//ret.add(new ThrusterAction(model, true , false, false, this));
-					//ret.add(new ThrusterAction(model, false, true , false, this));
-					ret.add(new ThrusterAction(model, false, false, true , this));
-				}
-				if(fuel > 1) {
-					//ret.add(new ThrusterAction(model, true , true , false, this));
-					//ret.add(new ThrusterAction(model, true , false, true , this));
-					//ret.add(new ThrusterAction(model, false, true , true , this));
-				}
-				if(fuel > 2) {
-					//ret.add(new ThrusterAction(model, true , true , true , this));
-				}
-			}
-			
-			return ret;
-		}
-		
-		public AlignedBox bound() {
-			Position p = model.positions.get(this);
-			return new AlignedBox(p.x - 19, p.y - 26, p.x + 19, p.y + 15);
 		}
 	}
 }
