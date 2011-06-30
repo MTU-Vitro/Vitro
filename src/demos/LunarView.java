@@ -79,8 +79,9 @@ public class LunarView implements View {
 		synchronized(model) {
 			g.setColor(colors.outline);
 			g.setFont(new Font("Monospaced", Font.BOLD, 20));
-			g.drawString(String.format("vx: % 2.3f", model.lander.velocity.x), 10, 20);
-			g.drawString(String.format("vy: % 2.3f", model.lander.velocity.y), 10, 40);
+			g.drawString(String.format("VX:   % 2.3f", model.lander.velocity.x), 10, 20);
+			g.drawString(String.format("VY:   % 2.3f", model.lander.velocity.y), 10, 40);
+			g.drawString(String.format("FUEL: % d",    model.lander.fuel), 10, 60);
 
 			Position position = model.positions.get(model.lander);
 			landerView.draw(
