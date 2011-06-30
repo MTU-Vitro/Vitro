@@ -31,6 +31,11 @@ public class LunarWorld extends Plane {
 		return false;
 	}
 	
+	public boolean success() {
+		if(lander.landed) { return true; }
+		return false;
+	}
+	
 	public boolean collides(Collidable actor0, Collidable actor1) {
 		// We know its only one or the other
 
@@ -199,14 +204,14 @@ public class LunarWorld extends Plane {
 	}
 	
 	public class LunarLander extends PhysicsActor implements Collidable {
-		public final Thruster lThruster = new Thruster(new Vector2( 5.0,   0.0), 1);
-		public final Thruster rThruster = new Thruster(new Vector2(-5.0,   0.0), 1);
+		public final Thruster lThruster = new Thruster(new Vector2( 2.0,   0.0), 1);
+		public final Thruster rThruster = new Thruster(new Vector2(-2.0,   0.0), 1);
 		public final Thruster mThruster = new Thruster(new Vector2( 0.0, -10.0), 1);
 		
 		public boolean isDead = false;
 		public boolean landed = false;
 		
-		public int     fuel   = 100;
+		public int     fuel   = 1000;
 	
 		public LunarLander(Plane model) {
 			super(model, 1.0);
@@ -237,6 +242,10 @@ public class LunarWorld extends Plane {
 			}
 			
 			return ret;
+		}
+		
+		public LunarWorld model() {
+			return (LunarWorld)model;
 		}
 		
 		public AlignedBox bound() {
