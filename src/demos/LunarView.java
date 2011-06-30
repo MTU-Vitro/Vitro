@@ -19,6 +19,7 @@ public class LunarView implements View {
 	private final LanderView landerView;
 	private final Set<Point> stars;
 	private final Polygon mountains;
+	private final VectorFont font;
 
 	public LunarView(LunarWorld model, Controller controller, int width, int height) {
 		this.model      = model;
@@ -28,6 +29,7 @@ public class LunarView implements View {
 		this.colors     = new ColorScheme(Color.WHITE, new Color(75, 75, 75), Color.BLACK);
 		
 		landerView = new LanderView(model.lander);
+		font = new VectorFont(12, 17);
 
 		stars = new HashSet<Point>();
 		for(int x = 0; x < 40; x++) {
@@ -78,11 +80,17 @@ public class LunarView implements View {
 
 		synchronized(model) {
 			g.setColor(colors.outline);
-			g.setFont(new Font("Monospaced", Font.BOLD, 20));
-			g.drawString(String.format("VX:   % 2.3f", model.lander.velocity.x), 10, 20);
-			g.drawString(String.format("VY:   % 2.3f", model.lander.velocity.y), 10, 40);
-			g.drawString(String.format("FUEL: % d",    model.lander.fuel), 10, 60);
+			font.draw(g, 10, 10, String.format("VX:  % 07.2f", model.lander.velocity.x));
+			font.draw(g, 10, 30, String.format("VY:  % 07.2f", model.lander.velocity.y));
+			font.draw(g, 10, 50, String.format("FUEL:% d",    model.lander.fuel));
 
+			double alt  = model.positions.get(model.target).y - model.positions.get(model.lander).y;
+			double dist = model.positions.get(model.target).x - model.positions.get(model.lander).x;
+
+			font.draw(g, 10, 70, String.format("ALTITUDE:% 07.2f", alt));
+			font.draw(g, 10, 90, String.format("DISTANCE:% 07.2f", dist));
+
+			/*
 			for(Actor actor : model.actors) {
 				if(actor instanceof Collidable) {
 					AlignedBox bound = ((Collidable)actor).bound();
@@ -94,6 +102,7 @@ public class LunarView implements View {
 					);
 				}
 			}
+			*/
 
 			Position position = model.positions.get(model.lander);
 			landerView.draw(
