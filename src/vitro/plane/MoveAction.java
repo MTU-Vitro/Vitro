@@ -10,6 +10,8 @@ public class MoveAction extends PlaneAction {
 	public final Position start;
 	public final Position end;
 	public final Actor    actor;
+
+	private boolean collision = false;
 	
 	public MoveAction(Plane model, Position destination, Actor actor) {
 		super(model);
@@ -26,11 +28,16 @@ public class MoveAction extends PlaneAction {
 					collidableActors.add((Collidable)a);
 				}
 			}
-			return Collision.earliestCollision(collidableActors, (Collidable)actor, moveVector);
+			// shouldn't have to forward the model on to the Collision class
+			Vector2 newMoveVector = Collision.earliestCollision(model, collidableActors, (Collidable)actor, moveVector);
+			if(!newMoveVector.equals(moveVector)) { collision = true; System.out.println("COLLISION"); }
+			return newMoveVector;
 		}
 		return moveVector;
 	}
-	
+
+	public boolean collision() { return collision; }
+
 	public void apply() {
 		if(!start.equals(model.positions.get(actor))) {
 			throw new Error(String.format("Precondition for MoveAction '%s' not satisfied.", this));

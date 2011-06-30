@@ -8,7 +8,7 @@ import java.util.*;
 public class LunarWorld extends Plane {
 
 	public final LunarLander lander = new LunarLander(this);
-	public final Gravitron   planet = new Gravitron(this, new Vector2(0.0, 6.0));
+	public final Gravitron   planet = new Gravitron(this, new Vector2(0.0, 5.0));
 	
 	public LunarWorld() {
 		actors.add(planet);
@@ -18,18 +18,19 @@ public class LunarWorld extends Plane {
 		return false;
 	}
 	
-	protected boolean collides(Actor actor0, Actor actor1) {
+	public boolean collides(Collidable actor0, Collidable actor1) {
 		// We know its only one or the other
-		
-		if(actor0 instanceof LunarLander) { 
+
+		System.out.println("Collision Detected");
+		if(actor0 instanceof LunarLander) {
+			System.out.println("Actor0 is Dead!");
 			((LunarLander)actor0).isDead = true;
-			((LunarLander)actor0).velocity = Vector2.ZERO;
 		}
-		if(actor1 instanceof LunarLander) { 
+		if(actor1 instanceof LunarLander) {
+			System.out.println("Actor1 is Dead!");
 			((LunarLander)actor1).isDead = true;
-			((LunarLander)actor1).velocity = Vector2.ZERO;
 		}
-		
+
 		return true;
 	}
 	
@@ -81,6 +82,9 @@ public class LunarWorld extends Plane {
 		public void apply() {
 			actor.velocity = endVelocity;
 			moveAction.apply();
+			if(moveAction.collision()) {
+				actor.velocity = Vector2.ZERO;
+			}
 		}
 		
 		public void undo() {
@@ -214,7 +218,7 @@ public class LunarWorld extends Plane {
 	
 	public class LunarLander extends PhysicsActor implements Collidable {
 		public boolean isDead = false;
-		public int     fuel   = 200;
+		public int     fuel   = 100;
 	
 		public LunarLander(Plane model) {
 			super(model, 1.0);
@@ -232,17 +236,17 @@ public class LunarWorld extends Plane {
 			if(!isDead) {
 				ret.add(new ThrusterAction(model, false, false, false, this));
 				if(fuel > 0) {
-					ret.add(new ThrusterAction(model, true , false, false, this));
-					ret.add(new ThrusterAction(model, false, true , false, this));
+					//ret.add(new ThrusterAction(model, true , false, false, this));
+					//ret.add(new ThrusterAction(model, false, true , false, this));
 					ret.add(new ThrusterAction(model, false, false, true , this));
 				}
 				if(fuel > 1) {
-					ret.add(new ThrusterAction(model, true , true , false, this));
-					ret.add(new ThrusterAction(model, true , false, true , this));
-					ret.add(new ThrusterAction(model, false, true , true , this));
+					//ret.add(new ThrusterAction(model, true , true , false, this));
+					//ret.add(new ThrusterAction(model, true , false, true , this));
+					//ret.add(new ThrusterAction(model, false, true , true , this));
 				}
 				if(fuel > 2) {
-					ret.add(new ThrusterAction(model, true , true , true , this));
+					//ret.add(new ThrusterAction(model, true , true , true , this));
 				}
 			}
 			

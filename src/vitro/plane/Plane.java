@@ -23,7 +23,7 @@ public class Plane extends Model {
 		model = this;
 	}
 	
-	protected boolean collides(Actor actor0, Actor actor1) {
+	protected boolean collides(Collidable actor0, Collidable actor1) {
 		return true;
 	}
 	
