@@ -278,5 +278,8 @@ public class VectorFont {
 			.75, .56, .75, .84,
 			.25, .84, .75, .84
 		));
+		letters.put('/', new Glyph(
+			0, 1, 1, 0
+		));
 	}
 }
