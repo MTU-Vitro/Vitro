@@ -71,7 +71,7 @@ public class BoidWorld extends Plane {
 
 			Position newPos = myPos.translate(heading.normalize().mul(0.1));
 			//newPos = new Position(Math.min(Math.max(newPos.x, 0.0), width), Math.min(Math.max(newPos.y, 0.0), height));
-			ret.add(new MoveAction(model, newPos, this));
+			//ret.add(new MoveAction(model, newPos, this));
 			
 			
 			//ret.add(new MoveAction(model, myPos.translate(0.1, 0.0), this));
