@@ -80,5 +80,9 @@
 	<target name="demo:lunar" depends="demos:compile">
 		<demo class = "demos.LunarEye"/>
 	</target>
+	
+	<target name="demo:lights" depends="demos:compile">
+		<demo class = "demos.LightsOutEye" />
+	</target>
 
 </project>

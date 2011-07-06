@@ -46,17 +46,11 @@ public class GridView implements View {
 
 		for(int y = 0; y < model.height; y++) {
 			for(int x = 0; x < model.height; x++) {
-				g.setColor(colors.outline);
-				g.drawRect(
-					horizontalMargin + (x * cellSize),
-					verticalMargin   + (y * cellSize),
-					cellSize,
-					cellSize
-				);
+				drawCell((Graphics2D)g, x, y);
 			}
 		}
 		synchronized(model) {
-			for(Actor actor : model.actors) { drawActor(g, actor); }
+			for(Actor actor : model.actors) { drawActor((Graphics2D)g, actor); }
 			for(Annotation a : controller.annotations().keySet()) {
 				if (a instanceof ActorAnnotation) {
 					drawActorAnnotation((Graphics2D)g, (ActorAnnotation)a);
@@ -65,7 +59,17 @@ public class GridView implements View {
 		}
 	}
 
-	protected void drawActor(Graphics g, Actor a) {
+	protected void drawCell(Graphics2D g, int x, int y) {
+		g.setColor(colors.outline);
+		g.drawRect(
+			horizontalMargin + (x * cellSize),
+			verticalMargin   + (y * cellSize),
+			cellSize,
+			cellSize
+		);
+	}
+
+	protected void drawActor(Graphics2D g, Actor a) {
 		Location location = model.locations.get(a);
 		if (location == null) { return; }
 		if (a instanceof Factional) {
