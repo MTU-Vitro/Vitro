@@ -1,41 +1,61 @@
 package vitro.plane;
 
 import vitro.*;
+import vitro.util.*;
+import java.util.*;
 
 public class VelocityAction extends PlaneAction {
 	public final PhysicsActor actor;
 
-	private boolean  applied      = false;
-	private Position prevPosition = null;
-	private Position nextPosition = null;
-	private Action   response     = null;
+	private boolean  applied       = false;
+	private Position prevPosition  = null;
+	private Position nextPosition  = null;
+	private List<Action> responses = new LinkedList<Action>();
+	private Action   chained       = null;
 
 	public VelocityAction(Plane model, PhysicsActor actor) {
 		super(model);
 		this.actor = actor;
 	}
 
+	public void apply(Vector2 v, int depth) {
+		if(v.normSq() < 0.001 || depth > 10) { return; }
+		
+		if(actor instanceof Collidable) {
+			Collision collision = Collision.collision(model, (Collidable)actor, v);
+			if(collision.intercepted != null) {
+				nextPosition = model.positions.get(actor).translate(collision.intercept);
+
+				Action response = ((Collidable)actor).collisionAction(collision.intercepted);
+				if(response != null) {
+					responses.add(response);
+					response.apply();
+				}
+				
+				Vector2 vel = ((Collidable)actor).collisionVector(collision.intercepted, (v).sub(collision.intercept));
+				model.positions.put(actor, nextPosition);
+				apply(vel, depth + 1);
+			}
+		}
+	}
+
 	public void apply() {
+		if(applied) {
+			for(int x = responses.size() - 1; x >= 0; x++) { responses.get(x).apply(); }
+		}
+		
 		if(!applied) {
 			applied = true;
 			
 			prevPosition = model.positions.get(actor);
-			if(actor instanceof Collidable) {
-				Collision collision = Collision.collision(model, (Collidable)actor, actor.velocity);
-				if(collision.intercepted != null) {
-					response = ((Collidable)actor).collision(collision.intercepted);
-				}
-				nextPosition = prevPosition.translate(collision.intercept);
-			}
-			else {
-				nextPosition = prevPosition.translate(actor.velocity);
-			}
+			nextPosition = prevPosition.translate(actor.velocity);
+			
+			apply(actor.velocity, 0);
 		}
 
-		if(!model.positions.get(actor).equals(prevPosition)) {
-			throw new Error();
-		}
-		if(response != null) { response.apply(); }
+//		if(!model.positions.get(actor).equals(prevPosition)) {
+//			throw new Error();
+//		}
 		model.positions.put(actor, nextPosition);
 	}
 
@@ -44,7 +64,7 @@ public class VelocityAction extends PlaneAction {
 			throw new Error();
 		}
 		model.positions.put(actor, prevPosition);
-		if(response != null) { response.undo(); }
+		for(int x = responses.size() - 1; x >= 0; x++) { responses.get(x).undo(); }
 	}
 
 	@Override

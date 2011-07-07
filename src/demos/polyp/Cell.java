@@ -4,7 +4,7 @@ import vitro.*;
 import vitro.plane.*;
 import java.util.*;
 
-public class Cell extends PhysicsActor implements Collidable {
+public class Cell extends PhysicsActor {//{implements Collidable {
 
 
 	public Cell(Plane model) {

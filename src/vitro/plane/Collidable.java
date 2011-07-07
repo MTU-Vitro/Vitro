@@ -3,6 +3,7 @@ package vitro.plane;
 import vitro.*;
 
 public interface Collidable {
-	public Action collision(Collidable obstacle);
-	public Bound  bound();
+	public Bound   bound();
+	public Vector2 collisionVector(Collidable obstacle, Vector2 remaining);
+	public Action  collisionAction(Collidable obstacle);
 }

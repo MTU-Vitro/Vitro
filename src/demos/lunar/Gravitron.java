@@ -45,17 +45,26 @@ public class Gravitron extends PlaneActor implements Collidable {
 	}
 
 	/**
-	*
-	**/
-	public Action collision(Collidable obstacle) {
-		return null;
-	}
-
-	/**
 	* Should be a plane instead... Also, ground level should either be
 	* parameterized or should be zero with everything else adapting
 	**/
 	public Bound bound() {
 		return new AlignedBox(-10000, -5, 10000, -10);
+	}
+
+	/**
+	*
+	**/	
+	public Vector2 collisionVector(Collidable obstacle, Vector2 remaining) {
+		// we don't move anyways...
+		return Vector2.ZERO;
+	}
+	
+	/**
+	*
+	**/
+	public Action  collisionAction(Collidable obstacle) {
+		// we don't move anyways...
+		return null;
 	}
 }

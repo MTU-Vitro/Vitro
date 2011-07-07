@@ -52,26 +52,34 @@ public class Lander extends PhysicsActor implements Collidable {
 	/**
 	*
 	**/
-	public Action collision(Collidable obstacle) {
-		State newState = State.CRASHED;
-		if(obstacle instanceof LandingPad) {
-			if(this.velocity.norm() < 10 && ((LandingPad)obstacle).correct(this)) {
-				newState = State.LANDED;
-			}
-		}
-
-		List<Action> composite = new LinkedList<Action>();
-		composite.add(new ForceAction(this, this.velocity.mul(-this.mass)));
-		composite.add(new ChangeStateAction(newState));
-		return new CompositeAction(composite);
+	public Bound bound() {
+		Position p = model.positions.get(this);
+		return new AlignedBox(p.x - 19, p.y - 15, p.x + 19, p.y + 24);
 	}
 
 	/**
 	*
+	**/	
+	public Vector2 collisionVector(Collidable obstacle, Vector2 remaining) {
+		if(obstacle instanceof Lander) { return remaining; }
+		return Vector2.ZERO;
+	}
+	
+	/**
+	*
 	**/
-	public Bound bound() {
-		Position p = model.positions.get(this);
-		return new AlignedBox(p.x - 19, p.y - 15, p.x + 19, p.y + 24);
+	public Action  collisionAction(Collidable obstacle) {
+		if(obstacle instanceof Lander) { return null; }
+		
+		List<Action> composite = new LinkedList<Action>();
+		if(obstacle instanceof LandingPad && velocity.norm() < 10 && ((LandingPad)obstacle).correct(this)) {
+			composite.add(new ChangeStateAction(State.LANDED));
+		}
+		else {
+			composite.add(new ChangeStateAction(State.CRASHED));
+		}
+		composite.add(new ForceAction(this, velocity.mul(-mass)));
+		return new CompositeAction(composite);
 	}
 
 	/**

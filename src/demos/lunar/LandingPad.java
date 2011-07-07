@@ -32,15 +32,24 @@ public class LandingPad extends PlaneActor implements Collidable {
 	/**
 	*
 	**/
-	public Action collision(Collidable obstacle) {
-		return null;
-	}
-
-	/**
-	*
-	**/
 	public Bound bound() {
 		Position p = model.positions.get(this);
 		return new AlignedBox(p.x - 35, -5, p.x + 35, p.y);
+	}
+	
+	/**
+	*
+	**/	
+	public Vector2 collisionVector(Collidable obstacle, Vector2 remaining) {
+		// we don't move anyways...
+		return Vector2.ZERO;
+	}
+	
+	/**
+	*
+	**/
+	public Action  collisionAction(Collidable obstacle) {
+		// we don't move anyways...
+		return null;
 	}
 }

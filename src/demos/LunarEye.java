@@ -16,16 +16,20 @@ public class LunarEye extends Host {
 	}
 
 	public LunarEye() {
-		Lunar model           = new Lunar(-1.0, new Position(0.0, 10.0));
+		Lunar model = new Lunar(-1.0, new Position(0.0, 10.0));
 
 		Lander lander = new Lander(model);
 		model.positions.put(lander, new Position(000.0, 400.0));
 		lander.velocity = new Vector2(0.0, 0.0);
+		
+		lander = new Lander(model);
+		model.positions.put(lander, new Position(-100.0, 400.0));
+		lander.velocity = new Vector2(5.0, 0.0);
 
 		Controller controller = new SequentialController(model);
 		LunarView view        = new LunarView(model, controller, 640, 480);
 
-		controller.bind(lander.navigation, new LunarBrain());
+		//controller.bind(lander.navigation, new LunarBrain());
 
 		show(view);
 	}
