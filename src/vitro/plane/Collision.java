@@ -27,11 +27,17 @@ public class Collision {
 				Bound bound0 = moving.bound();
 				Bound bound1 = obstacle.bound();
 
-				if(!(bound0 instanceof AlignedBox) && !(bound1 instanceof AlignedBox)) {
+				double param;
+				if(bound0 instanceof AlignedBox && bound1 instanceof AlignedBox) {
+					param = collision((AlignedBox)bound0, (AlignedBox)bound1, move);
+				}
+				else if(bound0 instanceof Circle && bound1 instanceof Circle) {
+					param = collision((Circle)bound0, (Circle)bound1, move);
+				}
+				else {
 					throw new Error("Collision not supported!");
 				}
 
-				double param = collision((AlignedBox)bound0, (AlignedBox)bound1, move);
 				if(0.0 <= param && param <= intercept) {
 					intercepted = obstacle;
 					intercept = param;
@@ -42,12 +48,31 @@ public class Collision {
 		return new Collision(intercepted, move.mul(intercept));
 	}
 
+	private static double collision(Circle circle0, Circle circle1, Vector2 move) {
+		Vector2 diff = (circle1.center).displace(circle0.center);
+
+		double a = move.dot(move);
+		double b = diff.dot(move) * 2;
+		double c = diff.dot(diff);
+
+		double discrim = b * b - 4 * a * c;
+		if(discrim >= 0) {
+			double sqrt = Math.sqrt(discrim);
+
+			double t0 = (-b - sqrt) / (2 * a);
+			double t1 = (-b + sqrt) / (2 * a);
+
+			if(t0 < 0) { return Double.POSITIVE_INFINITY; }
+			else       { return t0;                       }
+		}
+		else {
+			return Double.POSITIVE_INFINITY;
+		}
+	}
 
 	private static double collision(AlignedBox box0, AlignedBox box1, Vector2 move) {
-		boolean collision = false;
-
 		double tFirst = Double.NEGATIVE_INFINITY;
-		double tLast  = Double.POSITIVE_INFINITY;
+		double tLast  = Double.POSITIVE_INFINITY;  // what is tLast good for?
 
 		if(move.x < 0.0) {
 			if(box0.point1.x <= box1.point0.x) return Double.POSITIVE_INFINITY;
@@ -71,9 +96,7 @@ public class Collision {
 			if(box1.point1.y >= box0.point0.y) tLast  = Math.min((box1.point1.y - box0.point0.y) / move.y, tLast);
 		}
 
-		//if(tFirst > tLast) { return 1.0; }
 		if(tFirst >= 0.0)   { return tFirst; }
-		//return tLast;
 		return Double.POSITIVE_INFINITY;
 	}
 }
