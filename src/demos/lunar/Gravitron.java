@@ -31,7 +31,7 @@ public class Gravitron extends PlaneActor implements Collidable {
 	* ground.
 	**/
 	public Set<Action> actions() {
-		Set<Action> gravity = new HashSet<Action>();
+		List<Action> gravity = new LinkedList<Action>();
 		for(Actor actor : Groups.ofType(Lander.class, model.actors)) {
 			Lander lander = (Lander)actor;
 			if(lander.state == Lander.State.IN_FLIGHT) {

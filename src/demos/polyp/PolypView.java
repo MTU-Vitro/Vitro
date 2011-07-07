@@ -19,7 +19,7 @@ public class PolypView implements View {
 		this.width   = width;
 		this.height  = height;
 		
-		colors = new ColorScheme(Color.BLACK, Color.PINK, Color.BLUE);
+		colors = new ColorScheme(Color.BLACK, Color.BLUE, Color.WHITE);
 	}
 	
 	public Controller  controller()  { return control; }
@@ -30,12 +30,36 @@ public class PolypView implements View {
 	public void draw(Graphics g) {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
+		
+		synchronized(model) {
+			// sorry for this :P
+			for(Actor actor : model.actors) {
+				if(actor instanceof Collidable && ((Collidable)actor).bound() instanceof Circle) {
+					Circle bound = (Circle)((Collidable)actor).bound();
+				
+					g.setColor(colors.secondary);
+					g.fillOval(
+						(int)(bound.center.x - bound.radius), 
+						(int)(bound.center.y - bound.radius),
+						(int)(2 * bound.radius),
+						(int)(2 * bound.radius)
+					);
+					g.setColor(colors.outline);
+					g.drawOval(
+						(int)(bound.center.x - bound.radius), 
+						(int)(bound.center.y - bound.radius),
+						(int)(2 * bound.radius),
+						(int)(2 * bound.radius)
+					);
+				}
+			}
+		}
 	}
 	
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if(sofar > .50) {
+		if(sofar > .10) {
 			control.next();
 			sofar = 0;
 		}

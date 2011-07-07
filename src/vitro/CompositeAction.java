@@ -3,9 +3,9 @@ package vitro;
 import java.util.*;
 
 public class CompositeAction implements Action {
-	public final Collection<Action> actions;
+	public final List<Action> actions;
 	
-	public CompositeAction(Collection<Action> actions) {
+	public CompositeAction(List<Action> actions) {
 		this.actions = actions;
 	}
 	

@@ -21,7 +21,7 @@ public class Collision {
 		double intercept = 1.0;
 
 		for(Actor a : model.actors) {
-			if(a instanceof Collidable) {
+			if(a instanceof Collidable && moving != a) {
 				Collidable obstacle = (Collidable)a;
 
 				Bound bound0 = moving.bound();
@@ -38,7 +38,7 @@ public class Collision {
 					throw new Error("Collision not supported!");
 				}
 
-				if(0.0 <= param && param <= intercept) {
+				if(-0.01 <= param && param <= intercept) {
 					intercepted = obstacle;
 					intercept = param;
 				}
@@ -49,11 +49,14 @@ public class Collision {
 	}
 
 	private static double collision(Circle circle0, Circle circle1, Vector2 move) {
-		Vector2 diff = (circle1.center).displace(circle0.center);
+		Vector2 diff = (circle0.center).displace(circle1.center);
+		double  rads = (circle0.radius + circle1.radius) * (circle0.radius + circle1.radius);
+		
+		if(move.dot(diff) <= 0) { return Double.POSITIVE_INFINITY; }
 
-		double a = move.dot(move);
-		double b = diff.dot(move) * 2;
-		double c = diff.dot(diff);
+		double a =      move.dot(move);
+		double b = -2 * move.dot(diff);
+		double c =      diff.dot(diff) - rads;
 
 		double discrim = b * b - 4 * a * c;
 		if(discrim >= 0) {
@@ -62,12 +65,10 @@ public class Collision {
 			double t0 = (-b - sqrt) / (2 * a);
 			double t1 = (-b + sqrt) / (2 * a);
 
-			if(t0 < 0) { return Double.POSITIVE_INFINITY; }
-			else       { return t0;                       }
+			if(t0 >= -0.01) { return t0; }
+			if(t1 >= -0.01) { return t1; }
 		}
-		else {
-			return Double.POSITIVE_INFINITY;
-		}
+		return Double.POSITIVE_INFINITY;
 	}
 
 	private static double collision(AlignedBox box0, AlignedBox box1, Vector2 move) {

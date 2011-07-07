@@ -18,16 +18,14 @@ public class VelocityAction extends PlaneAction {
 	public void apply() {
 		if(!applied) {
 			applied = true;
+			
 			prevPosition = model.positions.get(actor);
 			if(actor instanceof Collidable) {
 				Collision collision = Collision.collision(model, (Collidable)actor, actor.velocity);
 				if(collision.intercepted != null) {
 					response = ((Collidable)actor).collision(collision.intercepted);
 				}
-				//System.out.println(prevPosition.translate(collision.intercept));
-				//System.out.println(">> " + collision.intercept);
 				nextPosition = prevPosition.translate(collision.intercept);
-				//System.out.println(">> " + nextPosition);
 			}
 			else {
 				nextPosition = prevPosition.translate(actor.velocity);
@@ -37,11 +35,8 @@ public class VelocityAction extends PlaneAction {
 		if(!model.positions.get(actor).equals(prevPosition)) {
 			throw new Error();
 		}
-		model.positions.put(actor, nextPosition);
-		if(actor instanceof Collidable) {
-			//System.out.println("++ " + ((AlignedBox)(((Collidable)actor).bound())).point0.y);
-		}
 		if(response != null) { response.apply(); }
+		model.positions.put(actor, nextPosition);
 	}
 
 	public void undo() {
