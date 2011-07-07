@@ -85,4 +85,8 @@
 		<demo class = "demos.LightsOutEye" />
 	</target>
 
+	<target name="demo:polyp" depends="demos:compile">
+		<demo class = "demos.polyp.PolypHost" />
+	</target>
+
 </project>
