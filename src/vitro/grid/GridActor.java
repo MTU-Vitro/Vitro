@@ -25,7 +25,11 @@ public class GridActor extends Actor {
 				ret.add(new Location(model, nx, ny));
 			}
 		}
-		return model.passable(this, ret);
+		return ret;
+	}
+
+	public Set<Location> passableNeighbors(int[][] deltas) {
+		return model.passable(this, neighbors(deltas));
 	}
 
 	public Set<Location> pumpingNeighbors(int[][] deltas) {

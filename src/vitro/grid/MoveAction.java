@@ -48,6 +48,6 @@ public class MoveAction extends GridAction {
 
 	@Override
 	public String toString() {
-		return String.format("Move actor '%s' from '%s' to '%s'.", actor, start, end);
+		return String.format("Move actor '%s' from %s to %s.", actor, start, end);
 	}
 }

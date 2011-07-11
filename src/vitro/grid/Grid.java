@@ -60,7 +60,7 @@ public class Grid extends Model {
 	// by overriding this method, users
 	// can easily add their own passability
 	// system of arbitrary complexity.
-	protected boolean passable(Actor actor, Location location) {
+	public boolean passable(Actor actor, Location location) {
 		return true;
 	}
 
