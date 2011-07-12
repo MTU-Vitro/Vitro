@@ -16,36 +16,28 @@ public class Collision {
 	/**
 	* Can we handle simultaneous collisions?
 	**/
-	public static Collision collision(Plane model, Collidable moving, Vector2 move) {
-		Collidable intercepted = null;
-		double intercept = 1.0;
+	public static SortedMap<Double, Collidable> collision(Plane model, Collidable moving, Vector2 move) {
+		SortedMap<Double, Collidable> intersections = new TreeMap<Double, Collidable>();
 
-		for(Actor a : model.actors) {
-			if(a instanceof Collidable && moving != a) {
-				Collidable obstacle = (Collidable)a;
+		for(Actor actor : model.actors) {
+			if(actor instanceof Collidable && moving != actor) {
+				Collidable obstacle = (Collidable)actor;
 
 				Bound bound0 = moving.bound();
 				Bound bound1 = obstacle.bound();
 
-				double param;
 				if(bound0 instanceof AlignedBox && bound1 instanceof AlignedBox) {
-					param = collision((AlignedBox)bound0, (AlignedBox)bound1, move);
+					double param = collision((AlignedBox)bound0, (AlignedBox)bound1, move);
+					intersections.put(param, obstacle);
 				}
-				else if(bound0 instanceof Circle && bound1 instanceof Circle) {
-					param = collision((Circle)bound0, (Circle)bound1, move);
-				}
-				else {
-					throw new Error("Collision not supported!");
-				}
-
-				if(-0.01 <= param && param <= intercept) {
-					intercepted = obstacle;
-					intercept = param;
+				if(bound0 instanceof Circle     && bound1 instanceof Circle    ) {
+					double param = collision(    (Circle)bound0,     (Circle)bound1, move);
+					intersections.put(param, obstacle);
 				}
 			}
 		}
 
-		return new Collision(intercepted, move.mul(intercept));
+		return intersections.tailMap(0.0).headMap(1.0);
 	}
 
 	private static double collision(Circle circle0, Circle circle1, Vector2 move) {

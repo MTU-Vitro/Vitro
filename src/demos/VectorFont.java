@@ -4,12 +4,17 @@ import java.awt.*;
 import java.util.*;
 
 public class VectorFont {
+	public final int characterWidth;
+	public final int characterHeight;
 
 	private static final int spacing = 4;
 	private final int charWidth;
 	private final int charHeight;
 
 	public VectorFont(int charWidth, int charHeight) {
+		this.characterWidth  = charWidth;
+		this.characterHeight = charHeight;
+
 		this.charWidth  = charWidth;
 		this.charHeight = charHeight;
 	}
@@ -20,6 +25,14 @@ public class VectorFont {
 			glyph.draw(g, x, y, charWidth, charHeight);
 			x += charWidth + spacing;
 		}
+	}
+
+	public int length(String text) {
+		int length = 0;
+		for(char c : text.toCharArray()) {
+			length += charWidth + spacing;
+		}
+		return length - spacing;
 	}
 
 	private static class Glyph {
@@ -280,6 +293,16 @@ public class VectorFont {
 		));
 		letters.put('/', new Glyph(
 			0, 1, 1, 0
+		));
+		letters.put('[', new Glyph(
+			1.0, 0.1, 0.5, 0.1,
+			0.5, 0.1, 0.5, 0.9,
+			0.5, 0.9, 1.0, 0.9
+		));
+		letters.put(']', new Glyph(
+			0.0, 0.1, 0.5, 0.1,
+			0.5, 0.1, 0.5, 0.9,
+			0.5, 0.9, 0.0, 0.9
 		));
 	}
 }

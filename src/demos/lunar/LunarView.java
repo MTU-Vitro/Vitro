@@ -12,21 +12,21 @@ import java.util.*;
 public class LunarView implements View {
 
 	private final ColorScheme colors = new ColorScheme(Color.WHITE, new Color(75, 75, 75), Color.BLACK);
-	private final VectorFont  font   = new VectorFont(12, 17);
 
 	private final Lunar      model;
 	private final Controller controller;
 	private final int        width;
 	private final int        height;
 
-	private final StarView       starView;
-	private final MountainView   mountainView;
-	private final GroundView     groundView;
+	private final ObserverView observerView;
+
 	private final LandingPadView landingPadView;
 	private final HUDView        hudView;
 
 	private final Set<LanderView> landerViews;
 
+	private AffineTransform screen;
+	private AffineTransform world;
 
 	private Polygon blast = null;
 
@@ -36,9 +36,9 @@ public class LunarView implements View {
 		this.width      = width;
 		this.height     = height;
 
-		starView       = new StarView(40);
-		mountainView   = new MountainView(height / 2, 20);
-		groundView     = new GroundView(height - 20);
+		observerView   = new ObserverView();
+
+
 		landingPadView = new LandingPadView(model.landingPad);
 		hudView        = new HUDView((Lander)Groups.firstOfType(Lander.class, model.actors), model.landingPad);
 
@@ -70,11 +70,9 @@ public class LunarView implements View {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
-		starView.draw((Graphics2D)g);
-		mountainView.draw((Graphics2D)g);
-		groundView.draw((Graphics2D)g);
-
 		synchronized(model) {
+			observerView.draw((Graphics2D)g);
+
 			AffineTransform oldTransform = ((Graphics2D)g).getTransform();
 			((Graphics2D)g).scale( 1, -1);
 			((Graphics2D)g).translate(width / 2, 20 - height);
@@ -103,105 +101,6 @@ public class LunarView implements View {
 	}
 
 
-	/**
-	*
-	**/
-	public class StarView {
-		private final Set<Point> stars;
-
-		public StarView(int density) {
-			this.stars = new HashSet<Point>();
-
-			for(int x = 0; x < density; x++) {
-				stars.add(new Point(
-					(int)(Math.random() * width ),
-					(int)(Math.random() * height)
-				));
-			}
-		}
-
-		protected void draw(Graphics2D g) {
-			g.setColor(colors.outline);
-			for(Point star : stars) {
-				g.drawLine(star.x, star.y, star.x, star.y);
-			}
-		}
-	}
-
-	/**
-	*
-	**/
-	public class MountainView {
-		private final Polygon mountains;
-
-		public MountainView(int startY, int diffHeight) {
-			mountains = build(startY, diffHeight);
-		}
-
-		public void draw(Graphics2D g) {
-			g.setColor(colors.background);
-			g.fillPolygon(mountains);
-			g.setColor(colors.outline.darker());
-			g.drawPolygon(mountains);
-		}
-
-		private Polygon build(int startHeight, int diffHeight) {
-			int[] x = new int[50];
-			int[] y = new int[50];
-
-			int xp = -10;
-			int yp = startHeight;
-
-			for(int i = 1; i < 49; i++) {
-				x[i] = xp;
-				y[i] = yp;
-				xp += (int)(Math.random() * 10) + (width / 40);
-				yp += (int)(Math.random() * (2 * diffHeight)) - diffHeight;
-			}
-
-			x[ 0] = -20;       y[ 0] = 2 * height;
-			x[49] = 2 * width; y[49] = 2 * height;
-
-			return new Polygon(x, y, 50);
-		}
-	}
-
-	/**
-	*
-	**/
-	public class GroundView {
-		private final Polygon ground;
-
-		public GroundView(int startHeight) {
-			ground = build(startHeight);
-		}
-
-		public void draw(Graphics2D g) {
-			g.setColor(colors.background);
-			g.fillPolygon(ground);
-			g.setColor(colors.outline);
-			g.drawPolygon(ground);
-		}
-
-		private Polygon build(int startHeight) {
-			int[] x = new int[50];
-			int[] y = new int[50];
-
-			int xp = -10;
-			for(int i = 1; i < 49; i++) {
-				x[i] = xp;
-				y[i] = startHeight + (int)(Math.random() *  6) - 3;
-
-				xp += (int)(Math.random() * 10) + (width / 40);
-			}
-
-			x[ 0] = -20;       y[ 0] = 2 * height;
-			x[49] = 2 * width; y[49] = 2 * height;
-
-			return new Polygon(x, y, 50);
-		}
-	}
-
 
 	/**
 	*
@@ -219,21 +118,10 @@ public class LunarView implements View {
 			boolean success = lander.state == Lander.State.LANDED;
 			boolean dead    = lander.state == Lander.State.CRASHED;
 
-			/*
-			AlignedBox bound = (AlignedBox)lander.bound();
-			g.setColor(colors.outline);
-			g.drawRect(
-				(int)(bound.point0.x),
-				(int)(bound.point0.y),
-				(int)(bound.point1.x - bound.point0.x),
-				(int)(bound.point1.y - bound.point0.y)
-			);
-			*/
-
 			AffineTransform oldTransform = g.getTransform();
 			g.rotate(Math.PI, x, y);
 
-			if(dead) {
+			if(lander.state == Lander.State.CRASHED) {
 				g.fillPolygon(blast(x, y));
 			}
 
@@ -376,9 +264,104 @@ public class LunarView implements View {
 	/**
 	*
 	**/
+	public class ObserverView {
+		private final Set<Point> stars;
+		private final Polygon    mountains;
+		private final Polygon    ground;
+
+		public ObserverView() {
+			stars     = generateStars(400);
+			mountains = generateMountains(height / 2, 20);
+			ground    = generateGround(height - 20);
+		}
+
+		public void draw(Graphics2D g) {
+			drawStars(g);
+			drawMountains(g);
+			drawGround(g);
+		}
+
+
+		private void drawStars(Graphics2D g) {
+			g.setColor(colors.outline);
+			for(Point star : stars) {
+				g.drawLine(star.x, star.y, star.x, star.y);
+			}
+		}
+
+		public void drawMountains(Graphics2D g) {
+			g.setColor(colors.background);
+			g.fillPolygon(mountains);
+			g.setColor(colors.outline.darker().darker());
+			g.drawPolygon(mountains);
+		}
+
+		public void drawGround(Graphics2D g) {
+			g.setColor(colors.background);
+			g.fillPolygon(ground);
+			g.setColor(colors.outline);
+			g.drawPolygon(ground);
+		}
+
+		private Set<Point> generateStars(int density) {
+			Set<Point> stars = new HashSet<Point>();
+			for(int x = 0; x < density; x++) {
+				stars.add(new Point((int)(Math.random() * width), (int)(Math.random() * height)));
+			}
+			return stars;
+		}
+
+		private Polygon generateMountains(int startHeight, int diffHeight) {
+			int[] x = new int[50];
+			int[] y = new int[50];
+
+			int xp = -10;
+			int yp = startHeight;
+
+			for(int i = 1; i < 49; i++) {
+				x[i] = xp;
+				y[i] = yp;
+				xp += (int)(Math.random() * 10) + (width / 40);
+				yp += (int)(Math.random() * (2 * diffHeight)) - diffHeight;
+			}
+
+			x[ 0] = -20;       y[ 0] = 2 * height;
+			x[49] = 2 * width; y[49] = 2 * height;
+
+			return new Polygon(x, y, 50);
+		}
+
+		private Polygon generateGround(int startHeight) {
+			int[] x = new int[50];
+			int[] y = new int[50];
+
+			int xp = -10;
+			for(int i = 1; i < 49; i++) {
+				x[i] = xp;
+				y[i] = startHeight + (int)(Math.random() *  6) - 3;
+
+				xp += (int)(Math.random() * 10) + (width / 40);
+			}
+
+			x[ 0] = -20;       y[ 0] = 2 * height;
+			x[49] = 2 * width; y[49] = 2 * height;
+
+			return new Polygon(x, y, 50);
+		}
+	}
+
+
+	/**
+	*
+	**/
 	public class HUDView {
+		private final VectorFont font = new VectorFont(6, 9);
+
 		public final Lander     lander;
 		public final LandingPad landingPad;
+
+		private final int bufX = 10;
+		private final int bufY = 10;
 
 		public HUDView(Lander lander, LandingPad landingPad) {
 			this.lander     = lander;
@@ -386,16 +369,97 @@ public class LunarView implements View {
 		}
 
 		public void draw(Graphics2D g) {
+			// draw main details
+			drawMarkerLander(g);
+			drawMarkerLandingPad(g);
+
+			drawLanderDetails(g);
+			drawGlobalDetails(g);
+
+			// draw exception notifications
+			if     (lander                      == null) { drawNotification(g, "DISCONNECTED");          }
+			else if(model.positions.get(lander) == null) { drawNotification(g, "OBTAINING POSITION..."); }
+		}
+
+		private final void drawLanderDetails(Graphics2D g) {
+			String xVelString = String.format("VEL [X] :  %s", "----.--");
+			String yVelString = String.format("VEL [Y] :  %s", "----.--");
+			String fuelString = String.format("FUEL    :  %s", "----"   );
+
+			if(lander != null && model.positions.get(lander) != null) {
+				xVelString = String.format("VEL [X] :  % 07.2f", lander.velocity.x);
+				yVelString = String.format("VEL [Y] :  % 07.2f", lander.velocity.y);
+				fuelString = String.format("FUEL    : % 4d"   , lander.fuel      );
+			}
+
 			g.setColor(colors.outline);
-			font.draw(g, 10, 10, String.format("VX:  % 07.2f", lander.velocity.x));
-			font.draw(g, 10, 30, String.format("VY:  % 07.2f", lander.velocity.y));
-			font.draw(g, 10, 50, String.format("FUEL:% 4d", lander.fuel));
+			font.draw(g, bufX, bufY + 0 * (font.characterHeight + 3), xVelString);
+			font.draw(g, bufX, bufY + 1 * (font.characterHeight + 3), yVelString);
+			font.draw(g, bufX, bufY + 2 * (font.characterHeight + 3), fuelString);
+		}
 
-			double altitude =   model.positions.get(lander).y;
-			double distance = - model.positions.get(lander).x + model.positions.get(landingPad).x;
+		private final void drawGlobalDetails(Graphics2D g) {
+			String altString = String.format("ALTITUDE :  %s", "----.--");
+			String disString = String.format("DISTANCE :  %s", "----.--");
 
-			font.draw(g, 10, 70, String.format("ALTITUDE:% 07.2f", altitude));
-			font.draw(g, 10, 90, String.format("DISTANCE:% 07.2f", distance));
+			if(lander     != null && model.positions.get(lander)     != null &&
+			   landingPad != null && model.positions.get(landingPad) != null) {
+				double altitude =   model.positions.get(lander).y - model.positions.get(landingPad).y - 15;
+				double distance = - model.positions.get(lander).x - model.positions.get(landingPad).x;
+
+				altString = String.format("ALTITUDE : % 07.2f", altitude);
+				disString = String.format("DISTANCE : % 07.2f", distance);
+			}
+
+			g.setColor(colors.outline);
+			font.draw(g, bufX + (width / 2), bufY + 0 * (font.characterHeight + 3), altString);
+			font.draw(g, bufX + (width / 2), bufY + 1 * (font.characterHeight + 3), disString);
+		}
+
+		private final void drawNotification(Graphics2D g, String string) {
+			int length = font.length(string);
+
+			g.setColor(colors.background);
+			g.fillRect(width / 2 - length / 2 - 15, height / 2 - font.characterHeight / 2 - 10, length + 30, font.characterHeight + 20);
+			g.setColor(colors.outline);
+			g.drawRect(width / 2 - length / 2 - 15, height / 2 - font.characterHeight / 2 - 10, length + 30, font.characterHeight + 20);
+
+			font.draw(g, width / 2 - length / 2, height / 2 - font.characterHeight / 2, string);
+		}
+
+		private final void drawMarkerLander(Graphics2D g) {
+			if(lander != null && model.positions.get(lander) != null) {
+				Position p = model.positions.get(lander);
+				int[][] polygon = new int[][] { 
+					{ (int)(p.x)     , (int)(p.x) -  5, (int)(p.x) +  5 }, 
+					{ (int)(p.y) + 30, (int)(p.y) + 35, (int)(p.y) + 35 }
+				};
+
+				AffineTransform oldTransform = g.getTransform();
+				g.scale( 1, -1);
+				g.translate(width / 2, 20 - height);
+
+				g.setColor(colors.outline);
+				g.fillPolygon(polygon[0], polygon[1], 3);
+
+				g.setTransform(oldTransform);
+			}
+		}
+
+		private final void drawMarkerLandingPad(Graphics2D g) {
+			if(landingPad != null && model.positions.get(landingPad) != null) {
+				Position p = model.positions.get(landingPad);
+				int[][] polygon = new int[][] { { (int)(p.x), (int)(p.x) -  5, (int)(p.x) +  5 }, { -10, -15, -15 } };
+
+				AffineTransform oldTransform = g.getTransform();
+				g.scale( 1, -1);
+				g.translate(width / 2, 20 - height);
+
+				g.setColor(colors.outline);
+				g.fillPolygon(polygon[0], polygon[1], 3);
+
+				g.setTransform(oldTransform);
+			}
 		}
 	}
 }
