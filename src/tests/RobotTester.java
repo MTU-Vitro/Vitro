@@ -88,8 +88,12 @@ public class RobotTester {
 		Action suicide = first(bot.actions());
 
 		suicide.apply();
+		List<Action> cleanup = world.cleanup();
+		for(Action a : cleanup) { a.apply(); }
 		assertFalse(world.actors.contains(bot));
 		
+		Collections.reverse(cleanup);
+		for(Action a : cleanup) { a.undo(); }
 		suicide.undo();
 		assertTrue(world.actorAt(new Location(world, 0, 0)) == bot);
 	}

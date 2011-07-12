@@ -12,10 +12,13 @@ public class Robots extends Grid {
 
 	public static final int SOLID       = 0;
 	public static final int LIGHT       = 1;
-	public static final int TARGET      = 2;
-	public static final int DARK        = 3;
-	public static final int SLUDGE      = 4;
-	public static final int DARK_SLUDGE = 5;
+	public static final int DARK        = 2;
+	public static final int TARGET      = 3;
+	public static final int DARK_TARGET = 4;
+	public static final int SLUDGE      = 5;
+	public static final int DARK_SLUDGE = 6;
+	public static final int FLOAT       = 7;
+	public static final int DARK_FLOAT  = 8;
 
 	public final int[][] tiles;
 
@@ -26,12 +29,17 @@ public class Robots extends Grid {
 
 	public boolean dark(Location location) {
 		int tile = tiles[location.y][location.x];
-		return tile == DARK || tile == DARK_SLUDGE;
+		return tile == DARK || tile == DARK_SLUDGE || tile == DARK_TARGET;
 	}
 
 	public boolean sludge(Location location) {
 		int tile = tiles[location.y][location.x];
 		return tile == SLUDGE || tile == DARK_SLUDGE;
+	}
+
+	public boolean target(Location location) {
+		int tile = tiles[location.y][location.x];
+		return tile == TARGET || tile == DARK_TARGET;
 	}
 
 	public boolean passable(Actor actor, Location location) {
@@ -53,10 +61,12 @@ public class Robots extends Grid {
 		// every target must be covered by a Block or a BLU.
 		for(int y = 0; y < tiles.length; y++) {
 			for(int x = 0; x < tiles[0].length; x++) {
-				if (tiles[y][x] == TARGET) {
-					Actor actor = actorAt(new Location(this, x, y));
-					if (actor == null) { return false; }
-					if (!(actor instanceof Block) && !(actor instanceof BLU)) { return false; }
+				Location location = new Location(this, x, y);
+				if (target(location)) {
+					Actor actor = actorAt(location);
+					if (actor instanceof Block) { continue; }
+					if (actor instanceof BLU)   { continue; }
+					return false;
 				}
 			}
 		}
@@ -76,38 +86,6 @@ public class Robots extends Grid {
 
 		public String toString() {
 			return String.format("Block %d", id);
-		}
-	}
-
-	public static class RoboMove extends MoveAction {
-		private DestroyAction sploosh;
-
-		public RoboMove(Robots model, Location destination, Actor actor) {
-			super(model, destination, actor);
-			if (model.sludge(destination)) {
-				if (!(actor instanceof RNG) || model.dark(destination)) {
-					// if a robot is taking a dip in sludge,
-					// we want the DestroyAction to reflect
-					// the destination location:
-					super.apply();
-					sploosh = new DestroyAction(model, actor);
-					super.undo();
-				}
-			}
-		}
-
-		public void apply() {
-			super.apply();
-			if (sploosh != null) { sploosh.apply(); }
-		}
-
-		public void undo() {
-			if (sploosh != null) { sploosh.undo(); }
-			super.undo();
-		}
-
-		public String toString() {
-			return super.toString() + ((sploosh == null) ? "" : ".. landing in a puddle of goo.");
 		}
 	}
 
@@ -156,59 +134,7 @@ public class Robots extends Grid {
 		return null;
 	}
 
-	public static class DropAction extends CreateAction {
-		public final RNG rng;
-
-		public DropAction(Grid model, RNG actor) {
-			super(model, actor.location(), actor.carried);
-			this.rng = actor;
-		}
-
-		public void apply() {
-			super.apply();
-			rng.carried = null;
-		}
-
-		public void undo() {
-			super.undo();
-			rng.carried = actor;
-		}
-
-		public String toString() {
-			return String.format("Drop '%s' with actor '%s'.", actor, rng);
-		}
-	}
-
-	public static class LiftAction extends DestroyAction {
-		public final RNG rng;
-		public final Actor target;
-
-		public LiftAction(Grid model, RNG actor, Actor target) {
-			super(model, target);
-			this.rng    = actor;
-			this.target = target;
-		}
-
-		public void apply() {
-			super.apply();
-			rng.carried = target;
-		}
-
-		public void undo() {
-			super.undo();
-			rng.carried = null;
-		}
-
-		public String toString() {
-			return String.format("Lift '%s' with actor '%s'.", target, rng);
-		}
-	}
-
-	public abstract class Robot extends GridActor {
-		public Robot(Robots model) { super(model); }
-	}
-
-	public class BLU extends Robot {
+	public class BLU extends GridActor {
 		private final int id;
 
 		public BLU(Robots model) {
@@ -218,10 +144,9 @@ public class Robots extends Grid {
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
-			if (zonked()) { return ret; }
 			for(Location location : neighbors(ORTHOGONAL)) {
 				if (model.passable(this, location)) {
-					ret.add(new RoboMove((Robots)model, location, this));
+					ret.add(new MoveAction(model, location, this));
 				}
 				// BLU can push objects:
 				Actor other = model.actorAt(location);
@@ -237,9 +162,8 @@ public class Robots extends Grid {
 		}
 	}
 
-	public class RNG extends Robot {
+	public class RNG extends GridActor {
 		private final int id;
-		public Actor carried = null;
 
 		public RNG(Robots model) {
 			super(model);
@@ -254,29 +178,34 @@ public class Robots extends Grid {
 			for(Location location : neighbors(ORTHOGONAL)) {
 				if (model.passable(this, location)) {
 					ret.add(new MoveAction(model, location, this));
+				
+					// RNG can drag objects:
 				}
 			}
-			// RNG can drop objects:
-			if (carried != null && model.passable(carried, location())) {
-				ret.add(new DropAction(model, this));
-			}
-			// RNG can pick up objects:
-			if (carried == null) {
-				Set<Actor> targets = model.actorsAt(location());
-				for(Actor target : targets) {
-					if (target instanceof RNG) {
-						// this excludes both yourself and
-						// other operational (flying) RNGs
-						if (!((RNG)target).zonked()) { continue; }
-					}
-					ret.add(new LiftAction(model, this, target));
-				}
-			}
+			
 			return ret;
 		}
 
 		public String toString() {
 			return String.format("RNG %d", id);
 		}
+	}
+
+	public List<Action> cleanup() {
+		List<Action> ret = super.cleanup();
+		for(Actor actor : actors) {
+			Location location = locations.get(actor);
+			if (location == null || !sludge(location)) { continue; }
+			if (actor instanceof Block) {
+				
+			}
+			if (actor instanceof BLU) {
+				ret.add(new DestroyAction(model, actor));
+			}
+			if (actor instanceof RNG && dark(location)) {
+				ret.add(new DestroyAction(model, actor));
+			}
+		}
+		return ret;
 	}
 }
