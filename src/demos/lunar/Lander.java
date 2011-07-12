@@ -62,6 +62,7 @@ public class Lander extends PhysicsActor implements Collidable {
 	**/	
 	public Vector2 collisionVector(Collidable obstacle, Vector2 remaining) {
 		if(obstacle instanceof Lander) { return remaining; }
+		if(obstacle instanceof LandingPad || obstacle instanceof Gravitron) { return Vector2.ZERO; }
 		return Vector2.ZERO;
 	}
 	

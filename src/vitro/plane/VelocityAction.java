@@ -18,45 +18,37 @@ public class VelocityAction extends PlaneAction {
 		this.actor = actor;
 	}
 
-	public void apply(Vector2 v, int depth) {
-		if(v.normSq() < 0.001 || depth > 10) { return; }
-		
-		if(actor instanceof Collidable) {
-			Collision collision = Collision.collision(model, (Collidable)actor, v);
-			if(collision.intercepted != null) {
-				nextPosition = model.positions.get(actor).translate(collision.intercept);
-
-				Action response = ((Collidable)actor).collisionAction(collision.intercepted);
-				if(response != null) {
-					responses.add(response);
-					response.apply();
-				}
-				
-				Vector2 vel = ((Collidable)actor).collisionVector(collision.intercepted, (v).sub(collision.intercept));
-				model.positions.put(actor, nextPosition);
-				apply(vel, depth + 1);
-			}
-		}
-	}
-
 	public void apply() {
-		if(applied) {
-			for(int x = responses.size() - 1; x >= 0; x++) { responses.get(x).apply(); }
-		}
-		
 		if(!applied) {
 			applied = true;
-			
+
 			prevPosition = model.positions.get(actor);
-			nextPosition = prevPosition.translate(actor.velocity);
-			
-			apply(actor.velocity, 0);
+			nextPosition = prevPosition;
+
+			Vector2 velocity = actor.velocity;
+			if(actor instanceof Collidable) {
+				SortedMap<Double, Collidable> intersections = Collision.collision(model, (Collidable)actor, velocity);
+				for(Map.Entry<Double, Collidable> entry : intersections.entrySet()) {
+					
+
+					Action response = ((Collidable)actor).collisionAction(entry.getValue());
+					if(response != null) { responses.add(response); }
+
+					Vector2 partial = velocity.mul(1 - entry.getKey());
+					Vector2 reflect = ((Collidable)actor).collisionVector(entry.getValue(), partial);
+					if(!partial.equals(reflect)) {
+						nextPosition = nextPosition.translate(velocity.mul(entry.getKey()));
+						// perform the reflection or whatever.
+						velocity = reflect;
+						break;
+					}
+				}
+				nextPosition = nextPosition.translate(velocity);
+			}
 		}
 
-//		if(!model.positions.get(actor).equals(prevPosition)) {
-//			throw new Error();
-//		}
 		model.positions.put(actor, nextPosition);
+		for(Action response : responses) { response.apply(); }
 	}
 
 	public void undo() {
