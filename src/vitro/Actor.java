@@ -10,10 +10,6 @@ import java.util.*;
 **/
 public class Actor {
 
-	public Action involuntary() {
-		return null;
-	}
-
 	/**
 	* A collection of Actions that are possible for this Actor.
 	* In a simulation round, each Actor will have the opportunity

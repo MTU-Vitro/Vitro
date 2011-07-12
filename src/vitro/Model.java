@@ -35,4 +35,11 @@ public abstract class Model {
 	public boolean done() {
 		return false;
 	}
+	
+	/**
+	*
+	**/
+	public List<Action> cleanup() {
+		return new LinkedList<Action>();
+	}
 }

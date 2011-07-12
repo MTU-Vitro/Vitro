@@ -77,20 +77,9 @@ public abstract class Controller {
 		synchronized(model) {		
 			// generate a new round:
 			if (cursor == history.size()) {
-				List<Action> actions = new LinkedList<Action>();
-				actions.addAll(nextRound());
-				// we grab the involuntary actions for every actor and
-				// apply them. this could be done in a different order
-				// (as is handled by the sequential, simultaneous
-				// controllers), but is handled here for now.
-				for(Actor a : actors()) {
-					Action involuntary = a.involuntary();
-					if (involuntary != null) {
-						involuntary.apply();
-						actions.add(involuntary);
-					}
-				}
-				history.add(actions);
+				List<Action> round = nextRound();
+				round.addAll(model.cleanup());
+				history.add(round);
 				// --
 				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();
 				for(Agent agent : agents) {
