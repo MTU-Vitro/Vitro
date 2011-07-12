@@ -49,7 +49,8 @@ public class Robots extends Grid {
 		// RNG can hover over the same square as different objects:
 		Actor other = actorAt(location);
 		if (other != null) {
-			if ( (other instanceof RNG) &&  (actor instanceof RNG)) { return false; }
+			if ( (other instanceof RNG) &&  (actor instanceof RNG)) { return  dark(location); }
+			if ( (other instanceof RNG) && !(actor instanceof RNG)) { return !dark(location); }
 			if (!(other instanceof RNG) && !(actor instanceof RNG)) { return false; }
 		}
 
@@ -121,6 +122,33 @@ public class Robots extends Grid {
 		}
 	}
 
+	public static class FloatAction extends DestroyAction {
+		private final Robots grid;
+		public final Location location;
+		public final Actor target;
+		
+		public FloatAction(Robots grid, Actor target) {
+			super(grid, target);
+			this.grid     = grid;
+			this.location = grid.locations.get(target);
+			this.target   = target;
+		}
+
+		public void apply() {
+			super.apply();
+			grid.tiles[location.y][location.x] = grid.dark(location) ? DARK_FLOAT : FLOAT;
+		}
+
+		public void undo() {
+			grid.tiles[location.y][location.x] = grid.dark(location) ? DARK_SLUDGE : SLUDGE;
+			super.undo();
+		}
+
+		public String toString() {
+			return String.format("Float '%s' in Sludge at %s.", target, location);
+		}
+	}
+
 	private Location pushDestination(Actor pusher, Actor pushed) {
 		Location a = locations.get(pusher);
 		Location b = locations.get(pushed);
@@ -145,7 +173,7 @@ public class Robots extends Grid {
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
 			for(Location location : neighbors(ORTHOGONAL)) {
-				if (model.passable(this, location)) {
+				if (passable(this, location)) {
 					ret.add(new MoveAction(model, location, this));
 				}
 				// BLU can push objects:
@@ -173,16 +201,21 @@ public class Robots extends Grid {
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
 			// RNG is solar-powered and becomes inactive in the dark.
-			if (((Robots)model).dark(location())) { return ret; }
+			if (dark(location())) { return ret; }
 
 			for(Location location : neighbors(ORTHOGONAL)) {
-				if (model.passable(this, location)) {
-					ret.add(new MoveAction(model, location, this));
-				
-					// RNG can drag objects:
+				if (!passable(this, location)) { continue; }
+				ret.add(new MoveAction(model, location, this));
+			
+				// RNG can drag objects:
+				for(Actor other : actorsAt(location())) {
+					if ((other instanceof RNG) || !passable(other, location)) { continue; }
+					ret.add(new CompositeAction(
+						new MoveAction(model, location, this),
+						new MoveAction(model, location, other)
+					));
 				}
 			}
-			
 			return ret;
 		}
 
@@ -195,15 +228,25 @@ public class Robots extends Grid {
 		List<Action> ret = super.cleanup();
 		for(Actor actor : actors) {
 			Location location = locations.get(actor);
-			if (location == null || !sludge(location)) { continue; }
-			if (actor instanceof Block) {
-				
+			if (location == null) { continue; }
+
+			if (sludge(location)) {
+				if (actor instanceof Block) {
+					ret.add(new FloatAction((Robots)model, actor));
+				}
+				if (actor instanceof BLU) {
+					ret.add(new DestroyAction(model, actor));
+				}
+				if (actor instanceof RNG && dark(location) && actorsAt(location).size() == 1) {
+					// If we're dragging something, it takes the plunge first.
+					ret.add(new DestroyAction(model, actor));
+				}
 			}
-			if (actor instanceof BLU) {
-				ret.add(new DestroyAction(model, actor));
-			}
-			if (actor instanceof RNG && dark(location)) {
-				ret.add(new DestroyAction(model, actor));
+			else {
+				if (actor instanceof RNG && dark(location) && actorsAt(location).size() > 1) {
+					// if we fall on something, we blow up.
+					ret.add(new DestroyAction(model, actor));
+				}
 			}
 		}
 		return ret;

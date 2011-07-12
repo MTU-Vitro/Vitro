@@ -8,13 +8,21 @@ public class CompositeAction implements Action {
 	public CompositeAction(List<Action> actions) {
 		this.actions = actions;
 	}
+
+	public CompositeAction(Action... actions) {
+		this.actions = Arrays.asList(actions);
+	}
 	
 	public void apply() {
-		for(Action action : actions) { action.apply(); }
+		for(int x = 0; x < actions.size(); x++) {
+			actions.get(x).apply();
+		}
 	}
 	
 	public void undo() {
-		for(Action action : actions) { action.undo();  }
+		for(int x = actions.size() - 1; x >= 0; x--) {
+			actions.get(x).undo();
+		}
 	}
 	
 	@Override
