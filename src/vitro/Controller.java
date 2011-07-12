@@ -77,7 +77,10 @@ public abstract class Controller {
 		synchronized(model) {		
 			// generate a new round:
 			if (cursor == history.size()) {
-				history.add(nextRound());
+				List<Action> round = nextRound();
+				round.addAll(model.cleanup());
+				history.add(round);
+				// --
 				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();
 				for(Agent agent : agents) {
 					if (agent instanceof Annotated) {

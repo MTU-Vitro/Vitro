@@ -28,6 +28,8 @@ public class Drawing {
 	}
 
 	public static void drawStringCentered(Graphics g, String s, int x, int y) {
+		if(s.length() == 0) { return; }
+	
 		Font font = g.getFont();
 		//Rectangle2D bounds = font.getStringBounds(s, g.getFontMetrics().getFontRenderContext());
 
