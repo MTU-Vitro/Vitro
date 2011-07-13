@@ -1,4 +1,4 @@
-package demos;
+package demos.robots;
 
 import vitro.*;
 import vitro.grid.*;
@@ -178,6 +178,7 @@ public class Robots extends Grid {
 				}
 				// BLU can push objects:
 				Actor other = model.actorAt(location);
+				if (other instanceof RNG && !dark(location)) { continue; }
 				if (pushDestination(this, other) != null) {
 					ret.add(new PushAction((Robots)model, this, other));
 				}

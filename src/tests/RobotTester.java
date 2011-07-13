@@ -1,6 +1,6 @@
 package tests;
 
-import demos.Robots;
+import demos.robots.Robots;
 
 import vitro.*;
 import vitro.grid.*;

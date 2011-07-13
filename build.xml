@@ -88,5 +88,9 @@
 	<target name="demo:polyp" depends="demos:compile">
 		<demo class = "demos.polyp.PolypHost" />
 	</target>
+	
+	<target name="demo:robots" depends="demos:compile">
+		<demo class = "demos.robots.RobotsEye" />
+	</target>
 
 </project>

@@ -1,7 +1,6 @@
-package demos;
+package vitro.grid;
 
 import vitro.*;
-import vitro.grid.*;
 import java.awt.*;
 import static vitro.util.Groups.*;
 
