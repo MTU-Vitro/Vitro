@@ -78,7 +78,10 @@ public abstract class Controller {
 			// generate a new round:
 			if (cursor == history.size()) {
 				List<Action> round = nextRound();
-				round.addAll(model.cleanup());
+				for(Action action : model.cleanup()) {
+					action.apply();
+					round.add(action);
+				}
 				history.add(round);
 				// --
 				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();

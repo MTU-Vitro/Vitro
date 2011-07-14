@@ -1,4 +1,4 @@
-package demos;
+package demos.wumpus;
 
 import vitro.*;
 import vitro.graph.*;

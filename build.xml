@@ -59,9 +59,14 @@
 	<!-- Default Target -->
 	<target name = "all" depends = "vitro:build, junit, javadoc"/>
 
+	<!-- AIMA Target(s) -->
+	<target name="aima:wumpus" depends="demos:compile">
+		<demo class = "demos.wumpus.WumpusAIMA"/>
+	</target>
+
 	<!-- Demo Target(s) -->
 	<target name="demo:wumpusworld" depends="demos:compile">
-		<demo class = "demos.WumpusEye"/>
+		<demo class = "demos.wumpus.WumpusEye"/>
 	</target>
 
 	<target name="demo:vacworld" depends="demos:compile">
