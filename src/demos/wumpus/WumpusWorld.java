@@ -1,4 +1,4 @@
-package demos;
+package demos.wumpus;
 
 import vitro.*;
 import vitro.graph.*;
@@ -118,7 +118,6 @@ public class WumpusWorld extends Graph {
 	}
 
 	public class ShootAction extends CreateAction {
-
 		private final Hunter hunter;
 
 		public ShootAction(Graph model, Node n, Hunter hunter) {
