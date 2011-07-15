@@ -67,24 +67,6 @@ public class RobotsView implements View {
 	public int         width()       { return width;      }
 	public int         height()      { return height;     }
 
-	private double sofar = -1;
-	public void tick(double time) {
-		sofar += time;
-		if (sofar > .5) {
-			if (actionIndex >= controller.previousActions().size()) {
-				flush();
-				controller.next();
-				actionIndex = 0;
-			}
-			else {
-				if (showAction(controller.previousActions().get(actionIndex))) {
-					actionIndex++;
-				}
-			}
-			sofar = 0;
-		}
-	}
-
 	private boolean showAction(Action a) {
 		if (a instanceof Robots.PushAction) {
 			Robots.PushAction p = (Robots.PushAction)a;
@@ -104,6 +86,9 @@ public class RobotsView implements View {
 			CompositeAction c = (CompositeAction)a;
 			MoveAction m1 = (MoveAction)c.actions.get(0);
 			MoveAction m2 = (MoveAction)c.actions.get(1);
+			// dragging animation
+			Sprite sprite = sprites.get(m1.actor);
+			sprite.anim = new int[] { 4, 5 };
 			return moveTo(m1.actor, m1.end) &
 			       moveTo(m2.actor, m2.end);
 		}
@@ -217,13 +202,45 @@ public class RobotsView implements View {
 		}
 	}
 
+	private double sofar = -1;
+	public void tick(double time) {
+		sofar += time;
+		if (sofar > .5) {
+			if (actionIndex >= controller.previousActions().size()) {
+				flush();
+				controller.next();
+				actionIndex = 0;
+			}
+			sofar = 0;
+		}
+	}
+
+	private int drawFrame = 0;
 	public void draw(Graphics g) {
 		if (sofar < 0) { flush(); }
 		synchronized(model) {
-			if (model.done() && actionIndex < controller.previousActions().size()) {
-				if (showAction(controller.previousActions().get(actionIndex))) {
-					actionIndex++;
+			if (drawFrame >= 4) {
+				if (actionIndex < controller.previousActions().size()) {
+					if (showAction(controller.previousActions().get(actionIndex))) {
+						actionIndex++;
+					}
 				}
+				else if (model.done()) {
+					for(Sprite sprite :sprites.values()) {
+						if (sprite.tiles == BLU) {
+							sprite.anim = new int[] { 9 };
+							sprite.frame = 0;
+						}
+						if (sprite.tiles == RNG) {
+							sprite.anim = new int[] { 7 };
+							sprite.frame = 0;
+						}
+					}
+				}
+				drawFrame = 0;
+			}
+			else {
+				drawFrame++;
 			}
 		}
 

@@ -14,31 +14,53 @@ public class RobotsEye extends Host {
 	public RobotsEye() {
 
 		Robots model = new Robots(new int[][] {
-			{ 0, 0, 0, 0, 0, 0 },
-			{ 0, 1, 0, 2, 1, 0 },
-			{ 0, 1, 0, 1, 1, 0 },
-			{ 0, 2, 0, 1, 0, 0 },
-			{ 0, 1, 1, 1, 3, 0 },
-			{ 0, 0, 0, 0, 0, 0 }
+			{ 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 1, 1, 0, 2, 1, 0 },
+			{ 0, 0, 1, 0, 1, 1, 0 },
+			{ 0, 0, 2, 0, 1, 0, 0 },
+			{ 0, 0, 1, 1, 1, 3, 0 },
+			{ 0, 0, 0, 1, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0 }
 		});
-		model.locations.put(model.createRNG(),   new Location(model, 1, 1));
-		model.locations.put(model.createBLU(),   new Location(model, 1, 2));
-
-		model.locations.put(model.createBLU(),   new Location(model, 3, 1));
-		model.locations.put(model.createBlock(), new Location(model, 3, 2));
+		model.locations.put(model.createRNG(),   new Location(model, 2, 1));
+		model.locations.put(model.createBLU(),   new Location(model, 2, 2));
+		model.locations.put(model.createBLU(),   new Location(model, 4, 1));
+		model.locations.put(model.createBlock(), new Location(model, 4, 2));
 
 		/*
+		// a big maze
+		Robots model = new Robots(new int[][] {
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0 },
+			{ 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0 },
+			{ 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+			{ 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
+			{ 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0 },
+			{ 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0 },
+			{ 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 },
+			{ 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0 },
+			{ 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },
+			{ 0, 1, 1, 1, 1, 1, 0, 3, 1, 1, 1, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		});
+		model.locations.put(model.createBLU(),   new Location(model, 1, 1));
+		model.locations.put(model.createRNG(),   new Location(model, 1, 6));
+		model.locations.put(model.createRNG(),   new Location(model, 5, 1));
+		model.locations.put(model.createRNG(),   new Location(model, 4, 3));
+		*/
+
+		/*
+		// basic testing of RNG dragging stuff
 		Robots model = new Robots(new int[][] {
 			{ 0, 0, 0, 0, 0, 0 },
-			{ 0, 1, 0, 2, 1, 0 },
-			{ 0, 2, 0, 1, 1, 0 },
-			{ 0, 2, 0, 1, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0 },
 			{ 0, 1, 1, 1, 3, 0 },
+			{ 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0 },
 			{ 0, 0, 0, 0, 0, 0 }
 		});
-		model.locations.put(model.createRNG(),   new Location(model, 1, 1));
-		model.locations.put(model.createBlock(), new Location(model, 1, 2));
-		model.locations.put(model.createRNG(),   new Location(model, 4, 1));
+		model.locations.put(model.createRNG(),   new Location(model, 1, 2));
+		model.locations.put(model.createBlock(), new Location(model, 2, 2));
 		*/
 
 		SequentialController controller = new SequentialController(model);
