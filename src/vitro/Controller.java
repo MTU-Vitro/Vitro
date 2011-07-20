@@ -126,6 +126,9 @@ public abstract class Controller {
 	}
 
 	public List<Action> previousActions() {
+		if (cursor == 0 || history.size() < 1) {
+			return new ArrayList<Action>();
+		}
 		return history.get(cursor - 1);
 	}
 

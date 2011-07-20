@@ -87,7 +87,6 @@ public class Host extends JFrame implements ActionListener {
 		setVisible(true);
 
 		while(true) {
-			//view.draw();
 			buttonPrev.setEnabled(view.controller().hasPrev());
 			buttonNext.setEnabled(view.controller().hasNext());
 			buttonPlay.setEnabled(view.controller().hasNext());
@@ -136,20 +135,11 @@ public class Host extends JFrame implements ActionListener {
 		}
 		else if (e.getSource() == buttonReset) {
 			wait = true;
-
-			throw new Error("Reset is not implemented!");
-			/*
-			// we basically need to do this,
-			// except reflectively.
-			view = new GraphView(view);
-			remove(panel);
-			panel = new HostPanel(view);
-			add(panel, BorderLayout.CENTER);
-			pack();
-			*/
-
-			//view.flush();
-			//repaint();
+			while(view.controller().hasPrev()) {
+				view.controller().prev();
+			}
+			view.flush();
+			repaint();
 		}
 		else if (e.getSource() == buttonKey) {
 			panel.toggleKey();

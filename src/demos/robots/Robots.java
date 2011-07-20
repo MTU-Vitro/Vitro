@@ -64,10 +64,12 @@ public class Robots extends Grid {
 			for(int x = 0; x < tiles[0].length; x++) {
 				Location location = new Location(this, x, y);
 				if (target(location)) {
-					Actor actor = actorAt(location);
-					if (actor instanceof Block) { continue; }
-					if (actor instanceof BLU)   { continue; }
-					return false;
+					boolean satisfied = false;
+					for(Actor actor : actorsAt(location)) {
+						if (actor instanceof Block) { satisfied = true; break; }
+						if (actor instanceof BLU)   { satisfied = true; break; }
+					}
+					if (!satisfied) { return false; }
 				}
 			}
 		}
