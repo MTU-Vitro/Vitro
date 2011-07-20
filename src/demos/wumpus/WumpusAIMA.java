@@ -11,9 +11,9 @@ public class WumpusAIMA extends Host {
 	}
 
 	public WumpusAIMA() {
-		WumpusGrid model      = new WumpusGrid(5, 5);
-		Controller controller = new SimultaneousController(model);
-		GridView   view       = new GridView(model, controller, 800, 600, new ColorScheme());
+		WumpusGrid     model      = new WumpusGrid(5, 5);
+		Controller     controller = new SimultaneousController(model);
+		WumpusGridView view       = new WumpusGridView(model, controller, 800, 600);
 		
 		WumpusGrid.Hunter hunter = model.createHunter(0, 0);
 		WumpusGrid.Wumpus wumpus = model.createWumpus(4, 4);
