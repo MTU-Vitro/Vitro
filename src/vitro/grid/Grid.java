@@ -31,6 +31,18 @@ public class Grid extends Model {
 		model = this;
 	}
 
+	public Set<Location> neighbors(Location location, int[][] deltas) {
+		Set<Location> ret = new HashSet<Location>();
+		for(int[] d : deltas) {
+			int nx = location.x + d[0];
+			int ny = location.y + d[1];
+			if (nx >= 0 && nx < model.width && ny >= 0 && ny < model.height) {
+				ret.add(new Location(model, nx, ny));
+			}
+		}
+		return ret;
+	}
+
 	public Actor actorAt(Location location) {
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
 			if (location.equals(e.getValue())) { return e.getKey(); }
