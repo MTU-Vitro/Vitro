@@ -44,7 +44,7 @@ public class GridView implements View {
 		Drawing.configureVector(g);
 
 		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.height; x++) {
+			for(int x = 0; x < model.width; x++) {
 				drawCell((Graphics2D)g, x, y);
 			}
 		}
@@ -53,6 +53,9 @@ public class GridView implements View {
 			for(Annotation a : controller.annotations().keySet()) {
 				if (a instanceof ActorAnnotation) {
 					drawActorAnnotation((Graphics2D)g, (ActorAnnotation)a);
+				}
+				else if (a instanceof GridAnnotation) {
+					drawGridAnnotation((Graphics2D)g, (GridAnnotation)a);
 				}
 			}
 		}
@@ -113,6 +116,19 @@ public class GridView implements View {
 			cellSize - cellMargin
 		);
 		g.setStroke(oldStroke);
+	}
+	
+	protected void drawGridAnnotation(Graphics2D g, GridAnnotation a) {
+		for(Location l : a.coloring.keySet()) {
+			g.setColor(a.coloring.get(l));
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+			g.fillRect(
+				horizontalMargin + (l.x * cellSize),
+				verticalMargin   + (l.y * cellSize),
+				cellSize,
+				cellSize
+			);
+		}
 	}
 
 	private double sofar = 0;

@@ -42,6 +42,10 @@ public class Grid extends Model {
 		}
 		return ret;
 	}
+	
+	public Set<Location> passableNeighbors(Location location, int[][] deltas) {
+		return passable(null, neighbors(location, deltas));
+	}
 
 	public Actor actorAt(Location location) {
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
