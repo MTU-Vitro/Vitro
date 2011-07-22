@@ -46,7 +46,7 @@ public abstract class Controller {
 	protected <A extends Actor> Action getAction(A a) {
 		Set<Action> actions = a.actions();
 		Agent<A> agent = getAgent(a);
-		if (actions.size() >= 1 && agent != null) {
+		if (actions.size() >= 0 && agent != null) {
 			Action choice = agent.choose(a, Collections.unmodifiableSet(actions));
 			// If the agent returns a malicious Action, using
 			// equals() or hashCode() to confirm it was one of the
