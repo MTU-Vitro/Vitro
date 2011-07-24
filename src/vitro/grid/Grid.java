@@ -62,13 +62,26 @@ public class Grid extends Model {
 		return ret;
 	}
 
-	public Set<Location> emptyCells() {
+	public Set<Actor> actorsAt(Set<Location> locationSet) {
+		Set<Actor> ret = new HashSet<Actor>();
+		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
+			if(locationSet.contains(e.getValue())) { ret.add(e.getKey()); }
+		}
+		return ret;
+	}
+
+	public Set<Location> allCells() {
 		Set<Location> ret = new HashSet<Location>();
 		for(int x = 0; x < width; x++) {
 			for(int y = 0; y < height; y++) {
 				ret.add(new Location(this, x, y));
 			}
 		}
+		return ret;
+	}
+
+	public Set<Location> emptyCells() {
+		Set<Location> ret = allCells();
 		ret.removeAll(locations.values());
 		return ret;
 	}
