@@ -1,6 +1,6 @@
 package tests;
 
-import demos.WumpusWorld;
+import demos.wumpus.WumpusWorld;
 
 import vitro.*;
 import vitro.graph.*;
