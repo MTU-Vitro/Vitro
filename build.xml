@@ -70,6 +70,10 @@
 		<demo class = "demos.search.SearchAssignment"/>
 	</target>
 
+	<target name="demo:sweeper" depends="demos:compile">
+		<demo class = "demos.sweeper.SweeperEye"/>
+	</target>
+
 	<target name="demo:wumpusworld" depends="demos:compile">
 		<demo class = "demos.wumpus.WumpusEye"/>
 	</target>
