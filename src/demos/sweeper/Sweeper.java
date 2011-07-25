@@ -45,6 +45,16 @@ public class Sweeper extends Grid {
 		for(Actor actor : Groups.ofType(Mine.class, actors)) {
 			if(locations.get(actor) != null && !hidden.contains(locations.get(actor))) { return true; }
 		}
+		if(Groups.ofType(Mine.class, actors).size() == hidden.size()) { return true; } 
+
+		return false;
+	}
+	
+	public boolean success() {
+		for(Actor actor : Groups.ofType(Mine.class, actors)) {
+			if(locations.get(actor) != null && !hidden.contains(locations.get(actor))) { return false; }
+		}
+		if(Groups.ofType(Mine.class, actors).size() == hidden.size()) { return true; } 
 
 		return false;
 	}

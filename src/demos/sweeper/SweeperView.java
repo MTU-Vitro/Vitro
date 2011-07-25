@@ -8,15 +8,17 @@ import java.awt.geom.*;
 import java.util.*;
 
 public class SweeperView extends GridView {
+	public final Sweeper model;
 
 	public SweeperView(Sweeper model, Controller controller, int width, int height) {
-		super(model, controller, width, height, new ColorScheme(Color.BLACK, Color.GRAY, Color.WHITE));
+		super(model, controller, width, height, new ColorScheme());
+		this.model = model;
 	}
 	
 	protected void drawCell(Graphics2D g, int x, int y) {
 		synchronized(model) {
 			//System.out.println(((Mines)model).count(new Location(model, 0, 0)));
-			if(((Sweeper)model).hidden.contains(new Location(model, x, y))) {
+			if(model.hidden.contains(new Location(model, x, y))) {
 				g.setColor(colors.secondary);
 				g.fillRect(
 					horizontalMargin + (x * cellSize),
@@ -31,7 +33,7 @@ public class SweeperView extends GridView {
 					g.setColor(colors.outline);
 					Drawing.drawStringCentered(
 						g,
-						""+((Sweeper)model).count(location),
+						""+model.count(location),
 						horizontalMargin + cellSize/2 + (location.x * cellSize),
 						verticalMargin   + cellSize/2 + (location.y * cellSize)
 					);
@@ -43,7 +45,7 @@ public class SweeperView extends GridView {
 	}
 
 	protected void drawActor(Graphics2D g, Actor a) {
-		if(a instanceof Sweeper.Mine && ((Sweeper)model).hidden.contains(((Sweeper)model).locations.get(a))) {
+		if(a instanceof Sweeper.Mine && model.hidden.contains(model.locations.get(a))) {
 			return;
 		}
 		super.drawActor(g, a);
