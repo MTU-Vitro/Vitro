@@ -1,6 +1,7 @@
 package demos.sweeper;
 
 import vitro.*;
+import vitro.grid.*;
 import java.util.*;
 import java.awt.Point;
 import static vitro.util.Groups.*;
@@ -9,6 +10,7 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 	
 	private Set<Point> knownMines = new HashSet<Point>();
 	private Set<Point> knownSafe  = new HashSet<Point>();
+	private Point lastFlip = new Point(0, 0);
 
 	public Action choose(Sweeper.Player actor, Set<Action> options) {
 
@@ -35,18 +37,29 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 			}
 		}
 
-		//System.out.println("Known Mines: "+knownMines);
-		//System.out.println("Known Safe:  "+knownSafe);
-
 		// If we've got safe options, take 'em.
+		// Preferentially choose moves that are closest to
+		// our previous action.
 		if (knownSafe.size() > 0) {
-			return flip(first(knownSafe), options);
+			Point flip = first(knownSafe);
+			for(Point safe : knownSafe) {
+				if (distance(safe, lastFlip) < distance(flip, lastFlip)) { flip = safe; }
+			}
+			if (flip != null) { return flip(flip, options); }
 		}
 
-		// give up and pick randomly.
-		// TODO: make this exclude options from 'known mines'
-		// so as to make it slightly less suicidal.
 		System.out.println("GOTTA GO FAST");
+
+		// Filter out actions that would flip a known mine,
+		// and then choose randomly from the remaining options.
+		Set<Action> goodIdeas = new HashSet<Action>(options);
+		for(Action a : options) {
+			if (!(a instanceof Sweeper.FlipAction)) { continue; }
+			Sweeper.FlipAction flip = (Sweeper.FlipAction)a;
+			if (!knownMines.contains(new Point(flip.location.x, flip.location.y))) {
+				goodIdeas.add(flip);
+			}
+		}
 		return any(options);
 	}
 
@@ -75,11 +88,19 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 		if (actor.count(x, y) == dangerous) { knownSafe.addAll(safe); }
 	}
 
+	private double distance(Point a, Point b) {
+		int dx = a.x - b.x;
+		int dy = a.y - b.y;
+		return Math.sqrt((dx * dx) + (dy * dy));
+	}
+
 	private Sweeper.FlipAction flip(Point p, Set<Action> options) {
 		for(Action a : options) {
-			if (!(a instanceof Sweeper.FlipAction)) { continue; }
 			Sweeper.FlipAction flip = (Sweeper.FlipAction)a;
-			if (flip.location.x == p.x && flip.location.y == p.y) { return flip; }
+			if (flip.location.x == p.x && flip.location.y == p.y) {
+				lastFlip = p;
+				return flip;
+			}
 		}
 		return null;
 	}
