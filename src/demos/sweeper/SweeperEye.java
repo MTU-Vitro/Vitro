@@ -13,12 +13,11 @@ public class SweeperEye extends Host {
 	}
 
 	public SweeperEye() {
-
-		Sweeper model         = new Sweeper(20, 20, 30);
+		Sweeper model         = new Sweeper(30, 30, 75);
 		Controller controller = new SimultaneousController(model);
-		SweeperView view      = new SweeperView(model, controller, 600, 600);
+		SweeperView view      = new SweeperView(model, controller);
 
-		controller.bind(model.player, new RandomAgent());
+		controller.bind(model.player, new SweeperAgent());
 		show(view);
 	}
 }

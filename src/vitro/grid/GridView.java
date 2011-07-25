@@ -119,15 +119,19 @@ public class GridView implements View {
 	}
 	
 	protected void drawGridAnnotation(Graphics2D g, GridAnnotation a) {
-		for(Location l : a.coloring.keySet()) {
-			g.setColor(a.coloring.get(l));
+		for(Point p : a.coloring.keySet()) {
+			g.setColor(a.coloring.get(p));
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-			g.fillRect(
-				horizontalMargin + (l.x * cellSize),
-				verticalMargin   + (l.y * cellSize),
-				cellSize,
-				cellSize
-			);
+			
+			Location location = new Location(model, p.x, p.y);
+			if(location.valid()) {
+				g.fillRect(
+					horizontalMargin + (location.x * cellSize),
+					verticalMargin   + (location.y * cellSize),
+					cellSize,
+					cellSize
+				);
+			}
 		}
 	}
 
