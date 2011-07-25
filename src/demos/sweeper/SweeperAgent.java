@@ -4,10 +4,13 @@ import vitro.*;
 import vitro.grid.*;
 import java.util.*;
 import java.awt.Point;
+import java.awt.Color;
 import static vitro.util.Groups.*;
 
-public class SweeperAgent implements Agent<Sweeper.Player> {
+public class SweeperAgent implements Agent<Sweeper.Player>, Annotated {
 	
+	private Set<Location> mineLocations = new HashSet<Location>();
+
 	private Set<Point> knownMines = new HashSet<Point>();
 	private Set<Point> knownSafe  = new HashSet<Point>();
 	private Point lastFlip = new Point(0, 0);
@@ -17,6 +20,7 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 		// Abandon our previous assumptions.
 		knownMines.clear();
 		knownSafe.clear();
+		mineLocations.clear();
 
 		// If a space indicating N mines is
 		// surrounded by exactly N spaces,
@@ -25,6 +29,16 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 			for(int x = 0; x < actor.width(); x++) {
 				if (actor.hidden(x, y)) { continue; }
 				findMines(x, y, actor);
+			}
+		}
+
+		// populate a set of mine Locations so I can
+		// use 'em in a GridAnnotation.
+		// TODO: REMOVE THIS DEPENDENCY AND CLEAN STUFF UP.
+		for(Action a : options) {
+			Location flip = ((Sweeper.FlipAction)a).location;
+			for(Point p : knownMines) {
+				if (flip.x == p.x && flip.y == p.y) { mineLocations.add(flip); }
 			}
 		}
 
@@ -60,7 +74,13 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 				goodIdeas.add(flip);
 			}
 		}
-		return any(options);
+		return any(goodIdeas);
+	}
+
+	public Set<Annotation> annotations() {
+		Set<Annotation> ret = new HashSet<Annotation>();
+		ret.add(new GridAnnotation(mineLocations, Color.RED));
+		return ret;
 	}
 
 	private void findMines(int x, int y, Sweeper.Player actor) {
@@ -81,9 +101,8 @@ public class SweeperAgent implements Agent<Sweeper.Player> {
 			int cx = x + delta[0];
 			int cy = y + delta[1];
 			if (cx < 0 || cy < 0 || cx >= actor.width() || cy >= actor.height()) { continue; }
-			Point here = new Point(cx, cy);
-			if (knownMines.contains(here)) { dangerous++;    }
-			else if (actor.hidden(cx, cy)) { safe.add(here); }
+			if (knownMines.contains(new Point(cx, cy))) { dangerous++;    }
+			else if (actor.hidden(cx, cy))              { safe.add(new Point(cx, cy)); }
 		}
 		if (actor.count(x, y) == dangerous) { knownSafe.addAll(safe); }
 	}
