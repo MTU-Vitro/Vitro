@@ -2,7 +2,6 @@ package demos.sweeper;
 
 import vitro.*;
 import vitro.grid.*;
-import java.awt.Color;
 
 
 public class SweeperEye extends Host {
@@ -15,7 +14,7 @@ public class SweeperEye extends Host {
 
 	public SweeperEye() {
 
-		Sweeper model         = new Sweeper(20, 20, 50);
+		Sweeper model         = new Sweeper(20, 20, 30);
 		Controller controller = new SimultaneousController(model);
 		SweeperView view      = new SweeperView(model, controller, 600, 600);
 

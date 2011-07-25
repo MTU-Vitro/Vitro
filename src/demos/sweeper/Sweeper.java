@@ -70,34 +70,37 @@ public class Sweeper extends Grid {
 	}
 
 	public class FlipAction implements Action {
-		public final Location location;
+		public final Location flipped;
 
 		private Set<Location> cascade = null;
 
-		public FlipAction(Location location) {
-			this.location = location;
+		public FlipAction(Location flipped) {
+			this.flipped = flipped;
 		}
 
 		public void apply() {
 			if(cascade == null) {
 				cascade = new HashSet<Location>();
+				cascade.add(flipped);
 
-				// pumping empties
-				Set<Location> toAdd = new HashSet<Location>();
-				toAdd.add(location);
+				// bfs search for zero count squares
+				if(count(flipped) == 0) {
+					Queue<Location> frontier = new LinkedList<Location>();
+					frontier.add(flipped);
 
-				while(!toAdd.isEmpty()) {
-					cascade.addAll(toAdd);
-					toAdd.clear();
+					Set<Location> visited = new HashSet<Location>();
+					visited.add(flipped);
 
-					for(Location location : cascade) {
-						if(count(location) == 0) {
-							for(Location neighbor : neighbors(location, ADJACENT)) {
-								toAdd.add(neighbor);
+					while(!frontier.isEmpty()) {
+						Location current = frontier.remove();
+						for(Location next : neighbors(current, ADJACENT)) {
+							if(!visited.contains(next) && count(next) == 0) {
+								frontier.add(next);
 							}
+							visited.add(next);
 						}
 					}
-					toAdd.removeAll(cascade);
+					cascade.addAll(visited);
 				}
 			}
 
