@@ -69,6 +69,18 @@ public class Sweeper extends Grid {
 
 	public class Player extends Actor {
 
+		public int width()  { return model.width;  }
+		public int height() { return model.height; }
+
+		public boolean hidden(int x, int y) {
+			return hidden.contains(new Location(model, x, y));
+		}
+
+		public int count(int x, int y) {
+			Location location = new Location(model, x, y);
+			if (hidden(x, y)) { return 0; }
+			return ((Sweeper)model).count(location);
+		}
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();

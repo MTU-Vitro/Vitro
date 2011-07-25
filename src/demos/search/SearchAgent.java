@@ -12,9 +12,7 @@ public class SearchAgent implements Agent<Search.SearchActor>, Annotated {
 	public enum Type { BREADTH, DEPTH, ASTAR; }
 	
 	public final Type type;
-
 	public final Map<Actor, List<Location>>         paths      = new HashMap<Actor, List<Location>>();
-	
 	public final Map<Actor, Map<Location, Integer>> expansions = new HashMap<Actor, Map<Location, Integer>>();
 
 	//
