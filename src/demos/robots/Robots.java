@@ -41,6 +41,19 @@ public class Robots extends Grid {
 		int tile = tiles[location.y][location.x];
 		return tile == TARGET || tile == DARK_TARGET;
 	}
+	
+	public Set<Location> targets() {
+		Set<Location> ret = new HashSet<Location>();
+		for(int y = 0; y < height; y++) {
+			for(int x = 0; x < width; x++) {
+				int tile = tiles[y][x];
+				if(tile == TARGET || tile == DARK_TARGET) {
+					ret.add(new Location(this, x, y));
+				}
+			}
+		}
+		return ret;
+	}
 
 	public boolean passable(Actor actor, Location location) {
 		// out of bounds is impassible:
@@ -171,6 +184,8 @@ public class Robots extends Grid {
 			super(model);
 			id = BLUId++;
 		}
+		
+		public Set<Location> targets() { return ((Robots)model).targets(); }
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
