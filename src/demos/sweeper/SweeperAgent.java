@@ -8,19 +8,18 @@ import java.awt.Color;
 import static vitro.util.Groups.*;
 
 public class SweeperAgent implements Agent<Sweeper.Player>, Annotated {
-	
-	private Set<Location> mineLocations = new HashSet<Location>();
 
 	private Set<Point> knownMines = new HashSet<Point>();
 	private Set<Point> knownSafe  = new HashSet<Point>();
 	private Point lastFlip = new Point(0, 0);
+	private Sweeper.Player player;
 
 	public Action choose(Sweeper.Player actor, Set<Action> options) {
 
 		// Abandon our previous assumptions.
+		player = actor;
 		knownMines.clear();
 		knownSafe.clear();
-		mineLocations.clear();
 
 		// If a space indicating N mines is
 		// surrounded by exactly N spaces,
@@ -29,16 +28,6 @@ public class SweeperAgent implements Agent<Sweeper.Player>, Annotated {
 			for(int x = 0; x < actor.width(); x++) {
 				if (actor.hidden(x, y)) { continue; }
 				findMines(x, y, actor);
-			}
-		}
-
-		// populate a set of mine Locations so I can
-		// use 'em in a GridAnnotation.
-		// TODO: REMOVE THIS DEPENDENCY AND CLEAN STUFF UP.
-		for(Action a : options) {
-			Location flip = ((Sweeper.FlipAction)a).location;
-			for(Point p : knownMines) {
-				if (flip.x == p.x && flip.y == p.y) { mineLocations.add(flip); }
 			}
 		}
 
@@ -66,7 +55,7 @@ public class SweeperAgent implements Agent<Sweeper.Player>, Annotated {
 
 		// Filter out actions that would flip a known mine,
 		// and then choose randomly from the remaining options.
-		Set<Action> goodIdeas = new HashSet<Action>(options);
+		Set<Action> goodIdeas = new HashSet<Action>();
 		for(Action a : options) {
 			if (!(a instanceof Sweeper.FlipAction)) { continue; }
 			Sweeper.FlipAction flip = (Sweeper.FlipAction)a;
@@ -79,6 +68,12 @@ public class SweeperAgent implements Agent<Sweeper.Player>, Annotated {
 
 	public Set<Annotation> annotations() {
 		Set<Annotation> ret = new HashSet<Annotation>();
+		if (player == null) { return ret; }
+
+		Set<Location> mineLocations = new HashSet<Location>();
+		for(Point p : knownMines) {
+			mineLocations.add(player.createLocation(p));
+		}
 		ret.add(new GridAnnotation(mineLocations, Color.RED));
 		return ret;
 	}

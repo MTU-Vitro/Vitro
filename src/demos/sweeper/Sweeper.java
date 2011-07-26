@@ -72,6 +72,10 @@ public class Sweeper extends Grid {
 		public int width()  { return model.width;  }
 		public int height() { return model.height; }
 
+		public Location createLocation(java.awt.Point point) {
+			return new Location(model, point.x, point.y);
+		}
+
 		public boolean hidden(int x, int y) {
 			return hidden.contains(new Location(model, x, y));
 		}
