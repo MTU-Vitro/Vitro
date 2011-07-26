@@ -149,6 +149,10 @@ public abstract class Controller {
 		}
 		return ret;
 	}
+	
+	public int index() {
+		return cursor;
+	}
 
 	protected abstract List<Action> nextRound();
 }
