@@ -18,6 +18,10 @@ public class Sweeper extends Grid {
 		generateMines(numMines);
 	}
 
+	public void createMine(int x, int y) {
+		locations.put(new Mine(), new Location(this, x, y));
+	}
+
 	protected void generateMines(int numMines) {
 		for(Actor actor : actors) {
 			if(actor instanceof Mine) { actors.remove(actor); }
@@ -65,7 +69,7 @@ public class Sweeper extends Grid {
 	}
 
 
-	public class Mine extends Actor { }
+	public static class Mine extends Actor { }
 
 	public class Player extends Actor {
 

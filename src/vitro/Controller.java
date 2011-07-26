@@ -77,12 +77,17 @@ public abstract class Controller {
 		synchronized(model) {		
 			// generate a new round:
 			if (cursor == history.size()) {
+
+				long startTime = System.currentTimeMillis();
 				List<Action> round = nextRound();
 				for(Action action : model.cleanup()) {
 					action.apply();
 					round.add(action);
 				}
 				history.add(round);
+				long endTime = System.currentTimeMillis();
+				System.out.format("Elapsed agent time: %d%n", endTime - startTime);
+
 				// --
 				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();
 				for(Agent agent : agents) {
