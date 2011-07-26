@@ -74,7 +74,7 @@ public class SweeperView implements View {
 		this.board = new Component(
 			new Rectangle(
 				outer.panel.x + buffer, score.bound.y + score.bound.height + buffer,
-				outer.panel.width - 2 * buffer, outer.panel.width - 2 * buffer
+				outer.panel.width - 2 * buffer, outer.panel.height - 3 * buffer - score.bound.height - 1
 			),
 			2, true
 		);
@@ -104,8 +104,8 @@ public class SweeperView implements View {
 		);
 
 		this.cells = new ArrayList<Cell>(model.width * model.height);
-		for(int y = 0; y < model.width; y++) {
-			for(int x = 0; x < model.height; x++) {
+		for(int y = 0; y < model.height; y++) {
+			for(int x = 0; x < model.width; x++) {
 				cells.add(new Cell(new Location(model, x, y)));
 			}
 		}
@@ -180,7 +180,7 @@ public class SweeperView implements View {
 
 		int mines = Groups.ofType(Sweeper.Mine.class, model.actors).size();
 		int flags = annotation != null ? ((GridAnnotation)annotation).coloring.keySet().size() : 0;
-		int ticks = 0;
+		int ticks = controller.index();
 
 		return new State(model.done(), model.success(), previous, annotation, mines, flags, ticks);
 	}
@@ -316,14 +316,19 @@ public class SweeperView implements View {
 		public static final int SIZE = 16;
 
 		public final Location     location;
+		public final Rectangle    cell;
 		public final Rectangle    area;
 		public final Sweeper.Mine mine;
 
 		public Cell(Location location) {
 			this.location = location;
-			this.area = new Rectangle(
+			this.cell = new Rectangle(
 				board.panel.x + location.x * (SIZE + 1), board.panel.y + location.y * (SIZE + 1), 
 				SIZE, SIZE
+			);
+			this.area = new Rectangle(
+				board.panel.x + location.x * (SIZE + 1) - 1, board.panel.y + location.y * (SIZE + 1) - 1, 
+				SIZE + 1, SIZE + 1
 			);
 
 			Actor actor = Groups.firstOfType(Sweeper.Mine.class, model.actorsAt(location));
@@ -331,23 +336,28 @@ public class SweeperView implements View {
 		}
 
 		public void drawCell(Graphics2D g) {
-			Drawing.drawBezelRect(g, area, 2, brighter, darker, background);
+			Drawing.drawBezelRect(g, cell, 2, brighter, darker, background);
 		}
 
 		public void drawMine(Graphics2D g) {
 			int tx = board.panel.x + location.x * (SIZE + 1) + (SIZE + 1) / 2;
 			int ty = board.panel.y + location.y * (SIZE + 1) + (SIZE + 1) / 2;
 
-			Drawing.drawCircleCentered(g, tx, ty, 3, Color.BLACK, Color.BLACK);
-			g.drawLine(tx    , ty - 4, tx    , ty + 4);
-			g.drawLine(tx - 4, ty    , tx + 4, ty    );
+			Drawing.drawCircleCentered(g, tx, ty, 4, Color.BLACK, Color.BLACK);
+			
+			g.setColor(Color.BLACK);
+			g.drawLine(tx    , ty - 6, tx    , ty + 6);
+			g.drawLine(tx - 6, ty    , tx + 6, ty    );
 			g.drawLine(tx - 4, ty - 4, tx + 4, ty + 4);
 			g.drawLine(tx - 4, ty + 4, tx + 4, ty - 4);
+			
+			g.setColor(Color.WHITE);
+			g.fillRect(tx - 2, ty - 2, 2, 2);
 		}
 
 		public void drawFlag(Graphics2D g) {
-			int bx = board.panel.x + location.x * (SIZE + 1);
-			int by = board.panel.y + location.y * (SIZE + 1);
+			int bx = board.panel.x + location.x * (SIZE + 1) - 2;
+			int by = board.panel.y + location.y * (SIZE + 1) - 1;
 
 			g.setColor(colors.outline);
 			g.fillRect(bx +  6, by + 13, 8, 2);
@@ -363,7 +373,14 @@ public class SweeperView implements View {
 		}
 
 		public void drawFail(Graphics2D g) {
+			int tx = board.panel.x + location.x * (SIZE + 1) + (SIZE + 1) / 2;
+			int ty = board.panel.y + location.y * (SIZE + 1) + (SIZE + 1) / 2;
 
+			g.setColor(Color.RED);
+			g.drawLine(tx    , ty - 6, tx    , ty + 6);
+			g.drawLine(tx - 6, ty    , tx + 6, ty    );
+			g.drawLine(tx - 4, ty - 4, tx + 4, ty + 4);
+			g.drawLine(tx - 4, ty + 4, tx + 4, ty - 4);
 		}
 
 		public void drawCount(Graphics2D g) {
