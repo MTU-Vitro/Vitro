@@ -9,6 +9,7 @@ public class Sweeper extends Grid {
 	public final Player player = new Player();
 
 	public final Set<Location> hidden = new HashSet<Location>();
+	public final Map<Location, Integer> counts = new HashMap<Location, Integer>();
 
 	public Sweeper(int width, int height, int numMines) {
 		super(width, height);
@@ -26,6 +27,7 @@ public class Sweeper extends Grid {
 		for(Actor actor : actors) {
 			if(actor instanceof Mine) { actors.remove(actor); }
 		}
+		counts.clear();
 
 		Random rnd = new Random();
 		for(int m = 0; m < numMines; m++) {
@@ -42,6 +44,19 @@ public class Sweeper extends Grid {
 			}
 
 			locations.put(new Mine(), toPlace);
+		}
+		
+		for(int y = 0; y < height; y++) {
+			for(int x = 0; x < width; x++) {
+				Location location = new Location(model, x, y);
+			
+				if(Groups.containsType(Mine.class, actorsAt(location))) { 
+					counts.put(location, -1);
+					continue;
+				}
+				
+				counts.put(location, Groups.ofType(Mine.class, actorsAt(neighbors(location, ADJACENT))).size());
+			}
 		}
 	}
 
@@ -64,8 +79,7 @@ public class Sweeper extends Grid {
 	}
 
 	public int count(Location location) {
-		if(Groups.containsType(Mine.class, actorsAt(location))) { return -1; }
-		return Groups.ofType(Mine.class, actorsAt(neighbors(location, ADJACENT))).size();
+		return counts.get(location);
 	}
 
 
