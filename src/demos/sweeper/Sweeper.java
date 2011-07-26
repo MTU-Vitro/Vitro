@@ -23,6 +23,47 @@ public class Sweeper extends Grid {
 		locations.put(new Mine(), new Location(this, x, y));
 	}
 
+	public void clearSafeArea() {
+		List<Location> locations = new ArrayList<Location>(allCells());
+		Collections.shuffle(locations);
+		Location place = null;
+		for(Location location : locations) {
+			if (counts.get(location) == 0) {
+				place = location;
+				break;
+			}
+		}
+		if (place == null) {
+			throw new Error("Unable to find an exposed safe region.");
+		}
+		hidden.removeAll(clear(place));
+	}
+
+	protected Set<Location> clear(Location location) {
+		Set<Location> cascade = new HashSet<Location>();
+		cascade.add(location);
+		// bfs search for zero count squares
+		if(count(location) == 0) {
+			Queue<Location> frontier = new LinkedList<Location>();
+			frontier.add(location);
+
+			Set<Location> visited = new HashSet<Location>();
+			visited.add(location);
+
+			while(!frontier.isEmpty()) {
+				Location current = frontier.remove();
+				for(Location next : neighbors(current, ADJACENT)) {
+					if(!visited.contains(next) && count(next) == 0) {
+						frontier.add(next);
+					}
+					visited.add(next);
+				}
+			}
+			cascade.addAll(visited);
+		}
+		return cascade;
+	}
+
 	protected void generateMines(int numMines) {
 		for(Actor actor : actors) {
 			if(actor instanceof Mine) { actors.remove(actor); }
@@ -124,28 +165,7 @@ public class Sweeper extends Grid {
 
 		public void apply() {
 			if(cascade == null) {
-				cascade = new HashSet<Location>();
-				cascade.add(location);
-
-				// bfs search for zero count squares
-				if(count(location) == 0) {
-					Queue<Location> frontier = new LinkedList<Location>();
-					frontier.add(location);
-
-					Set<Location> visited = new HashSet<Location>();
-					visited.add(location);
-
-					while(!frontier.isEmpty()) {
-						Location current = frontier.remove();
-						for(Location next : neighbors(current, ADJACENT)) {
-							if(!visited.contains(next) && count(next) == 0) {
-								frontier.add(next);
-							}
-							visited.add(next);
-						}
-					}
-					cascade.addAll(visited);
-				}
+				cascade = ((Sweeper)model).clear(location);
 			}
 
 			hidden.removeAll(cascade);

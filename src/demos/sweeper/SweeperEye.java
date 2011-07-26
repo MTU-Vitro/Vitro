@@ -18,6 +18,9 @@ public class SweeperEye extends Host {
 		SweeperView view      = new SweeperView(model, controller);
 
 		controller.bind(model.player, new SweeperAgent());
+
+		model.clearSafeArea();
+
 		show(view);
 	}
 }
