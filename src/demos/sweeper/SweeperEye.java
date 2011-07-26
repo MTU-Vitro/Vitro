@@ -13,7 +13,7 @@ public class SweeperEye extends Host {
 	}
 
 	public SweeperEye() {
-		Sweeper model         = new Sweeper(30, 30, 75);
+		Sweeper model         = new Sweeper(25, 25, 100);
 		Controller controller = new SimultaneousController(model);
 		SweeperView view      = new SweeperView(model, controller);
 
