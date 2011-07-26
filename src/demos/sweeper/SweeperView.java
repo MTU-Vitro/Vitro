@@ -433,7 +433,7 @@ public class SweeperView implements View {
 					g.setColor(darker);
 					g.draw(area);
 
-					drawMine();
+					drawMine(g);
 				}
 				else {
 					if(mine == null) { drawFail(g); }
