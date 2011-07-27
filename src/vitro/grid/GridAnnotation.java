@@ -50,7 +50,7 @@ public class GridAnnotation implements Annotation {
 			min = Math.min(min, num.floatValue());
 			max = Math.max(max, num.floatValue());
 		}
-		
+
 		float[] compMin = colorMin.getColorComponents(null);
 		float[] compMax = colorMax.getColorComponents(null);
 		
@@ -61,10 +61,10 @@ public class GridAnnotation implements Annotation {
 				float[] comp = new float[] {
 					s * (compMax[0] - compMin[0]) + compMin[0],
 					s * (compMax[1] - compMin[1]) + compMin[1],
-					s * (compMax[2] - compMin[2]) + compMin[2]
+					s * (compMax[2] - compMin[2]) + compMin[2],
 				};
-				
-				colors.put(key, new Color(comp[0], comp[1], comp[2]));
+				float alpha = ((s * (colorMax.getAlpha() - colorMin.getAlpha())) + colorMin.getAlpha()) / 255;
+				colors.put(key, new Color(comp[0], comp[1], comp[2], alpha));
 			}
 			else {
 				colors.put(key, colorMin);

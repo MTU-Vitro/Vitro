@@ -43,7 +43,7 @@ public class RobotsView implements View {
 		this.buffer = new BufferedImage(
 			model.width  * 16,
 			model.height * 16,
-			BufferedImage.TYPE_INT_RGB
+			BufferedImage.TYPE_INT_ARGB
 		);
 		try {
 			ClassLoader loader = RobotsView.class.getClassLoader();
@@ -118,10 +118,10 @@ public class RobotsView implements View {
 		final Sprite sprite = sprites.get(actor);
 		final int sx = screenX(location);
 		final int sy = screenY(location);
-		if (sprite.x < sx) { sprite.x++; lastDir.put(actor, 6); }
-		if (sprite.x > sx) { sprite.x--; lastDir.put(actor, 6); }
-		if (sprite.y < sy) { sprite.y++; lastDir.put(actor, 1); }
-		if (sprite.y > sy) { sprite.y--; lastDir.put(actor, 3); }
+		if (sprite.x < sx) { sprite.x++; lastDir.put(actor, -6); }
+		if (sprite.x > sx) { sprite.x--; lastDir.put(actor,  6); }
+		if (sprite.y < sy) { sprite.y++; lastDir.put(actor,  1); }
+		if (sprite.y > sy) { sprite.y--; lastDir.put(actor,  3); }
 
 		if (actor instanceof Robots.BLU) {
 			// walking animations
@@ -257,6 +257,21 @@ public class RobotsView implements View {
 		for(int y = 0; y < model.height; y++) {
 			for(int x = 0; x < model.height; x++) {
 				drawCell(bg, x, y);
+			}
+		}
+
+		// draw gridAnnotations:
+		for(Annotation a : controller.annotations().keySet()) {
+			if (a instanceof GridAnnotation) {
+				for(Map.Entry<Point, Color> tile : ((GridAnnotation)a).coloring.entrySet()) {
+					bg.setColor(tile.getValue());
+					bg.fillRect(
+						(tile.getKey().x * 16),
+						(tile.getKey().y * 16),
+						16,
+						16
+					);
+				}
 			}
 		}
 		

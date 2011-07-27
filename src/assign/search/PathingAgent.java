@@ -121,8 +121,8 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 		// the view.
 		ret.add(new GridAnnotation(
 			expansions,
-			new Color(0.78f, 0.08f, 0.50f, 0.2f),
-			new Color(0.90f, 0.09f, 0.58f, 0.2f)
+			new Color(0.03f, 0.08f, 0.50f, 0.5f),
+			new Color(0.90f, 0.09f, 0.58f, 0.5f)
 		));
 
 		return ret;
