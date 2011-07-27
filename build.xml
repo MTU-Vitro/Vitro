@@ -37,6 +37,11 @@
 		<copy    file  = "${src}/demos/sweeper/numbers.png"  todir = "${bin}/demos/sweeper/" />
 	</target>
 
+	<target name = "assign:compile" depends = "stage, vitro:compile">
+		<!-- add file stagin for assignments here -->
+		<compile files = "assign/**"/>
+	</target>
+
 	<target name = "tests:compile" depends = "stage, vitro:compile, demos:compile">
 		<!-- add file staging for tests here -->
 		<compile files = "tests/**"/>
@@ -67,6 +72,11 @@
 	<!-- AIMA Target(s) -->
 	<target name="aima:wumpus" depends="demos:compile">
 		<demo class = "demos.wumpus.WumpusAIMA"/>
+	</target>
+
+	<!-- Assignment Target(s) -->
+	<target name="assign:search" depends="demos:compile, assign:compile">
+		<demo class = "assign.search.SearchHost"/>
 	</target>
 
 	<!-- Demo Target(s) -->

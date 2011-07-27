@@ -10,19 +10,38 @@ import java.awt.Color;
 
 public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 	
+	/**
+	*
+	**/
 	public enum PathType { 
 		BREADTH, DEPTH, ASTAR_EUCLIDIAN, ASTAR_MANHATTAN; 
 	}
 	
+	/**
+	*
+	**/
 	public final PathType type;
 	
+	/**
+	*
+	**/
 	public List<Location>         pathing    = null;
+	
+	/**
+	*
+	**/
 	public Map<Location, Integer> expansions = null;
 	
+	/**
+	*
+	**/
 	public PathingAgent(PathType type) {
 		this.type = type;
 	}
 
+	/**
+	*
+	**/
 	public final Action choose(Robots.BLU actor, Set<Action> options) {
 		// Here we assume that we will always see the same
 		// actor. This will be true of many models, including
@@ -68,9 +87,12 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 			}
 			
 			pathing.remove(0);
+			
+			// For the sake of testing and instrumentation, we
+			// use the DomainTracker class to track the number
+			// of expansions used by the search method.
+			expansions = ((DomainTracker<Location>)domain).expandOrder();
 		}
-		
-		
 
 		// If we have reached the end of our path then there
 		// is nothing we can do and so we just wait.
@@ -86,11 +108,23 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 		return actor.move(next, options);
 	}
 	
+	/**
+	*
+	**/
 	public final Set<Annotation> annotations() {
 		Set<Annotation> ret = new HashSet<Annotation>();
-		// You have a null pointer exception in GridAnnotation!
-		// at vitro.grid.GridAnnotation.calculateScaling(GridAnnotation.java:49)
-		//ret.add(new GridAnnotation(expansions, Color.WHITE, Color.GRAY));
+		
+		// Here we assemble a grid annotation, representing the
+		// expansion order of the searching mechanism. The
+		// GridAnnotation constructs a gradient between two colors
+		// based on the ordering and overlays the data on top of
+		// the view.
+		ret.add(new GridAnnotation(
+			expansions,
+			new Color(0.78f, 0.08f, 0.50f, 0.2f),
+			new Color(0.90f, 0.09f, 0.58f, 0.2f)
+		));
+
 		return ret;
 	}
 }

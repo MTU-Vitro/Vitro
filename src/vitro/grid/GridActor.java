@@ -28,6 +28,10 @@ public class GridActor extends Actor {
 		return ret;
 	}
 
+	public Set<Location> passableNeighbors(Location location, int[][] deltas) {
+		return model.passableNeighbors(location, deltas);
+	}
+
 	public Set<Location> passableNeighbors(int[][] deltas) {
 		return model.passable(this, neighbors(deltas));
 	}
