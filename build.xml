@@ -88,6 +88,10 @@
 		<demo class = "demos.search.SearchAssignment"/>
 	</target>
 
+	<target name="demo:tictac" depends="demos:compile">
+		<demo class = "demos.tictac.TicTacEye"/>
+	</target>
+
 	<target name="demo:sweeper" depends="demos:compile">
 		<demo class = "demos.sweeper.SweeperEye"/>
 	</target>
