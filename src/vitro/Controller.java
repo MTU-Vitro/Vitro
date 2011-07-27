@@ -37,7 +37,7 @@ public abstract class Controller {
 	// desirable because it saves a cast in every implementation.
 	// If there's a better way to do this, fix it.
 	@SuppressWarnings("unchecked")
-	protected <A extends Actor> Agent<A> getAgent(A a) {
+	public <A extends Actor> Agent<A> getAgent(A a) {
 		if (actorAgents.containsKey(a))            { return (Agent<A>)actorAgents.get(a); }
 		if (classAgents.containsKey(a.getClass())) { return (Agent<A>)classAgents.get(a.getClass()); }
 		return null;

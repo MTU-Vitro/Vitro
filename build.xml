@@ -32,6 +32,10 @@
 		<copy    file  = "${src}/demos/robots/RNG.png"       todir = "${bin}/demos/robots/" />
 		<copy    file  = "${src}/demos/robots/Crate.png"     todir = "${bin}/demos/robots/" />
 		<copy    file  = "${src}/demos/robots/sokotiles.png" todir = "${bin}/demos/robots/" />
+		<copy    file  = "${src}/demos/robots/font.png"      todir = "${bin}/demos/robots/" />
+		<copy    file  = "${src}/demos/robots/title.png"     todir = "${bin}/demos/robots/" />
+		<copy    file  = "${src}/demos/robots/bigBLU.png"    todir = "${bin}/demos/robots/" />
+		<copy    file  = "${src}/demos/robots/bigRNG.png"    todir = "${bin}/demos/robots/" />
 
 		<copy    file  = "${src}/demos/sweeper/faces.png"    todir = "${bin}/demos/sweeper/" />
 		<copy    file  = "${src}/demos/sweeper/numbers.png"  todir = "${bin}/demos/sweeper/" />

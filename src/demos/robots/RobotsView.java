@@ -1,5 +1,6 @@
 package demos.robots;
 
+import demos.*;
 import vitro.*;
 import vitro.grid.*;
 import java.awt.*;
@@ -23,6 +24,11 @@ public class RobotsView implements View {
 	private final Image BLU;
 	private final Image RNG;
 	private final Image crate;
+	private final Image chars;
+	private final Image title;
+	private final Image bigBLU;
+	private final Image bigRNG;
+	private final RasterFont font;
 	private final Map<Actor, Sprite> sprites  = new HashMap<Actor, Sprite>();
 	private final Map<Actor, Integer> lastDir = new HashMap<Actor, Integer>();
 	private final List<Sprite> renderSprites = new ArrayList<Sprite>();
@@ -51,10 +57,16 @@ public class RobotsView implements View {
 			this.BLU   = ImageIO.read(loader.getResource("demos/robots/BLU.png"));
 			this.RNG   = ImageIO.read(loader.getResource("demos/robots/RNG.png"));
 			this.crate = ImageIO.read(loader.getResource("demos/robots/Crate.png"));
+			this.chars = ImageIO.read(loader.getResource("demos/robots/font.png"));
+			this.title = ImageIO.read(loader.getResource("demos/robots/title.png"));
+			this.bigRNG = ImageIO.read(loader.getResource("demos/robots/bigRNG.png"));
+			this.bigBLU = ImageIO.read(loader.getResource("demos/robots/bigBLU.png"));
 		}
 		catch(IOException e) {
 			throw new Error("Unable to load image resources.");
 		}
+		font = new RasterFont(8, 8, chars);
+
 		flush();
 
 		colors.outline    = Color.WHITE;
@@ -283,12 +295,76 @@ public class RobotsView implements View {
 			sprite.draw(bg);
 		}
 
+		//font.draw(bg, 10, 10, "Hello, World!");
+
 		g.drawImage(
 			buffer,
 			0, 0, width,                 height,
 			0, 0, buffer.getWidth(null), buffer.getHeight(null),
 			null
 		);
+
+		if (sofar < 0) { drawTitle(g); }
+	}
+
+	private void drawTitle(Graphics g) {
+		g.setColor(new Color(25, 25, 25));
+		g.fillRect(0, 0, width, height);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("monospaced", Font.PLAIN, 14));
+
+		int bx = width/10;
+		int by = (height/10) * 9;
+		int rx = (width/10)*6;
+		int ry = (height/10) * 9;
+		String bName = null;
+		String rName = null;
+
+		synchronized(model) {
+			for(Actor a : model.actors) {
+				if (a instanceof Robots.BLU) { bName = ""+controller.getAgent(a); }
+				if (a instanceof Robots.RNG) { rName = ""+controller.getAgent(a); }
+			}
+		}
+
+		g.drawImage(
+			title,
+			(width - title.getWidth(null))/2,
+			(height - title.getHeight(null))/5,
+			null
+		);
+
+		if (bName != null) {
+			String heading = (rName != null) ? "          Featuring:" : "           Starring:";
+			g.drawString(heading, bx, by - 10);
+			g.drawString("As BLU- The Block Loading Unit", bx, by + 30);
+			g.drawImage(
+				bigBLU,
+				width/10,
+				height - (height/5) - bigBLU.getHeight(null),
+				null
+			);
+		}
+
+		if (rName != null) {
+			String heading = (bName != null) ? "            And:" : "           Starring:";
+			g.drawString(heading,rx, ry - 10);
+			g.drawString("As RNG- a Robot with No Gravity", rx, ry + 30);
+			g.drawImage(
+				bigRNG,
+				width - (width/10) - bigRNG.getWidth(null),
+				height - (height/5) - bigRNG.getHeight(null),
+				null
+			);
+		}
+
+		g.setFont(g.getFont().deriveFont(Font.BOLD, 16f));
+		if (bName != null) {
+			g.drawString(bName, bx + (240 - Drawing.stringWidth(g, bName)) / 2, by + 14);
+		}
+		if (rName != null) {
+			g.drawString(rName, rx + (240 - Drawing.stringWidth(g, rName)) / 2, ry + 14);
+		}
 	}
 
 	protected void drawCell(Graphics2D g, int x, int y) {
