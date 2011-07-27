@@ -23,7 +23,8 @@ public class RobotsView implements View {
 	private final Image BLU;
 	private final Image RNG;
 	private final Image crate;
-	private final Map<Actor, Sprite> sprites = new HashMap<Actor, Sprite>();
+	private final Map<Actor, Sprite> sprites  = new HashMap<Actor, Sprite>();
+	private final Map<Actor, Integer> lastDir = new HashMap<Actor, Integer>();
 	private final List<Sprite> renderSprites = new ArrayList<Sprite>();
 
 	private int actionIndex = 0;
@@ -117,10 +118,10 @@ public class RobotsView implements View {
 		final Sprite sprite = sprites.get(actor);
 		final int sx = screenX(location);
 		final int sy = screenY(location);
-		if (sprite.x < sx) { sprite.x++; }
-		if (sprite.x > sx) { sprite.x--; }
-		if (sprite.y < sy) { sprite.y++; }
-		if (sprite.y > sy) { sprite.y--; }
+		if (sprite.x < sx) { sprite.x++; lastDir.put(actor, 6); }
+		if (sprite.x > sx) { sprite.x--; lastDir.put(actor, 6); }
+		if (sprite.y < sy) { sprite.y++; lastDir.put(actor, 1); }
+		if (sprite.y > sy) { sprite.y--; lastDir.put(actor, 3); }
 
 		if (actor instanceof Robots.BLU) {
 			// walking animations
@@ -128,7 +129,7 @@ public class RobotsView implements View {
 			else if (sprite.x > sx) { sprite.anim = new int[] {  6,  7,  6,  5 }; } // walk left
 			else if (sprite.y < sy) { sprite.anim = new int[] {  1,  2, -1, -2 }; } // walk down
 			else if (sprite.y > sy) { sprite.anim = new int[] {  3,  4, -3, -4 }; } // walk up
-			else                    { sprite.anim = new int[] { 1 }; sprite.frame = 0; }
+			else                    { sprite.anim = new int[] { lastDir.get(actor) }; sprite.frame = 0; }
 		}
 
 		if (actor instanceof Robots.RNG) {
@@ -159,9 +160,13 @@ public class RobotsView implements View {
 				Location location = model.locations.get(actor);
 				if (location == null) { continue; }
 				if (actor instanceof Robots.BLU) {
+					int[] anim = new int[] { 1, 8 };
+					if (lastDir.containsKey(actor)) {
+						anim = new int[] { lastDir.get(actor) };
+					}
 					sprites.put(actor, new Sprite(
 						BLU,
-						new int[] { 1, 8 },
+						anim,
 						screenX(location),
 						screenY(location)
 					));

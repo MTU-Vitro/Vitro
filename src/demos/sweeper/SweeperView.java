@@ -394,9 +394,9 @@ public class SweeperView implements View {
 			int ty = board.panel.y + location.y * (SIZE + 1) + (SIZE + 1) / 2 + 1;
 		
 			Drawing.drawStringCentered(g, "" + count, tx    , ty    );
-			Drawing.drawStringCentered(g, "" + count, tx + 1, ty    );
-			Drawing.drawStringCentered(g, "" + count, tx    , ty + 1);
-			Drawing.drawStringCentered(g, "" + count, tx + 1, ty + 1);
+			//Drawing.drawStringCentered(g, "" + count, tx + 1, ty    );
+			//Drawing.drawStringCentered(g, "" + count, tx    , ty + 1);
+			//Drawing.drawStringCentered(g, "" + count, tx + 1, ty + 1);
 		}
 
 		public void drawStandard(Graphics2D g) {

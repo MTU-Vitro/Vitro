@@ -29,7 +29,6 @@ public class RobotsEye extends Host {
 		model.locations.put(model.createBlock(), new Location(model, 4, 2));
 		*/
 
-		/*
 		// a big maze
 		Robots model = new Robots(new int[][] {
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -46,11 +45,11 @@ public class RobotsEye extends Host {
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		});
 		model.locations.put(model.createBLU(),   new Location(model, 1, 1));
-		model.locations.put(model.createRNG(),   new Location(model, 1, 6));
-		model.locations.put(model.createRNG(),   new Location(model, 5, 1));
-		model.locations.put(model.createRNG(),   new Location(model, 4, 3));
-		*/
+		//model.locations.put(model.createRNG(),   new Location(model, 1, 6));
+		//model.locations.put(model.createRNG(),   new Location(model, 5, 1));
+		//model.locations.put(model.createRNG(),   new Location(model, 4, 3));
 
+		/*
 		// basic testing of RNG dragging stuff
 		Robots model = new Robots(new int[][] {
 			{ 0, 0, 0, 0, 0, 0 },
@@ -62,6 +61,7 @@ public class RobotsEye extends Host {
 		});
 		model.locations.put(model.createRNG(),   new Location(model, 1, 2));
 		model.locations.put(model.createBlock(), new Location(model, 2, 2));
+		*/
 
 		SequentialController controller = new SequentialController(model);
 		RobotsView view                 = new RobotsView(model, controller);

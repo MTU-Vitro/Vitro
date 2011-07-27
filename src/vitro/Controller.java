@@ -88,7 +88,6 @@ public abstract class Controller {
 				//long endTime = System.currentTimeMillis();
 				//System.out.format("Elapsed agent time: %d%n", endTime - startTime);
 
-				// --
 				Map<Annotation, Agent> annotations = new HashMap<Annotation, Agent>();
 				for(Agent agent : agents) {
 					if (agent instanceof Annotated) {
