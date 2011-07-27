@@ -4,6 +4,9 @@ import vitro.*;
 import vitro.grid.*;
 import demos.robots.*;
 
+import java.util.*;
+import vitro.util.*;
+
 public class SearchHost extends Host {
 	private static final long serialVersionUID = 1L;
 	
@@ -19,21 +22,11 @@ public class SearchHost extends Host {
 	}
 	
 	public void initializePart1() {
+		Maze m = (new MazeFactory(10, 10, 0, 0, new Random(0xDEADFACE))).generate();
+		System.out.println(m);
 	
-		int[][] maze = new int[][] {
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0 },
-			{ 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0 },
-			{ 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-			{ 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
-			{ 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0 },
-			{ 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0 },
-			{ 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 },
-			{ 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0 },
-			{ 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },
-			{ 0, 1, 1, 1, 1, 1, 0, 3, 1, 1, 1, 0 },
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		};
+		int[][] maze = m.asIntegerGrid();
+		maze[21 - 6][21 - 4] = 3;
 	
 		Robots model = new Robots(maze);
 		model.locations.put(model.createBLU(), new Location(model, 1, 1));
@@ -41,7 +34,7 @@ public class SearchHost extends Host {
 		Controller controller = new SequentialController(model);
 		RobotsView view       = new RobotsView(model, controller);
 		
-		controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.DEPTH));
+		controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.ASTAR_MANHATTAN));
 		
 		show(view);
 	}

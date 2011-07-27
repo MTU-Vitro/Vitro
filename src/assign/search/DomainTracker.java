@@ -25,7 +25,8 @@ public class DomainTracker<E> implements Domain<E> {
 	
 	public Set<E> expand(E e) {
 		count += 1;
-		expansions.put(e, count);
+		expansions.put(e     , count    );
+		expansions.put(goal(), count + 1);
 
 		return domain.expand(e);
 	}
