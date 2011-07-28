@@ -15,10 +15,11 @@ public class TicTacEye extends Host {
 
 		TicTac     model      = new TicTac(3);
 		Controller controller = new SequentialController(model);
-		GridView   view       = new GridView(model, controller, 640, 480, new ColorScheme());
+		//GridView   view       = new GridView(model, controller, 640, 480, new ColorScheme());
+		TicTacView view       = new TicTacView(model, controller);
 
-		//controller.bind(model.player0, new RandomAgent());
-		//controller.bind(model.player1, new RandomAgent());
+		controller.bind(model.player0, new RandomAgent());
+		controller.bind(model.player1, new RandomAgent());
 
 		show(view);
 	}

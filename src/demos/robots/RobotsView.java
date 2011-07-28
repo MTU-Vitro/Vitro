@@ -141,7 +141,10 @@ public class RobotsView implements View {
 			else if (sprite.x > sx) { sprite.anim = new int[] {  6,  7,  6,  5 }; } // walk left
 			else if (sprite.y < sy) { sprite.anim = new int[] {  1,  2, -1, -2 }; } // walk down
 			else if (sprite.y > sy) { sprite.anim = new int[] {  3,  4, -3, -4 }; } // walk up
-			else                    { sprite.anim = new int[] { lastDir.get(actor) }; sprite.frame = 0; }
+			else                    {
+				sprite.anim = new int[] { lastDir.containsKey(actor) ? lastDir.get(actor) : 1 };
+				sprite.frame = 0;
+			}
 		}
 
 		if (actor instanceof Robots.RNG) {
