@@ -72,7 +72,7 @@ public class TicTacView implements View {
 				for(int y = 0; y < 3; y++) {
 					Actor a = model.actorAt(new Location(model, x, y));
 					if (a instanceof Factional) {
-						drawCross(x, y, ((Factional)a).team() == model.CROSSES, g);
+						drawCross(x, y, ((Factional)a).team() != model.CROSSES, g);
 					}
 				}
 			}
