@@ -130,10 +130,10 @@ public class RobotsView implements View {
 		final Sprite sprite = sprites.get(actor);
 		final int sx = screenX(location);
 		final int sy = screenY(location);
-		if (sprite.x < sx) { sprite.x++; lastDir.put(actor, -6); }
-		if (sprite.x > sx) { sprite.x--; lastDir.put(actor,  6); }
-		if (sprite.y < sy) { sprite.y++; lastDir.put(actor,  1); }
-		if (sprite.y > sy) { sprite.y--; lastDir.put(actor,  3); }
+		if (sprite.x < sx) { sprite.x += 2; lastDir.put(actor, -6); }
+		if (sprite.x > sx) { sprite.x -= 2; lastDir.put(actor,  6); }
+		if (sprite.y < sy) { sprite.y += 2; lastDir.put(actor,  1); }
+		if (sprite.y > sy) { sprite.y -= 2; lastDir.put(actor,  3); }
 
 		if (actor instanceof Robots.BLU) {
 			// walking animations
