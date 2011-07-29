@@ -270,7 +270,7 @@ public class RobotsView implements View {
 
 		// draw background:
 		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.height; x++) {
+			for(int x = 0; x < model.width; x++) {
 				drawCell(bg, x, y);
 			}
 		}
