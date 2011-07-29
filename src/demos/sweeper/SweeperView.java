@@ -134,8 +134,7 @@ public class SweeperView implements View {
 	}
 
 	
-	public void draw(Graphics gt) {
-		Graphics2D g = (Graphics2D)gt;
+	public void draw(Graphics2D g) {
 		Drawing.configureRaster(g);
 
 		synchronized(model) {

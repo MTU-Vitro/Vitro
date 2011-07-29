@@ -38,24 +38,24 @@ public class GridView implements View {
 	public int         width()       { return width;      }
 	public int         height()      { return height;     }
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 
 		for(int y = 0; y < model.height; y++) {
 			for(int x = 0; x < model.width; x++) {
-				drawCell((Graphics2D)g, x, y);
+				drawCell(g, x, y);
 			}
 		}
 		synchronized(model) {
-			for(Actor actor : model.actors) { drawActor((Graphics2D)g, actor); }
+			for(Actor actor : model.actors) { drawActor(g, actor); }
 			for(Annotation a : controller.annotations().keySet()) {
 				if (a instanceof ActorAnnotation) {
-					drawActorAnnotation((Graphics2D)g, (ActorAnnotation)a);
+					drawActorAnnotation(g, (ActorAnnotation)a);
 				}
 				else if (a instanceof GridAnnotation) {
-					drawGridAnnotation((Graphics2D)g, (GridAnnotation)a);
+					drawGridAnnotation(g, (GridAnnotation)a);
 				}
 			}
 		}
