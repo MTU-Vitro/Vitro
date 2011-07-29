@@ -48,6 +48,7 @@
 	<target name = "assign:compile" depends = "stage, vitro:compile">
 		<!-- add file stagin for assignments here -->
 		<compile files = "assign/**"/>
+		<copy    file  = "${src}/assign/search/sokoban.blu0.map" todir = "${bin}/assign/search/" />
 	</target>
 
 	<target name = "tests:compile" depends = "stage, vitro:compile, demos:compile">
@@ -58,8 +59,9 @@
 	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile"/>
 
 	<!-- Build Target(s) -->
-	<target name = "vitro:build" depends = "vitro:compile">
-		<build files = "vitro/**" jar.name = "vitro.jar"/>
+	<target name = "vitro:build" depends = "vitro:compile, demos:compile, assign:compile">
+		<build files = "**" jar.name = "vitro.jar"/>
+		<!--<build files = "vitro/**" jar.name = "vitro.jar"/>-->
 	</target>
 
 	<!-- JUnit Target(s) -->

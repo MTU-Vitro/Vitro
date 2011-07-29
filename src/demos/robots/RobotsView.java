@@ -298,14 +298,32 @@ public class RobotsView implements View {
 			sprite.draw(bg);
 		}
 
-		//font.draw(bg, 10, 10, "Hello, World!");
 
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, width, height);
+
+		double xScale = (double)width  / buffer.getWidth(null);
+		double yScale = (double)height / buffer.getHeight(null);
+		double scale  = xScale > yScale ? yScale : xScale;
+		
+		int xOffset = (int)((width  - (buffer.getWidth(null)  * scale)) / 2);
+		int yOffset = (int)((height - (buffer.getHeight(null) * scale)) / 2);
+
+		g.drawImage(
+			buffer,
+			xOffset, yOffset, xOffset + (int)(buffer.getWidth(null) * scale), yOffset + (int)(buffer.getHeight(null) * scale),
+			0, 0, buffer.getWidth(null), buffer.getHeight(null),
+			null
+		);
+
+		/*
 		g.drawImage(
 			buffer,
 			0, 0, width,                 height,
 			0, 0, buffer.getWidth(null), buffer.getHeight(null),
 			null
 		);
+		*/
 
 		if (sofar < 0) { drawTitle(g); }
 	}
