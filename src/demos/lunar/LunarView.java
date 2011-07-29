@@ -18,8 +18,7 @@ public class LunarView implements View {
 	private final int        width;
 	private final int        height;
 
-	private final ObserverView observerView;
-
+	private final ObserverView   observerView;
 	private final LandingPadView landingPadView;
 	private final HUDView        hudView;
 
@@ -122,6 +121,7 @@ public class LunarView implements View {
 			g.rotate(Math.PI, x, y);
 
 			if(lander.state == Lander.State.CRASHED) {
+				g.setColor(Color.WHITE);
 				g.fillPolygon(blast(x, y));
 			}
 
