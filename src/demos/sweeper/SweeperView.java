@@ -136,9 +136,9 @@ public class SweeperView implements View {
 	
 	public void draw(Graphics gt) {
 		Graphics2D g = (Graphics2D)gt;
+		Drawing.configureRaster(g);
 
 		synchronized(model) {
-
 			outer.draw(g);
 			score.draw(g);
 			board.draw(g);
@@ -392,8 +392,9 @@ public class SweeperView implements View {
 		
 			int tx = board.panel.x + location.x * (SIZE + 1) + (SIZE + 1) / 2 - 1;
 			int ty = board.panel.y + location.y * (SIZE + 1) + (SIZE + 1) / 2 + 1;
-		
-			Drawing.drawStringCentered(g, "" + count, tx    , ty    );
+
+			g.drawString("" + count, tx - 3, ty + 4);
+			//Drawing.drawStringCentered(g, "" + count, tx    , ty    );
 			//Drawing.drawStringCentered(g, "" + count, tx + 1, ty    );
 			//Drawing.drawStringCentered(g, "" + count, tx    , ty + 1);
 			//Drawing.drawStringCentered(g, "" + count, tx + 1, ty + 1);

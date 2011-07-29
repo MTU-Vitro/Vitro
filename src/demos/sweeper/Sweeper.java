@@ -9,6 +9,7 @@ public class Sweeper extends Grid {
 	public final Player player = new Player();
 
 	public final Set<Location> hidden = new HashSet<Location>();
+	public final Set<Location> mines  = new HashSet<Location>();
 	public final Map<Location, Integer> counts = new HashMap<Location, Integer>();
 
 	public Sweeper(int width, int height, int numMines) {
@@ -69,6 +70,7 @@ public class Sweeper extends Grid {
 			if(actor instanceof Mine) { actors.remove(actor); }
 		}
 		counts.clear();
+		mines.clear();
 
 		Random rnd = new Random();
 		for(int m = 0; m < numMines; m++) {
@@ -85,6 +87,7 @@ public class Sweeper extends Grid {
 			}
 
 			locations.put(new Mine(), toPlace);
+			mines.add(toPlace);
 		}
 		
 		for(int y = 0; y < height; y++) {
@@ -102,20 +105,20 @@ public class Sweeper extends Grid {
 	}
 
 	public boolean done() {
-		for(Actor actor : Groups.ofType(Mine.class, actors)) {
-			if(locations.get(actor) != null && !hidden.contains(locations.get(actor))) { return true; }
+		for(Location mine : mines) {
+			if(!hidden.contains(mine)) { return true; }
 		}
-		if(Groups.ofType(Mine.class, actors).size() == hidden.size()) { return true; } 
-
+		if(mines.size() == hidden.size()) { return true; }
+		
 		return false;
 	}
 	
 	public boolean success() {
-		for(Actor actor : Groups.ofType(Mine.class, actors)) {
-			if(locations.get(actor) != null && !hidden.contains(locations.get(actor))) { return false; }
+		for(Location mine : mines) {
+			if(!hidden.contains(mine)) { return false; }
 		}
-		if(Groups.ofType(Mine.class, actors).size() == hidden.size()) { return true; } 
-
+		if(mines.size() == hidden.size()) { return true; }
+		
 		return false;
 	}
 
