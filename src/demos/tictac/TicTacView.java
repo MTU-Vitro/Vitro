@@ -54,7 +54,7 @@ public class TicTacView implements View {
 		// nuffing
 	}
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 		g.drawImage(board, 0, 123, null);
@@ -79,7 +79,7 @@ public class TicTacView implements View {
 		}
 	}
 
-	private void drawMessage(int index, Graphics g) {
+	private void drawMessage(int index, Graphics2D g) {
 		g.drawImage(
 			messages,
 			0,
@@ -94,7 +94,7 @@ public class TicTacView implements View {
 		);
 	}
 
-	private void drawCross(int x, int y, boolean blue, Graphics g) {
+	private void drawCross(int x, int y, boolean blue, Graphics2D g) {
 		int tile = (x + (y * 2)) % 6;
 		int px = x * 166 + 20;
 		int py = y * 210 + 20 + 123;

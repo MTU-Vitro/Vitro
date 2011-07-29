@@ -168,7 +168,7 @@ class HostPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		view.draw(g);
+		view.draw((Graphics2D)g);
 		if (showKey) {
 			view.colorScheme().drawKey(g, 10, 10);
 		}

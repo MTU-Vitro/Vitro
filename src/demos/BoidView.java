@@ -42,7 +42,7 @@ public class BoidView implements View {
 	public int         width()       { return width;      }
 	public int         height()      { return height;     }
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 

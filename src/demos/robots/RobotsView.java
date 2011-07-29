@@ -236,7 +236,7 @@ public class RobotsView implements View {
 	}
 
 	private int drawFrame = 0;
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		if (sofar < 0) { flush(); }
 		synchronized(model) {
 			if (drawFrame >= 4) {
@@ -310,7 +310,7 @@ public class RobotsView implements View {
 		if (sofar < 0) { drawTitle(g); }
 	}
 
-	private void drawTitle(Graphics g) {
+	private void drawTitle(Graphics2D g) {
 		g.setColor(new Color(25, 25, 25));
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.WHITE);
@@ -413,7 +413,7 @@ public class RobotsView implements View {
 			this.z = 0;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			draws++;
 			if (draws == delay) {
 				frame = (frame + 1) % anim.length;
@@ -456,7 +456,7 @@ public class RobotsView implements View {
 			z = 1;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			g.setColor(new Color(0, 0, 0, 100));
 			g.fillRect( x + 4, y + 20, 8, 2 );
 			g.fillRect( x + 6, y + 19, 4, 4 );
@@ -472,7 +472,7 @@ public class RobotsView implements View {
 			this.top = top;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			g.setColor(new Color(0, 0, 0, 128));
 			g.fillRect(x, y, 16, 16);
 			if (!top) { return; }
