@@ -1,6 +1,5 @@
-package demos;
+package demos.lunar;
 
-import demos.lunar.*;
 import vitro.*;
 import vitro.plane.*;
 

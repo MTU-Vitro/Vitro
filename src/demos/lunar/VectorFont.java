@@ -1,4 +1,4 @@
-package demos;
+package demos.lunar;
 
 import java.awt.*;
 import java.util.*;

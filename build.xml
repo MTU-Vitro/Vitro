@@ -115,7 +115,7 @@
 	</target>
 
 	<target name="demo:lunar" depends="demos:compile">
-		<demo class = "demos.LunarEye"/>
+		<demo class = "demos.lunar.LunarEye"/>
 	</target>
 
 	<target name="demo:lights" depends="demos:compile">
