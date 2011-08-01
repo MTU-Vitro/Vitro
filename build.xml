@@ -119,7 +119,7 @@
 	</target>
 
 	<target name="demo:lights" depends="demos:compile">
-		<demo class = "demos.LightsOutEye" />
+		<demo class = "demos.lights.LightsOutEye" />
 	</target>
 
 	<target name="demo:robots" depends="demos:compile">

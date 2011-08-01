@@ -1,4 +1,4 @@
-package demos;
+package demos.lights;
 
 import vitro.*;
 import vitro.grid.*;
