@@ -90,10 +90,6 @@
 	</target>
 
 	<!-- Demo Target(s) -->
-	<target name="demo:search" depends="demos:compile">
-		<demo class = "demos.search.SearchAssignment"/>
-	</target>
-
 	<target name="demo:tictac" depends="demos:compile">
 		<demo class = "demos.tictac.TicTacEye"/>
 	</target>
@@ -102,7 +98,7 @@
 		<demo class = "demos.sweeper.SweeperEye"/>
 	</target>
 
-	<target name="demo:wumpusworld" depends="demos:compile">
+	<target name="demo:wumpus" depends="demos:compile">
 		<demo class = "demos.wumpus.WumpusEye"/>
 	</target>
 
@@ -113,27 +109,19 @@
 	<target name="demo:slidepuzzle" depends="demos:compile">
 		<demo class = "demos.SlidePuzzleEye"/>
 	</target>
-	
+
 	<target name="demo:reversi" depends="demos:compile">
 		<demo class = "demos.ReversiEye"/>
-	</target>
-
-	<target name="demo:boids" depends="demos:compile">
-		<demo class = "demos.BoidEye"/>
 	</target>
 
 	<target name="demo:lunar" depends="demos:compile">
 		<demo class = "demos.LunarEye"/>
 	</target>
-	
+
 	<target name="demo:lights" depends="demos:compile">
 		<demo class = "demos.LightsOutEye" />
 	</target>
 
-	<target name="demo:polyp" depends="demos:compile">
-		<demo class = "demos.polyp.PolypHost" />
-	</target>
-	
 	<target name="demo:robots" depends="demos:compile">
 		<demo class = "demos.robots.RobotsEye" />
 	</target>
