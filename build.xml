@@ -103,7 +103,7 @@
 	</target>
 
 	<target name="demo:vacworld" depends="demos:compile">
-		<demo class = "demos.VacEye"/>
+		<demo class = "demos.vacuum.VacEye"/>
 	</target>
 
 	<target name="demo:slidepuzzle" depends="demos:compile">

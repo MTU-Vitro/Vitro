@@ -1,4 +1,4 @@
-package demos;
+package demos.vacuum;
 
 import vitro.*;
 import vitro.util.*;
