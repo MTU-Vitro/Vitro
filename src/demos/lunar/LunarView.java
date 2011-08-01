@@ -3,6 +3,7 @@ package demos.lunar;
 import vitro.*;
 import vitro.plane.*;
 import vitro.util.*;
+import demos.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
