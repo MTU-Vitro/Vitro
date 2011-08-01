@@ -111,7 +111,7 @@
 	</target>
 
 	<target name="demo:reversi" depends="demos:compile">
-		<demo class = "demos.ReversiEye"/>
+		<demo class = "demos.reversi.ReversiEye"/>
 	</target>
 
 	<target name="demo:lunar" depends="demos:compile">
