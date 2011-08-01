@@ -107,7 +107,7 @@
 	</target>
 
 	<target name="demo:slidepuzzle" depends="demos:compile">
-		<demo class = "demos.SlidePuzzleEye"/>
+		<demo class = "demos.slide.SlidePuzzleEye"/>
 	</target>
 
 	<target name="demo:reversi" depends="demos:compile">
