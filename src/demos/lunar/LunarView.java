@@ -18,8 +18,7 @@ public class LunarView implements View {
 	private final int        width;
 	private final int        height;
 
-	private final ObserverView observerView;
-
+	private final ObserverView   observerView;
 	private final LandingPadView landingPadView;
 	private final HUDView        hudView;
 
@@ -64,26 +63,26 @@ public class LunarView implements View {
 		return new Polygon(x, y, 20);
 	}
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		Drawing.configureVector(g);
 
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
 		synchronized(model) {
-			observerView.draw((Graphics2D)g);
+			observerView.draw(g);
 
-			AffineTransform oldTransform = ((Graphics2D)g).getTransform();
-			((Graphics2D)g).scale( 1, -1);
-			((Graphics2D)g).translate(width / 2, 20 - height);
+			AffineTransform oldTransform = g.getTransform();
+			g.scale( 1, -1);
+			g.translate(width / 2, 20 - height);
 
-			landingPadView.draw((Graphics2D)g);
+			landingPadView.draw(g);
 			for(LanderView landerView : landerViews) {
-				landerView.draw((Graphics2D)g);
+				landerView.draw(g);
 			}
 
-			((Graphics2D)g).setTransform(oldTransform);
-			hudView.draw((Graphics2D)g);
+			g.setTransform(oldTransform);
+			hudView.draw(g);
 		}
 	}
 
@@ -122,6 +121,7 @@ public class LunarView implements View {
 			g.rotate(Math.PI, x, y);
 
 			if(lander.state == Lander.State.CRASHED) {
+				g.setColor(Color.WHITE);
 				g.fillPolygon(blast(x, y));
 			}
 

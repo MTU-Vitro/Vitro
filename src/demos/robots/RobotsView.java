@@ -236,7 +236,7 @@ public class RobotsView implements View {
 	}
 
 	private int drawFrame = 0;
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		if (sofar < 0) { flush(); }
 		synchronized(model) {
 			if (drawFrame >= 4) {
@@ -270,7 +270,7 @@ public class RobotsView implements View {
 
 		// draw background:
 		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.height; x++) {
+			for(int x = 0; x < model.width; x++) {
 				drawCell(bg, x, y);
 			}
 		}
@@ -298,19 +298,37 @@ public class RobotsView implements View {
 			sprite.draw(bg);
 		}
 
-		//font.draw(bg, 10, 10, "Hello, World!");
 
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, width, height);
+
+		double xScale = (double)width  / buffer.getWidth(null);
+		double yScale = (double)height / buffer.getHeight(null);
+		double scale  = xScale > yScale ? yScale : xScale;
+		
+		int xOffset = (int)((width  - (buffer.getWidth(null)  * scale)) / 2);
+		int yOffset = (int)((height - (buffer.getHeight(null) * scale)) / 2);
+
+		g.drawImage(
+			buffer,
+			xOffset, yOffset, xOffset + (int)(buffer.getWidth(null) * scale), yOffset + (int)(buffer.getHeight(null) * scale),
+			0, 0, buffer.getWidth(null), buffer.getHeight(null),
+			null
+		);
+
+		/*
 		g.drawImage(
 			buffer,
 			0, 0, width,                 height,
 			0, 0, buffer.getWidth(null), buffer.getHeight(null),
 			null
 		);
+		*/
 
 		if (sofar < 0) { drawTitle(g); }
 	}
 
-	private void drawTitle(Graphics g) {
+	private void drawTitle(Graphics2D g) {
 		g.setColor(new Color(25, 25, 25));
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.WHITE);
@@ -413,7 +431,7 @@ public class RobotsView implements View {
 			this.z = 0;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			draws++;
 			if (draws == delay) {
 				frame = (frame + 1) % anim.length;
@@ -456,7 +474,7 @@ public class RobotsView implements View {
 			z = 1;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			g.setColor(new Color(0, 0, 0, 100));
 			g.fillRect( x + 4, y + 20, 8, 2 );
 			g.fillRect( x + 6, y + 19, 4, 4 );
@@ -472,7 +490,7 @@ public class RobotsView implements View {
 			this.top = top;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			g.setColor(new Color(0, 0, 0, 128));
 			g.fillRect(x, y, 16, 16);
 			if (!top) { return; }

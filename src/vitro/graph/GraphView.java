@@ -135,7 +135,7 @@ public class GraphView implements View {
 		}
 	}
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 		if (currentFrame == null) { flush(); }
 		g.setColor(palette.background);
 		g.fillRect(0, 0, width, height);
@@ -181,7 +181,7 @@ public class GraphView implements View {
 			this.label = label;
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, palette.background);
 			Drawing.drawStringCentered(g, label, x, y + radius + 5);
 		}
@@ -206,7 +206,7 @@ public class GraphView implements View {
 			);
 		}
 
-		public void draw(Graphics g) {
+		public void draw(Graphics2D g) {
 			g.setColor(palette.inactive);
 			Point a = endPoint(end.x, end.y, start.x, start.y, start.radius);
 			Point b = endPoint(start.x, start.y, end.x, end.y, end.radius);
@@ -214,10 +214,9 @@ public class GraphView implements View {
 			g.fillOval(b.x-4, b.y-4, 8, 8);
 		}
 
-		public void annotation(Graphics g, EdgeAnnotation e) {
-			Graphics2D g2 = (Graphics2D)g;
-			Stroke oldStroke = g2.getStroke();
-			g2.setStroke(new BasicStroke(
+		public void annotation(Graphics2D g, EdgeAnnotation e) {
+			Stroke oldStroke = g.getStroke();
+			g.setStroke(new BasicStroke(
 				4 + (float)(globalPulse.xd()),
 				BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND,
@@ -225,12 +224,12 @@ public class GraphView implements View {
 				new float[] {8, 8},
 				16 - (float)(globalTween.xd()) * 16
 			));
-			g2.setColor(palette.unique(e.label));
+			g.setColor(palette.unique(e.label));
 			Point a = endPoint(end.x, end.y, start.x, start.y, start.radius);
 			Point b = endPoint(start.x, start.y, end.x, end.y, end.radius);
 			g.drawLine(a.x, a.y, b.x, b.y);
 			g.fillOval(b.x-6, b.y-6, 12, 12);
-			g2.setStroke(oldStroke);
+			g.setStroke(oldStroke);
 		}
 	}
 
@@ -254,10 +253,9 @@ public class GraphView implements View {
 			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, fill);
 		}
 
-		public void annotation(Graphics g, ActorAnnotation a) {
-			Graphics2D g2 = (Graphics2D)g;
-			Stroke oldStroke = g2.getStroke();
-			g2.setStroke(new BasicStroke(
+		public void annotation(Graphics2D g, ActorAnnotation a) {
+			Stroke oldStroke = g.getStroke();
+			g.setStroke(new BasicStroke(
 				2 + (float)(globalPulse.xd()),
 				BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND,
@@ -265,12 +263,12 @@ public class GraphView implements View {
 				new float[] {4, 4},
 				(float)(globalTween.xd()) * 8
 			));
-			g2.setColor(palette.unique(a.label));
+			g.setColor(palette.unique(a.label));
 			int x = currentFrame.getLocation(actor).x;
 			int y = currentFrame.getLocation(actor).y;
 			int r = radius + 3;
-			g2.drawOval(x-r, y-r, 2*r, 2*r);
-			g2.setStroke(oldStroke);
+			g.drawOval(x-r, y-r, 2*r, 2*r);
+			g.setStroke(oldStroke);
 		}
 	}	
 

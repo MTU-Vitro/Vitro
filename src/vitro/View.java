@@ -1,6 +1,6 @@
 package vitro;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public interface View {
 
@@ -12,7 +12,7 @@ public interface View {
 
 	public int height();
 
-	public void draw(Graphics g);
+	public void draw(Graphics2D g);
 
 	public void tick(double time);
 
