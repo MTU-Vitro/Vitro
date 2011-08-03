@@ -19,8 +19,8 @@ public class SearchHost extends Host {
 	}
 	
 	public SearchHost() {
-		initializePart1();
-		//initializePart2();
+		//initializePart1();
+		initializePart2();
 	}
 	
 	public void initializePart1() {
@@ -44,19 +44,38 @@ public class SearchHost extends Host {
 	}
 	
 	public void initializePart2() {
-		String filename = "assign/search/sokoban.blu0.map";
+		String filename = "assign/search/sokoban.blu2.map";
 		int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
 		
 		Robots model = new Robots(maze);
-		model.locations.put(model.createBLU(), new Location(model, 2, 2));
+		model.locations.put(model.createBLU()  , new Location(model, 1, 1));
+		
+		if(filename.equals("assign/search/sokoban.blu0.map")) {
+			model.locations.put(model.createBlock(), new Location(model, 2, 1));
+		}
+		if(filename.equals("assign/search/sokoban.blu1.map")) {
+			model.locations.put(model.createBlock(), new Location(model, 2, 1));
+		}
+		if(filename.equals("assign/search/sokoban.blu2.map")) {
+			model.locations.put(model.createBlock(), new Location(model, 2, 2));
+		}
+		if(filename.equals("assign/search/sokoban.blu3.map")) {
+			model.locations.put(model.createBlock(), new Location(model, 2, 2));
+		}
+		if(filename.equals("assign/search/sokoban.blu4.map")) {
+			model.locations.put(model.createBlock(), new Location(model, 2, 2));
+		}
 		
 		Controller controller = new SequentialController(model);
 		RobotsView view       = new RobotsView(model, controller);
 		
-		controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.ASTAR_MANHATTAN));
+		//controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.ASTAR_MANHATTAN));
+		controller.bind(Robots.BLU.class, new SokobanAgentBLU());
 		
 		show(view);
 	}
+	
+	
 	
 	private int[][] loadRoom(String filename) {
 		List<List<Integer>> data = new ArrayList<List<Integer>>();
