@@ -49,6 +49,10 @@
 		<!-- add file stagin for assignments here -->
 		<compile files = "assign/**"/>
 		<copy    file  = "${src}/assign/search/sokoban.blu0.map" todir = "${bin}/assign/search/" />
+		<copy    file  = "${src}/assign/search/sokoban.blu1.map" todir = "${bin}/assign/search/" />
+		<copy    file  = "${src}/assign/search/sokoban.blu2.map" todir = "${bin}/assign/search/" />
+		<copy    file  = "${src}/assign/search/sokoban.blu3.map" todir = "${bin}/assign/search/" />
+		<copy    file  = "${src}/assign/search/sokoban.blu4.map" todir = "${bin}/assign/search/" />
 	</target>
 
 	<target name = "tests:compile" depends = "stage, vitro:compile, demos:compile">

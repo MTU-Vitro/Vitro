@@ -54,6 +54,14 @@ public class Robots extends Grid {
 		}
 		return ret;
 	}
+	
+	public Set<Location> blocks() {
+		Set<Location> ret = new HashSet<Location>();
+		for(Actor actor : Groups.ofType(Block.class, locations.keySet())) {
+			ret.add(locations.get(actor));
+		}
+		return ret;
+	}
 
 	public boolean passable(Actor actor, Location location) {
 		// out of bounds is impassible:
@@ -186,6 +194,7 @@ public class Robots extends Grid {
 		}
 		
 		public Set<Location> targets() { return ((Robots)model).targets(); }
+		public Set<Location> blocks()  { return ((Robots)model).blocks();  }
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
