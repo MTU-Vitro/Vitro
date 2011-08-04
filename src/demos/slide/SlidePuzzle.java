@@ -77,11 +77,19 @@ public class SlidePuzzle extends Grid {
 		}
 
 		public int[][] numbers() {
-			return numbers;
+			int[][] copy = new int[height][width];
+			for(int index = 0; index < width * height; index++) {
+				copy[index / width][index % width] = numbers[index / width][index % width];
+			}
+			return copy;
 		}
 
-		public SlidePuzzle model() {
-			return (SlidePuzzle)model;
+		public int[][] solution() {
+			int[][] solution = new int[height][width];
+			for(int index = 0; index < width * height; index++) {
+				solution[index / width][index % width] = index;
+			}
+			return solution;
 		}
 
 		public Set<Action> actions() {
@@ -92,5 +100,4 @@ public class SlidePuzzle extends Grid {
 			return ret;
 		}
 	}
-
 }
