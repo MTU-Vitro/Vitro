@@ -19,14 +19,13 @@ public class DomainTracker<E> implements Domain<E> {
 		return domain.initial();
 	}
 	
-	public E goal() {
-		return domain.goal();
+	public boolean isGoal(E e) {
+		return domain.isGoal(e);
 	}
 	
 	public Set<E> expand(E e) {
 		count += 1;
-		expansions.put(e     , count    );
-		expansions.put(goal(), count + 1);
+		expansions.put(e, count);
 
 		return domain.expand(e);
 	}

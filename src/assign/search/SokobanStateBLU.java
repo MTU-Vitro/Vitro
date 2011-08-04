@@ -16,12 +16,13 @@ public class SokobanStateBLU {
 		if (!(o instanceof SokobanStateBLU)) { return false; }
 		SokobanStateBLU other = (SokobanStateBLU)o;
 		// Ignoring BLU location. Doesn't matter to the problem.
-		return other.blockLocation.equals(blockLocation);
+		return other.bluLocation.equals(bluLocation) &&
+		       other.blockLocation.equals(blockLocation);
 	}
 	
 	@Override
 	public int hashCode() {
-		return bluLocation.hashCode();
+		return bluLocation.hashCode() ^ blockLocation.hashCode();
 	}
 	
 	@Override

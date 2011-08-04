@@ -20,8 +20,8 @@ public class DomainBLU implements Domain<Location> {
 		return initial;
 	}
 	
-	public Location goal() {
-		return goal;
+	public boolean isGoal(Location l) {
+		return goal.equals(l);
 	}
 	
 	public Set<Location> expand(Location location) {

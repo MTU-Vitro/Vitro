@@ -38,13 +38,13 @@ public class SearchHost extends Host {
 		Controller controller = new SequentialController(model);
 		RobotsView view       = new RobotsView(model, controller);
 		
-		controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.ASTAR_MANHATTAN));
+		controller.bind(Robots.BLU.class, new PathingAgent(PathingAgent.PathType.BREADTH));
 		
 		show(view);
 	}
 	
 	public void initializePart2() {
-		String filename = "assign/search/sokoban.blu2.map";
+		String filename = "assign/search/sokoban.blu3.map";
 		int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
 		
 		Robots model = new Robots(maze);

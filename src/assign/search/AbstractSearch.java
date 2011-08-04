@@ -3,7 +3,7 @@ package assign.search;
 import vitro.util.*;
 import java.util.*;
 
-public class AbstractSearch<E>  {
+public class AbstractSearch<E> {
 	
 	public List<E> search(Domain<E> domain, Collection<E> frontier) {
 		frontier.add(domain.initial());
@@ -15,7 +15,7 @@ public class AbstractSearch<E>  {
 			E current = Groups.first(frontier);
 			frontier.remove(current);
 			
-			if(current.equals(domain.goal())) {
+			if(domain.isGoal(current)) {
 				List<E> path = new ArrayList<E>();
 				
 				E state = current;
