@@ -68,7 +68,18 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 				);
 
 				states = method.search(domain);
-				if(states != null) { break; }
+				
+				
+				Set<Location> targetSet = actor.targets();
+				targetSet.remove(Groups.first(actor.blocks()));
+				Location bluTarget = Groups.first(targetSet);
+
+				Search<Location> pathMethod = new BreadthFirstSearch<Location>();
+				Domain<Location> pathDomain = new DomainBLU(actor, actor.location(), bluTarget);
+
+				List<Location> path = pathMethod.search(pathDomain);
+				
+				if(states != null && path != null) { break; }
 			}
 
 			// No solution found.

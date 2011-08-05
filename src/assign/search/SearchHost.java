@@ -31,7 +31,7 @@ public class SearchHost extends Host {
 	**/
 	public SearchHost() {
 		//this(new String[] { "pathing", "breadth" });
-		this(new String[] { "sokoban", "map1" });
+		this(new String[] { "sokoban", "map4" });
 	}
 
 	/**
@@ -57,7 +57,29 @@ public class SearchHost extends Host {
 		else                                        { System.out.println("Invalid Algorithm."); return; }
 
 		String filename = "assign/search/path.map";
-		int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+		int[][] maze = {
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0 },
+			{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0 },
+			{ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 },
+			{ 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0 },
+			{ 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
+			{ 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0 },
+			{ 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+			{ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0 },
+			{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 },
+			{ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0 },
+			{ 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },
+			{ 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0 },
+			{ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 3, 0, 1, 0 },
+			{ 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0 },
+			{ 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0 },
+			{ 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0 },
+			{ 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+		};
 
 		Robots     model      = new Robots(maze);
 		Controller controller = new SequentialController(model);
@@ -77,16 +99,22 @@ public class SearchHost extends Host {
 
 		Robots model;
 		if(args[1].equals("map0")) {
-			String filename = "assign/search/sokoban.blu0.map";
-			int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+			int[][] maze = {
+				{ 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 3, 1, 1, 1, 1, 3, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0 }
+			};
 
 			model = new Robots(maze);
 			model.locations.put(model.createBLU()  , new Location(model, 1, 1));
 			model.locations.put(model.createBlock(), new Location(model, 2, 1));
 		}
 		else if(args[1].equals("map1")) {
-			String filename = "assign/search/sokoban.blu1.map";
-			int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+			int[][] maze = {
+				{ 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 1, 1, 1, 1, 3, 3, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0 }
+			};
 
 			model = new Robots(maze);
 			model.locations.put(model.createBLU()  , new Location(model, 1, 1));
@@ -94,23 +122,63 @@ public class SearchHost extends Host {
 		}
 		else if(args[1].equals("map2")) {
 			String filename = "assign/search/sokoban.blu2.map";
-			int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+			int[][] maze = {
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+			};
 
 			model = new Robots(maze);
 			model.locations.put(model.createBLU()  , new Location(model, 1, 1));
 			model.locations.put(model.createBlock(), new Location(model, 2, 2));
 		}
 		else if(args[1].equals("map3")) {
-			String filename = "assign/search/sokoban.blu3.map";
-			int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+			int[][] maze = {
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+			};
 
 			model = new Robots(maze);
 			model.locations.put(model.createBLU()  , new Location(model, 1, 1));
 			model.locations.put(model.createBlock(), new Location(model, 2, 2));
 		}
 		else if(args[1].equals("map4")) {
-			String filename = "assign/search/sokoban.blu4.map";
-			int[][] maze = loadRoom(SearchHost.class.getClassLoader().getResource(filename).getFile());
+			int[][] maze = {
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+				{ 0, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 0 },
+				{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+			};
 
 			model = new Robots(maze);
 			model.locations.put(model.createBLU()  , new Location(model, 1, 1));
@@ -124,36 +192,5 @@ public class SearchHost extends Host {
 		controller.bind(Robots.BLU.class, new SokobanAgentBLU());
 
 		show(view);
-	}
-
-	/**
-	*
-	**/
-	private int[][] loadRoom(String filename) {
-		List<List<Integer>> data = new ArrayList<List<Integer>>();
-		try {
-			Scanner scanner = new Scanner(new File(filename));
-	
-			while(scanner.hasNextLine()) {
-				Scanner lineScanner = new Scanner(scanner.nextLine());
-				
-				List<Integer> line = new ArrayList<Integer>();
-				while(lineScanner.hasNextInt()) {
-					line.add(lineScanner.nextInt());
-				}
-				data.add(line);
-			}
-		}
-		catch(Exception e) {
-			System.err.println(e);
-		}
-
-		int[][] grid = new int[data.size()][data.get(0).size()];
-		for(int y = 0; y < data.size(); y++) {
-			for(int x = 0; x < data.get(0).size(); x++) {
-				grid[y][x] = data.get(y).get(x);
-			}
-		}
-		return grid;
 	}
 }
