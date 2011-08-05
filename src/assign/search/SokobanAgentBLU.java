@@ -43,8 +43,6 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 			// BLU + Target 0, Block + Target 1;
 			// BLU + Target 1, Block + Target 0.
 			for(Location target : targets) {
-				System.out.println("Trying target : " + target);
-
 				List<Location> goals = new ArrayList<Location>(targets);
 				goals.remove(target);
 
@@ -61,6 +59,7 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 						}
 					}
 				);
+				//Search<SokobanStateBLU> method = new BreadthFirstSearch<SokobanStateBLU>();
 				Domain<SokobanStateBLU> domain = new SokobanDomainBLU(
 					actor,
 					block,
@@ -86,7 +85,6 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 		if(states.size() > 1) {
 			// Carry out blu/block pathing until done
 			SokobanStateBLU current = states.get(1);
-			System.out.println(current);
 
 			// We have arrived at our intermediate destination, so we now push!
 			if((actor.location()).equals(current.bluLocation)) {
@@ -102,7 +100,6 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 			// Otherwise we path to our intermediate destination and follow!
 			Search<Location> method = new BreadthFirstSearch<Location>();
 			Domain<Location> domain = new DomainBLU(actor, actor.location(), current.bluLocation);
-			System.out.println(current.bluLocation);
 
 			Location next = method.search(domain).get(1);
 			Action action = actor.move(next, options);

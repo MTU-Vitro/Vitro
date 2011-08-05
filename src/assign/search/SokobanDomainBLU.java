@@ -45,7 +45,6 @@ public class SokobanDomainBLU implements Domain<SokobanStateBLU> {
 				ret.add(new SokobanStateBLU((double)(path.size()) + state.cost, toPush, next));
 			}
 		}
-		System.out.println(ret);
 		return ret;
 	}
 }
