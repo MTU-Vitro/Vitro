@@ -14,8 +14,8 @@ import java.awt.Color;
 public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 
 	private List<SokobanStateBLU> states = null;
-	private Map<Location, Integer> expansions = null;
-	private Map<Location, Integer> expansions2 = null;
+	private Map<Location, Integer> expansions  = new HashMap<Location, Integer>();
+	private List<Location>         expansions2 = new ArrayList<Location>();
 
 	/**
 	* Selects an action to perform for the given actor from the set of
@@ -37,7 +37,7 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 			// We assume : 1 blu, 1 block, 2 targets
 			Location       robot   = actor.location();
 			Location       block   = Groups.first(actor.blocks());
-			Set<Location> targets = actor.targets();
+			Set<Location>  targets = actor.targets();
 
 			// Consider the combinations for solving the puzzle:
 			// BLU + Target 0, Block + Target 1;
@@ -54,10 +54,17 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 
 				// Second, path the block, making sure that you only expand
 				// in "pushable" directions.
-				Search<SokobanStateBLU> method = new BreadthFirstSearch<SokobanStateBLU>();
+				Search<SokobanStateBLU> method = new UniformCostSearch<SokobanStateBLU>(
+					new CostFunction<SokobanStateBLU>() {
+						public double value(SokobanStateBLU state) {
+							return state.cost;
+						}
+					}
+				);
 				Domain<SokobanStateBLU> domain = new SokobanDomainBLU(
 					actor,
-					new SokobanStateBLU(robot, block),
+					block,
+					new SokobanStateBLU(0.0, robot, block),
 					blockTarget
 				);
 
@@ -76,30 +83,46 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 			}
 		}
 
-		if(states.size() == 0) { return null; }
+		if(states.size() > 1) {
+			// Carry out blu/block pathing until done
+			SokobanStateBLU current = states.get(1);
+			System.out.println(current);
 
-		SokobanStateBLU current = states.get(1);
-		System.out.println(current);
-
-		// We have arrived at our intermediate destination, so we now push!
-		if((actor.location()).equals(current.bluLocation)) {
-			for(Action action : Groups.ofType(Robots.PushAction.class, options)) {
-				Robots.PushAction push = (Robots.PushAction)action;
-				if(push.pusher == actor && push.pushedTo.equals(current.blockLocation)) {
-					states.remove(0);
-					return push;
+			// We have arrived at our intermediate destination, so we now push!
+			if((actor.location()).equals(current.bluLocation)) {
+				for(Action action : Groups.ofType(Robots.PushAction.class, options)) {
+					Robots.PushAction push = (Robots.PushAction)action;
+					if(push.pusher == actor && push.pushedTo.equals(current.blockLocation)) {
+						states.remove(0);
+						return push;
+					}
 				}
 			}
+
+			// Otherwise we path to our intermediate destination and follow!
+			Search<Location> method = new BreadthFirstSearch<Location>();
+			Domain<Location> domain = new DomainBLU(actor, actor.location(), current.bluLocation);
+			System.out.println(current.bluLocation);
+
+			Location next = method.search(domain).get(1);
+			Action action = actor.move(next, options);
+			return action;
 		}
+		else {
+			// Path blu to his own target
+			Set<Location> targetSet = actor.targets();
+			targetSet.remove(Groups.first(actor.blocks()));
+			Location target = Groups.first(targetSet);
 
-		// Otherwise we path to our intermediate destination and follow!
-		Search<Location> method = new BreadthFirstSearch<Location>();
-		Domain<Location> domain = new DomainBLU(actor, actor.location(), current.bluLocation);
-		System.out.println(current.bluLocation);
+			Search<Location> method = new BreadthFirstSearch<Location>();
+			Domain<Location> domain = new DomainBLU(actor, actor.location(), target);
 
-		Location next = method.search(domain).get(1);
-		Action action = actor.move(next, options);
-		return action;
+			List<Location> path = method.search(domain);
+			path.remove(0);
+			expansions2 = path;
+			Location next = path.remove(0);
+			return actor.move(next, options);
+		}
 	}
 	
 	/**
@@ -116,21 +139,21 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 		// GridAnnotation constructs a gradient between two colors
 		// based on the ordering and overlays the data on top of
 		// the view.
-		/*
+		
 		ret.add(new GridAnnotation(
 			expansions,
 			new Color(0.90f, 0.09f, 0.08f, 0.2f),
 			new Color(0.53f, 0.08f, 0.00f, 0.2f)
 		));
-		*/
-
-		/*
+		
 		ret.add(new GridAnnotation(
-			path,
+			expansions2,
 			new Color(0.00f, 0.09f, 0.58f, 0.5f)
 		));
-		*/
+		
+		
 
 		return ret;
 	}
 }
+

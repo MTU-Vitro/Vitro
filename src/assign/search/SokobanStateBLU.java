@@ -3,10 +3,12 @@ package assign.search;
 import vitro.grid.*;
 
 public class SokobanStateBLU {
+	public final double   cost;
 	public final Location bluLocation;
 	public final Location blockLocation;
 	
-	public SokobanStateBLU(Location bluLocation, Location blockLocation) {
+	public SokobanStateBLU(double cost, Location bluLocation, Location blockLocation) {
+		this.cost          = cost;
 		this.bluLocation   = bluLocation;
 		this.blockLocation = blockLocation;
 	}
@@ -27,6 +29,6 @@ public class SokobanStateBLU {
 	
 	@Override
 	public String toString() {
-		return bluLocation + "  " + blockLocation;
+		return bluLocation + "  " + blockLocation + "  " + cost;
 	}
 }

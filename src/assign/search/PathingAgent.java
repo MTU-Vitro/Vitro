@@ -86,9 +86,15 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 				                       break;
 				case DEPTH           : method = new DepthFirstSearch<Location>();
 				                       break;
-				case ASTAR_EUCLIDIAN : method = new AStarSearch<Location>(new EuclidianHeuristic(goal));
+				case ASTAR_EUCLIDIAN : method = new AStarSearch<Location>(
+				                           new ConstantCostFunction<Location>(),
+				                           new EuclidianHeuristic(goal)
+				                       );
 				                       break;
-				case ASTAR_MANHATTAN : method = new AStarSearch<Location>(new ManhattanHeuristic(goal));
+				case ASTAR_MANHATTAN : method = new AStarSearch<Location>(
+				                           new ConstantCostFunction<Location>(),
+				                           new ManhattanHeuristic(goal)
+				                       );
 				                       break;
 				default: throw new Error("Unrecognized search type!");
 			}
