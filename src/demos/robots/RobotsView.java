@@ -3,6 +3,7 @@ package demos.robots;
 import demos.*;
 import vitro.*;
 import vitro.grid.*;
+import vitro.util.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -276,7 +277,7 @@ public class RobotsView implements View {
 		}
 
 		// draw gridAnnotations:
-		for(Annotation a : controller.annotations().keySet()) {
+		for(Annotation a : new TreeSet<Annotation>(Groups.ofType(GridAnnotation.class, controller.annotations().keySet()))) {
 			if (a instanceof GridAnnotation) {
 				for(Map.Entry<Point, Color> tile : ((GridAnnotation)a).coloring.entrySet()) {
 					bg.setColor(tile.getValue());

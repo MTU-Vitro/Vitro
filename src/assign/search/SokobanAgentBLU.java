@@ -13,8 +13,11 @@ import java.awt.Color;
 **/
 public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 
-	private List<SokobanStateBLU> states = null;
-	private Map<Location, Integer> expansions  = new HashMap<Location, Integer>();
+	private List<SokobanStateBLU> states    = null;
+	private List<Location>        pathBLU   = null;
+	private List<Location>        pathBlock = null;
+
+	private Map<Location, Integer> expansions1 = new HashMap<Location, Integer>();
 	private List<Location>         expansions2 = new ArrayList<Location>();
 
 	/**
@@ -34,23 +37,23 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 
 		// On the first call, our state will not be initialized.
 		if(states == null) {
-			// We assume : 1 blu, 1 block, 2 targets
-			Location       robot   = actor.location();
-			Location       block   = Groups.first(actor.blocks());
-			Set<Location>  targets = actor.targets();
-
+			// We assume : 1 blue, 1 block, 2 targets.
+			Location      bluLocation   = actor.location();
+			Location      blockLocation = Groups.first(actor.blocks());
+			Set<Location> targets       = actor.targets();
+			
 			// Consider the combinations for solving the puzzle:
 			// BLU + Target 0, Block + Target 1;
 			// BLU + Target 1, Block + Target 0.
 			for(Location target : targets) {
 				List<Location> goals = new ArrayList<Location>(targets);
 				goals.remove(target);
-
-				// First, distribute the two targets between blu and the block.
-				Location robotTarget = Groups.first(goals);
+				
+				// First, distribute the two targets between blue and the block.
+				Location bluTarget   = Groups.first(goals);
 				Location blockTarget = target;
-
-				// Second, path the block, making sure that you only expand
+				
+				// Second, path the block, making sure that you only expand 
 				// in "pushable" directions.
 				Search<SokobanStateBLU> method = new UniformCostSearch<SokobanStateBLU>(
 					new CostFunction<SokobanStateBLU>() {
@@ -59,46 +62,50 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 						}
 					}
 				);
-				//Search<SokobanStateBLU> method = new BreadthFirstSearch<SokobanStateBLU>();
 				Domain<SokobanStateBLU> domain = new SokobanDomainBLU(
 					actor,
-					block,
-					new SokobanStateBLU(0.0, robot, block),
+					blockLocation,
+					new SokobanStateBLU(0.0, bluLocation, blockLocation),
 					blockTarget
 				);
-
 				states = method.search(domain);
 				
+				if(states == null) { continue; }
 				
-				Set<Location> targetSet = actor.targets();
-				targetSet.remove(Groups.first(actor.blocks()));
-				Location bluTarget = Groups.first(targetSet);
-
-				Search<Location> pathMethod = new BreadthFirstSearch<Location>();
-				Domain<Location> pathDomain = new DomainBLU(actor, actor.location(), bluTarget);
-
-				List<Location> path = pathMethod.search(pathDomain);
+				// Third, path BLU from his final location pushing the block
+				// to his target.
+				Search<Location> bluMethod = new BreadthFirstSearch<Location>();
+				Domain<Location> bluDomain = new DomainBLU(actor, actor.location(), bluTarget);
+				List<Location> path = bluMethod.search(bluDomain);
 				
-				if(states != null && path != null) { break; }
+				if(path == null) { continue; }
+				
+				// Here we have passed our checks and have found a valid
+				// solution!
+				break;
 			}
-
-			// No solution found.
-			if(states == null) { throw new Error("No path recieved!"); }
-
-			expansions = new HashMap<Location, Integer>();
-			int count = 0;
+			
+			// Check to see if no solution has been found.
+			if(states == null) { throw new Error("No Solution Found!"); }
+			
+			// Setup block path, as it is known at this time.
+			pathBlock = new ArrayList<Location>();
 			for(SokobanStateBLU state : states) {
-				expansions.put(state.blockLocation, count);
-				count++;
+				pathBlock.add(state.blockLocation);
 			}
 		}
 
+		// If BLU already has a path, we should attend to that
+
+		// Iterate through the block pushing states, pushing the block or
+		// pathing BLU as needed.
 		if(states.size() > 1) {
-			// Carry out blu/block pathing until done
 			SokobanStateBLU current = states.get(1);
 
-			// We have arrived at our intermediate destination, so we now push!
+			// If we have arrived at our intermediate destination, 
+			// we can now push!
 			if((actor.location()).equals(current.bluLocation)) {
+				pathBLU = null;
 				for(Action action : Groups.ofType(Robots.PushAction.class, options)) {
 					Robots.PushAction push = (Robots.PushAction)action;
 					if(push.pusher == actor && push.pushedTo.equals(current.blockLocation)) {
@@ -111,8 +118,13 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 			// Otherwise we path to our intermediate destination and follow!
 			Search<Location> method = new BreadthFirstSearch<Location>();
 			Domain<Location> domain = new DomainBLU(actor, actor.location(), current.bluLocation);
-
-			Location next = method.search(domain).get(1);
+			List<Location> path = method.search(domain);
+			
+			if(pathBLU == null) { pathBLU = new ArrayList<Location>(path); }
+			
+			path.remove(0);
+			Location next = path.remove(0);
+			
 			Action action = actor.move(next, options);
 			return action;
 		}
@@ -124,11 +136,13 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 
 			Search<Location> method = new BreadthFirstSearch<Location>();
 			Domain<Location> domain = new DomainBLU(actor, actor.location(), target);
-
 			List<Location> path = method.search(domain);
+			
+			if(pathBLU == null) { pathBLU = new ArrayList<Location>(path); }
+			
 			path.remove(0);
-			expansions2 = path;
 			Location next = path.remove(0);
+			
 			return actor.move(next, options);
 		}
 	}
@@ -148,17 +162,10 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 		// based on the ordering and overlays the data on top of
 		// the view.
 		
-		ret.add(new GridAnnotation(
-			expansions,
-			new Color(0.90f, 0.09f, 0.08f, 0.2f),
-			new Color(0.53f, 0.08f, 0.00f, 0.2f)
-		));
-		
-		ret.add(new GridAnnotation(
-			expansions2,
-			new Color(0.00f, 0.09f, 0.58f, 0.5f)
-		));
-		
+		ret.add(new GridAnnotation(pathBlock, new Color(0.90f, 0.09f, 0.08f, 0.2f)));
+		if(pathBLU != null) {
+			ret.add(new GridAnnotation(pathBLU, new Color(0.00f, 0.09f, 0.58f, 0.5f)));
+		}
 		
 
 		return ret;
