@@ -4,11 +4,14 @@ import vitro.*;
 import java.util.*;
 import java.awt.*;
 
-public class GridAnnotation implements Annotation {
-	public final Map<Point, Color> coloring = new HashMap<Point, Color>();
+public class GridAnnotation implements Annotation, Comparable {
+	private static Integer currentOrder = 0;
 	
+	public final Map<Point, Color> coloring = new HashMap<Point, Color>();
+	private Integer order;
 	
 	public GridAnnotation(Collection<Location> colored, Color color) {
+		order = currentOrder++;
 		for(Location location : colored) { coloring.put(new Point(location.x, location.y), color); }
 	}
 	
@@ -72,5 +75,10 @@ public class GridAnnotation implements Annotation {
 		}
 		
 		return colors;
+	}
+	
+	public int compareTo(Object o) {
+		if(o instanceof GridAnnotation) { return ((GridAnnotation)o).order.compareTo(order); }
+		return 1;
 	}
 }
