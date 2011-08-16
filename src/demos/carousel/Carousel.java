@@ -17,7 +17,7 @@ public class Carousel extends JPanel implements KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final int SCREEN_WIDTH  = 1280;
 	private static final int SCREEN_HEIGHT = 1024;
-	private static final double ZOOM_TIME = 5;
+	private static final double ZOOM_TIME = 8;
 
 	public static void main(String[] args) {
 		JFrame window = new JFrame();
@@ -80,6 +80,14 @@ public class Carousel extends JPanel implements KeyListener {
 	private void resetView(int index) {
 		grid[getViewY(index)][getViewX(index)].reset();
 	}
+	private boolean waitForTimer(int max) {
+		timer++;
+		if (timer >= max) {
+			timer = 0;
+			return false;
+		}
+		return true;
+	}
 
 	private State mode = State.Grid;
 	private int index = 1;
@@ -90,9 +98,7 @@ public class Carousel extends JPanel implements KeyListener {
 
 	public void tick() {
 		if (mode == State.Grid) {
-			timer += 1;
-			if (timer < 20) { return; }
-			timer = 0;
+			if (waitForTimer(150)) { return; }
 			index++;
 			resetView(index);
 			mode = State.ZoomIn;
@@ -107,19 +113,15 @@ public class Carousel extends JPanel implements KeyListener {
 			tl.tick(.1);
 			br.tick(.1);
 			if (tl.done() && br.done()) {
-				timer += 1;
-				if (timer < 20) { return; }
-				timer = 0;
+				if (waitForTimer(20)) { return; }
 				mode = State.Slide;
 			}
 		}
 		if (mode == State.Slide) {
 			View v = getView(index);
-			v.tick(.01);
+			v.tick(.1);
 			if (v.controller().hasNext()) { return; }
-			timer += 1;
-			if (timer < 20) { return; }
-			timer = 0;
+			if (waitForTimer(150)) { return; }
 			mode = State.ZoomOut;
 			int x = getViewX(index);
 			int y = getViewY(index);
@@ -132,9 +134,7 @@ public class Carousel extends JPanel implements KeyListener {
 			tl.tick(.1);
 			br.tick(.1);
 			if (tl.done() && br.done()) {
-				timer += 1;
-				if (timer < 20) { return; }
-				timer = 0;
+				if (waitForTimer(20)) { return; }
 				mode = State.Grid;
 			}
 		}
@@ -174,6 +174,7 @@ public class Carousel extends JPanel implements KeyListener {
 	}
 
 	private void drawGrid(Graphics g) {
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		for(int y = 0; y < grid.length; y++) {
 			for(int x = 0; x < grid[0].length; x++) {
 				drawToBuffer(grid[y][x].view);
