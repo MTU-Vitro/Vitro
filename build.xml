@@ -124,5 +124,9 @@
 	<target name="demo:robots" depends="demos:compile">
 		<demo class = "demos.robots.RobotsEye" />
 	</target>
+	
+	<target name="demo:carousel" depends="demos:compile">
+		<demo class = "demos.Carousel" />
+	</target>
 
 </project>

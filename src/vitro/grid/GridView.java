@@ -142,7 +142,7 @@ public class GridView implements View {
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if (sofar > .75) {
+		if (sofar > .05) {
 			controller.next();
 			sofar = 0;
 		}
