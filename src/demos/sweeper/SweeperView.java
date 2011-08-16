@@ -118,15 +118,11 @@ public class SweeperView implements View {
 	public int         width()       { return width;      }
 	public int         height()      { return height;     }
 	
-	private double sofar = 0;
 	public void tick(double time) {
-		sofar += time;
-		if (sofar > .2) {
-			controller.next();
-			flush();
-			sofar = 0;
-		}
+		controller.next();
+		flush();
 	}
+
 	public void flush() {
 		synchronized(model) {
 			state = updateState();
@@ -135,6 +131,8 @@ public class SweeperView implements View {
 
 	
 	public void draw(Graphics2D g) {
+		g.setColor(background);
+		g.fillRect(0, 0, width, height);
 		Drawing.configureRaster(g);
 
 		synchronized(model) {
