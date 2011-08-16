@@ -9,10 +9,26 @@ import java.util.*;
 public class LightsOutView extends GridView {
 	
 	public LightsOutView(Grid model, Controller controller, int width, int height) {
-		super(model, controller, width, height, new ColorScheme());
+		super(model, controller, width, height, new ColorScheme(Color.BLACK, Color.LIGHT_GRAY, Color.BLUE));
+		colors.inactive = Color.GRAY;
 		colors.setColor(new Integer(0), new Color(141, 119, 197));
 		colors.setColor(new Integer(1), new Color(255, 133, 242));
-		//colors.background = new Color(180, 180, 180);
+	}
+
+	protected void drawBackground(Graphics2D g) {
+		g.setPaint(new LinearGradientPaint(
+			new Point2D.Double(0,      0),
+			new Point2D.Double(0, height),
+			new float[] {0.0f, .50f, 1.0f},
+			new Color[] {
+				colors.background.darker().darker(),
+				colors.background.darker(),
+				colors.background,
+			}
+		));
+	
+		g.fillRect(0, 0, width, height);
+		g.setPaint(null);
 	}
 
 	protected void drawCell(Graphics2D g, int x, int y) {

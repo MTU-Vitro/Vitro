@@ -39,7 +39,7 @@ public class GridView implements View {
 	public int         height()      { return height;     }
 
 	public void draw(Graphics2D g) {
-		g.setColor(colors.background);
+		drawBackground(g);
 		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 
@@ -59,6 +59,10 @@ public class GridView implements View {
 				}
 			}
 		}
+	}
+
+	protected void drawBackground(Graphics2D g) {
+		g.setColor(colors.background);
 	}
 
 	protected void drawCell(Graphics2D g, int x, int y) {
