@@ -18,6 +18,8 @@ public class Carousel extends JPanel implements KeyListener {
 	private static final int SCREEN_WIDTH  = 1280;
 	private static final int SCREEN_HEIGHT = 1024;
 	private static final double ZOOM_TIME = 8;
+	private static final double PAN_TIME = 10;
+	private final Object paintMonitor = new Object();
 
 	public static void main(String[] args) {
 		JFrame window = new JFrame();
@@ -90,26 +92,21 @@ public class Carousel extends JPanel implements KeyListener {
 	}
 
 	private State mode = State.Grid;
-	private int index = 1;
+	private int index = -1;
 	private double timer = 0;
 	private Image buffer = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 	private Tweener tl;
 	private Tweener br;
+	private Tweener tl2;
+	private Tweener br2;
 
 	public void tick() {
 		if (mode == State.Grid) {
 			if (waitForTimer(150)) { return; }
-			index++;
-			resetView(index);
-			mode = State.ZoomIn;
-			int x = getViewX(index);
-			int y = getViewY(index);
-			int w = SCREEN_WIDTH  / grid[0].length;
-			int h = SCREEN_HEIGHT / grid.length;
-			tl = new Tweener( x    * w,  y    * h,            0,             0, ZOOM_TIME);
-			br = new Tweener((x+1) * w, (y+1) * h, SCREEN_WIDTH, SCREEN_HEIGHT, ZOOM_TIME);
+			advance(State.ZoomIn);
+			zoomTransition(false);
 		}
-		if (mode == State.ZoomIn) {
+		else if (mode == State.ZoomIn) {
 			tl.tick(.1);
 			br.tick(.1);
 			if (tl.done() && br.done()) {
@@ -117,20 +114,28 @@ public class Carousel extends JPanel implements KeyListener {
 				mode = State.Slide;
 			}
 		}
-		if (mode == State.Slide) {
+		else if (mode == State.Pan) {
+			tl.tick(.1);
+			br.tick(.1);
+			tl2.tick(.1);
+			br2.tick(.1);
+			if (tl.done() && br.done() && tl2.done() && br2.done()) {
+				if (waitForTimer(20)) { return; }
+				mode = State.Slide;
+			}
+		}
+		else if (mode == State.Slide) {
 			View v = getView(index);
 			v.tick(.1);
 			if (v.controller().hasNext()) { return; }
 			if (waitForTimer(150)) { return; }
-			mode = State.ZoomOut;
-			int x = getViewX(index);
-			int y = getViewY(index);
-			int w = SCREEN_WIDTH  / grid[0].length;
-			int h = SCREEN_HEIGHT / grid.length;
-			tl = new Tweener(            0,             0,  x    * w,  y    * h, ZOOM_TIME);
-			br = new Tweener( SCREEN_WIDTH, SCREEN_HEIGHT, (x+1) * w, (y+1) * h, ZOOM_TIME);
+
+			synchronized(paintMonitor) {
+				if (Math.random() < .2) { zoomTransition(true); }
+				else                    { slideTransition(); }
+			}
 		}
-		if (mode == State.ZoomOut) {
+		else if (mode == State.ZoomOut) {
 			tl.tick(.1);
 			br.tick(.1);
 			if (tl.done() && br.done()) {
@@ -142,35 +147,100 @@ public class Carousel extends JPanel implements KeyListener {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		if (mode == State.Grid) {
-			drawGrid(g);
-		}
-		if (mode == State.ZoomIn || mode == State.ZoomOut) {
-			drawGrid(g);
-			drawToBuffer(getView(index));
-			g.drawImage(
-				buffer,
-				tl.x(),
-				tl.y(),
-				br.x(),
-				br.y(),
-				0,
-				0,
-				SCREEN_WIDTH,
-				SCREEN_HEIGHT,
-				this
-			);
-		}
-		if (mode == State.Slide) {
-			getView(index).draw((Graphics2D)g);
+		synchronized(paintMonitor) {
+			if (mode == State.Grid) {
+				drawGrid(g);
+			}
+			else if (mode == State.ZoomIn || mode == State.ZoomOut) {
+				drawGrid(g);
+				drawAt(getView(index), tl, br, g);
+			}
+			else if (mode == State.Pan) {
+				drawAt(getView(index-1), tl,  br,  g);
+				drawAt(getView(index),   tl2, br2, g);
+			}
+			else if (mode == State.Slide) {
+				drawToBuffer(getView(index), (Graphics2D)g);
+			}
 		}
 	}
 
+	private void slideTransition() {
+		advance(State.Pan);
+		int w = SCREEN_WIDTH;
+		int h = SCREEN_HEIGHT;
+		boolean positive = Math.random() > .5;
+		boolean vertical = Math.random() > .5;
+		int s = vertical ? h : w;
+		int a = positive ?     s :    -s;
+		int b = positive ? 2 * s :     0;
+		int c = positive ?     0 : 2 * s;
+		if (vertical) {
+			tl  = new Tweener( 0, 0, 0, a, PAN_TIME);
+			br  = new Tweener( w, h, w, b, PAN_TIME);
+			tl2 = new Tweener( 0,-a, 0, 0, PAN_TIME);
+			br2 = new Tweener( w, c, w, h, PAN_TIME);
+		}
+		else {
+			tl  = new Tweener( 0, 0, a, 0, PAN_TIME);
+			br  = new Tweener( w, h, b, h, PAN_TIME);
+			tl2 = new Tweener(-a, 0, 0, 0, PAN_TIME);
+			br2 = new Tweener( c, h, w, h, PAN_TIME);
+		}
+	}
+
+	private void zoomTransition(boolean out) {
+		mode = out ? State.ZoomOut : State.ZoomIn;
+		int x = getViewX(index);
+		int y = getViewY(index);
+		int w = SCREEN_WIDTH  / grid[0].length;
+		int h = SCREEN_HEIGHT / grid.length;
+		if (out) {
+			tl = new Tweener(            0,             0,  x    * w,  y    * h, ZOOM_TIME);
+			br = new Tweener( SCREEN_WIDTH, SCREEN_HEIGHT, (x+1) * w, (y+1) * h, ZOOM_TIME);
+		}
+		else {
+			tl = new Tweener( x    * w,  y    * h,            0,             0, ZOOM_TIME);
+			br = new Tweener((x+1) * w, (y+1) * h, SCREEN_WIDTH, SCREEN_HEIGHT, ZOOM_TIME);
+		}
+	}
+
+	private void advance(State nextState) {
+		synchronized(paintMonitor) {
+			index++;
+			resetView(index);
+			mode = nextState;
+		}
+	}
+
+	private void drawAt(View v, Tweener a, Tweener b, Graphics g) {
+		drawToBuffer(v);
+		g.drawImage(
+			buffer,
+			a.x(),
+			a.y(),
+			b.x(),
+			b.y(),
+			0,
+			0,
+			SCREEN_WIDTH,
+			SCREEN_HEIGHT,
+			this
+		);
+	}
+
 	private void drawToBuffer(View v) {
-		Graphics2D bg = (Graphics2D)buffer.getGraphics();
-		bg.setColor(Color.BLACK);
-		bg.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		v.draw(bg);
+		drawToBuffer(v, (Graphics2D)buffer.getGraphics());
+	}
+
+	private void drawToBuffer(View v, Graphics2D g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		g.translate(
+			(SCREEN_WIDTH  - v.width())  / 2,
+			(SCREEN_HEIGHT - v.height()) / 2
+		);
+		v.draw(g);
 	}
 
 	private void drawGrid(Graphics g) {
@@ -263,7 +333,7 @@ public class Carousel extends JPanel implements KeyListener {
 	};
 }
 
-enum State { Grid, ZoomIn, Slide, ZoomOut };
+enum State { Grid, ZoomIn, Slide, ZoomOut, Pan };
 
 abstract class Slide {
 	public View view;
