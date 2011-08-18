@@ -19,7 +19,7 @@ public class LunarEye extends Host {
 
 		Lander lander = new Lander(model);
 		model.positions.put(lander, new Position(Math.random() * 400 - 200, 400.0));
-		lander.velocity = new Vector2(Math.random() * 40 - 20, 0.0);
+		//lander.velocity = new Vector2(Math.random() * 20 - 10, 0.0);
 
 		Controller controller = new SequentialController(model);
 		LunarView view        = new LunarView(model, controller, 640, 480);

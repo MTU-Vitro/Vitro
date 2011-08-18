@@ -15,7 +15,7 @@ public class Lander extends PhysicsActor implements Collidable {
 	public final Thruster rThruster;
 
 	public State state = State.IN_FLIGHT;
-	public int   fuel  = 1000;
+	public int   fuel  = 100;
 
 	/**
 	*
@@ -45,7 +45,6 @@ public class Lander extends PhysicsActor implements Collidable {
 			composite.add(new VelocityAction(model, this));
 			ret.add(new CompositeAction(composite));
 		}
-
 		return ret;
 	}
 
@@ -54,7 +53,7 @@ public class Lander extends PhysicsActor implements Collidable {
 	**/
 	public Bound bound() {
 		Position p = model.positions.get(this);
-		return new AlignedBox(p.x - 19, p.y - 15, p.x + 19, p.y + 24);
+		return new AlignedBox(p.x - 19, p.y - 24, p.x + 19, p.y + 15);
 	}
 
 	/**
@@ -70,6 +69,7 @@ public class Lander extends PhysicsActor implements Collidable {
 	*
 	**/
 	public Action  collisionAction(Collidable obstacle) {
+	
 		if(obstacle instanceof Lander) { return null; }
 		
 		List<Action> composite = new LinkedList<Action>();
@@ -81,6 +81,13 @@ public class Lander extends PhysicsActor implements Collidable {
 		}
 		composite.add(new ForceAction(this, velocity.mul(-mass)));
 		return new CompositeAction(composite);
+	}
+
+	/**
+	*
+	**/
+	protected Lunar model() {
+		return (Lunar)model;
 	}
 
 	/**
@@ -136,8 +143,12 @@ public class Lander extends PhysicsActor implements Collidable {
 			return velocity;
 		}
 		
-		public Vector2 position() {
-			return position();
+		public Position position() {
+			return lander().position();
+		}
+		
+		public Position target() {
+			return model().landingPad.position();
 		}
 
 		public Set<Action> actions() {
