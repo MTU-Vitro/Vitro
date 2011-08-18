@@ -1,6 +1,6 @@
 package tests;
 
-import demos.VacWorld;
+import demos.vacuum.VacWorld;
 
 import vitro.*;
 import vitro.graph.*;
