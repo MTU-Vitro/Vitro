@@ -40,13 +40,20 @@ public class ReversiView implements View {
 	public int         height()      { return height;     }
 
 	public void draw(Graphics2D g) {
-		g.setColor(colors.background);
+		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 		g.setFont(new Font("Monospaced", Font.BOLD, 36));
 
 		for(int y = 0; y < model.height; y++) {
 			for(int x = 0; x < model.height; x++) {
+				g.setColor(colors.background);
+				g.fillRect(
+					horizontalMargin + (x * cellSize),
+					verticalMargin   + (y * cellSize),
+					cellSize,
+					cellSize
+				);
 				g.setColor(colors.outline);
 				g.drawRect(
 					horizontalMargin + (x * cellSize),
