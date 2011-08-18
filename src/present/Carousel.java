@@ -102,7 +102,7 @@ public class Carousel extends JPanel implements KeyListener {
 	}
 
 	private State mode = State.Grid;
-	private int index = 0;
+	private int index = 4;
 	private double timer = 0;
 	private Image buffer = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 	private Tweener tl;
@@ -441,23 +441,22 @@ public class Carousel extends JPanel implements KeyListener {
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
-				/*
-				Lunar model = new Lunar(-1.0, new Position(0.0, 10.0));
+				Lunar model = new Lunar(-1.0, new Position(Math.random() * 400 - 200, 10.0));
 				Lander lander = new Lander(model);
-				model.positions.put(lander, new Position(000.0, 400.0));
-				lander.velocity = new Vector2(0.0, 0.0);
-				lander = new Lander(model);
-				model.positions.put(lander, new Position(-100.0, 400.0));
-				lander.velocity = new Vector2(5.0, 0.0);
+				model.positions.put(lander, new Position(Math.random() * 400 - 200, 400.0));
 				Controller controller = new SequentialController(model);
 				LunarView view        = new LunarView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
-				*/
+				controller.bind(lander.navigation, new LunarBrain(Math.random() > .5));
+				this.view = view;
+				
+				/*
 				TicTac     model      = new TicTac(3);
 				Controller controller = new SequentialController(model);
 				TicTacView view       = new TicTacView(model, controller);
 				controller.bind(model.player0, new RandomAgent());
 				controller.bind(model.player1, new RandomAgent());
 				this.view = view;
+				*/
 			}},
 		}
 	};
