@@ -62,9 +62,19 @@
 	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile, present:compile"/>
 
 	<!-- Build Target(s) -->
-	<target name = "vitro:build" depends = "vitro:compile, demos:compile, assign:compile">
+	<target name = "vitro:build" depends = "vitro:compile, demos:compile, assign:compile, present:compile">
 		<build files = "**" jar.name = "vitro.jar"/>
 		<!--<build files = "vitro/**" jar.name = "vitro.jar"/>-->
+	</target>
+	
+	<target name = "carousel:build" depends = "present:compile">
+		<jar destfile = "${dist}/carousel.jar"
+				basedir  = "${bin}"
+				includes = "**">
+			<manifest>
+      			<attribute name="Main-Class" value="present.Carousel"/>
+    		</manifest>
+    	</jar>
 	</target>
 
 	<!-- JUnit Target(s) -->

@@ -37,7 +37,7 @@ public class Collision {
 			}
 		}
 
-		return intersections.tailMap(0.0).headMap(1.0);
+		return intersections.tailMap(-0.0).headMap(1.0);
 	}
 
 	private static double collision(Circle circle0, Circle circle1, Vector2 move) {

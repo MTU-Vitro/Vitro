@@ -113,7 +113,7 @@ public class LunarView implements View {
 
 		protected void draw(Graphics2D g) {
 			int x = (int)model.positions.get(lander).x;
-			int y = (int)model.positions.get(lander).y;
+			int y = (int)model.positions.get(lander).y - 8;
 			boolean success = lander.state == Lander.State.LANDED;
 			boolean dead    = lander.state == Lander.State.CRASHED;
 
@@ -133,13 +133,13 @@ public class LunarView implements View {
 				g.drawLine(x - 6, y + 10, x + dx, y + 10 + h);
 				g.drawLine(x + 6, y + 10, x + dx, y + 10 + h);
 			}
-			if(lander.rThruster.activated) {
+			if(lander.lThruster.activated) {
 				int  w = (int)(Math.random() * 7) + 10;
 				int dy = (int)(Math.random() * 2) - 1;
 				g.drawLine(x + 16, y - 15, x + 16 + w, y - 13 + dy);
 				g.drawLine(x + 16, y - 11, x + 16 + w, y - 13 + dy);
 			}
-			if(lander.lThruster.activated) {
+			if(lander.rThruster.activated) {
 				int  w = (int)(Math.random() * 7) + 10;
 				int dy = (int)(Math.random() * 2) - 1;
 				g.drawLine(x - 16, y - 15, x - 16 - w, y - 13 + dy);
@@ -203,14 +203,14 @@ public class LunarView implements View {
 				new int[] { y - 14, y - 17, y -  9, y - 12 },
 				4
 			));
-
+			
 			g.setTransform(oldTransform);
 		}
 
 		void fill(Graphics2D g, Shape shape) {
 			g.setColor(colors.background);
 			g.fill(shape);
-			g.setColor(new Color(100, 100, 100));
+			g.setColor(new Color(255, 255, 255));
 			g.draw(shape);
 		}
 	}
