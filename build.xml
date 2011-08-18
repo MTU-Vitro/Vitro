@@ -54,8 +54,12 @@
 		<!-- add file staging for tests here -->
 		<compile files = "tests/**"/>
 	</target>
+	
+	<target name = "present:compile" depends = "stage, vitro:compile, demos:compile, assign:compile">
+		<compile files = "present/**"/>
+	</target>
 
-	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile"/>
+	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile, present:compile"/>
 
 	<!-- Build Target(s) -->
 	<target name = "vitro:build" depends = "vitro:compile, demos:compile, assign:compile">
@@ -125,8 +129,8 @@
 		<demo class = "demos.robots.RobotsEye" />
 	</target>
 	
-	<target name="demo:carousel" depends="demos:compile">
-		<demo class = "demos.Carousel" />
+	<target name="present:carousel" depends="present:compile">
+		<demo class = "present.Carousel" />
 	</target>
 
 </project>
