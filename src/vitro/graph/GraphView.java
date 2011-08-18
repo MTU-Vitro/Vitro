@@ -171,7 +171,7 @@ public class GraphView implements View {
 		public final Node node;
 		public int x;
 		public int y;
-		public int radius = 40;
+		public int radius = 20;
 		public String label;
 		
 		private NodeView(Node node, int x, int y, String label) {

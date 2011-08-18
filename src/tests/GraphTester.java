@@ -70,6 +70,12 @@ public class GraphTester {
 		assertTrue(g.actors.contains(b));
 		assertTrue(v2.actors.contains(b));
 		assertTrue(g.getLocation(b) == v2);
+		
+		v2.actors.add(b);
+		
+		assertTrue(g.actors.contains(b));
+		assertTrue(v2.actors.contains(b));
+		assertTrue(g.getLocation(b) == v2);
 	}
 	
 	@Test

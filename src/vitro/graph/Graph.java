@@ -224,7 +224,7 @@ public class Graph extends Model {
 				// actors should only exist in a single
 				// location at a given time:
 				Node currentLocation = getLocation(e);
-				if (currentLocation != null) {
+				if (currentLocation != null && currentLocation.actors != sender) {
 					currentLocation.actors.remove(e);
 				}
 				locations.put(e, lists.get(System.identityHashCode(sender)));
