@@ -418,7 +418,7 @@ public class RobotsView implements View {
 		private final Image tiles;
 		public int[] anim;
 		public int frame = 0;
-		public int delay = 20;
+		public int delay = 10;
 		public int draws = 0;
 		public int x;
 		public int y;

@@ -303,6 +303,65 @@ public class Carousel extends JPanel implements KeyListener {
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
+				int[][] maze = Math.random() > .5 ?
+				new int[][] {
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+				} :
+				new int[][] {
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 3, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+				};
+
+				Robots model = new Robots(maze);
+				model.locations.put(model.createBLU()  , new Location(model, 1, 1));
+				model.locations.put(model.createBlock(), new Location(model, 2, 2));
+				Controller controller = new SequentialController(model);
+				RobotsView view       = new RobotsView(model, controller);
+				controller.bind(Robots.BLU.class, new SokobanAgentBLU());
+				this.view = view;
+			}},
+			new Slide() { public void reset() {
+				LightsOut model                 = new LightsOut(13, 13);
+				SequentialController controller = new SequentialController(model);
+				LightsOutView view              = new LightsOutView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
+				controller.bind(LightsOut.Player.class, new LightsOutBrain());
+				model.shuffle();
+				this.view = view;
+			}},
+		},
+		{
+			new Slide() { public void reset() {
+				Sweeper model         = new Sweeper(60, 50, 500);
+				Controller controller = new SimultaneousController(model);
+				SweeperView view      = new SweeperView(model, controller);
+				controller.bind(model.player, new SweeperAgent());
+				model.clearSafeArea();
+				this.view = view;
+			}},
+			new Slide() { public void reset() {
 				VacWorld model                  = new VacWorld();
 				SequentialController controller = new SequentialController(model);
 				GraphView view                  = new GraphView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -364,65 +423,6 @@ public class Carousel extends JPanel implements KeyListener {
 				}
 				
 				closet0.actors.add(model.createScrubby());
-				this.view = view;
-			}},
-			new Slide() { public void reset() {
-				LightsOut model                 = new LightsOut(13, 13);
-				SequentialController controller = new SequentialController(model);
-				LightsOutView view              = new LightsOutView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
-				controller.bind(LightsOut.Player.class, new LightsOutBrain());
-				model.shuffle();
-				this.view = view;
-			}},
-		},
-		{
-			new Slide() { public void reset() {
-				Sweeper model         = new Sweeper(60, 50, 500);
-				Controller controller = new SimultaneousController(model);
-				SweeperView view      = new SweeperView(model, controller);
-				controller.bind(model.player, new SweeperAgent());
-				model.clearSafeArea();
-				this.view = view;
-			}},
-			new Slide() { public void reset() {
-				int[][] maze = Math.random() > .5 ?
-				new int[][] {
-					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-				} :
-				new int[][] {
-					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 3, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 0 },
-					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-				};
-
-				Robots model = new Robots(maze);
-				model.locations.put(model.createBLU()  , new Location(model, 1, 1));
-				model.locations.put(model.createBlock(), new Location(model, 2, 2));
-				Controller controller = new SequentialController(model);
-				RobotsView view       = new RobotsView(model, controller);
-				controller.bind(Robots.BLU.class, new SokobanAgentBLU());
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
