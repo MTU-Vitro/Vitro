@@ -11,9 +11,11 @@ public class LunarBrain implements Agent<Lander.Navigation> {
 		TriggerAction action = (TriggerAction)Groups.firstOfType(TriggerAction.class, options);
 		if(action == null) { return null; }
 
+		/*
 		if(actor.velocity().norm() > 2) {
 			action.setMainTrigger(true);
 		}
+		*/
 		return action;
 	}
 

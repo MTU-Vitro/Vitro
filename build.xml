@@ -68,7 +68,7 @@
 	</target>
 	
 	<target name = "carousel:build" depends = "present:compile">
-		<jar destfile = "${dist}/carousel"
+		<jar destfile = "${dist}/carousel.jar"
 				basedir  = "${bin}"
 				includes = "**">
 			<manifest>

@@ -45,13 +45,14 @@ public class WumpusGrid extends Grid {
 		return object;
 	}
 
-	public Hunter createHunter(int x, int y) { return place(new Hunter(this), x, y); }
-	public Pit    createPit   (int x, int y) { return place(new Pit()       , x, y); }
-	public Bat    createBat   (int x, int y) { return place(new Bat()       , x, y); }
-	public Wumpus createWumpus(int x, int y) { return place(new Wumpus()    , x, y); }
+	protected Hunter createHunter(int x, int y) { return place(new Hunter(this), x, y); }
+	protected Gold   createGold  (int x, int y) { return place(new Gold()      , x, y); }
+	protected Pit    createPit   (int x, int y) { return place(new Pit()       , x, y); }
+	protected Bat    createBat   (int x, int y) { return place(new Bat()       , x, y); }
+	protected Wumpus createWumpus(int x, int y) { return place(new Wumpus()    , x, y); }
 
 	public class Hunter extends GridActor {
-		private int arrows = 3;
+		private int arrows = 1;
 
 		public Hunter(Grid model) {
 			super(model);
@@ -61,10 +62,22 @@ public class WumpusGrid extends Grid {
 			return model.actors.contains(this);
 		}
 
-		public boolean flapping() { return false; }
-		public boolean wind()     { return false; }
-		public boolean scent()    { return false; }
-		public boolean whistle()  { return false; }
+		private boolean query(Class c) {
+			Set<Location> neighbors = neighbors(ORTHOGONAL);
+			for(Actor a : actors) {
+				Location location = locations.get(a);
+				if(c.isInstance(a) && location != null && neighbors.contains(location)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public boolean glitter()  { return query(Gold.class);   }
+		public boolean flapping() { return query(Bat.class);    }
+		public boolean wind()     { return query(Pit.class);    }
+		public boolean scent()    { return query(Wumpus.class); }
+		public boolean whistle()  { return query(Arrow.class);  }
 
 		public Set<Action> actions() {
 			Set<Action> ret = super.actions();
@@ -94,6 +107,7 @@ public class WumpusGrid extends Grid {
 		}
 	}
 	
+	public class Gold   extends Actor {}
 	public class Pit    extends Actor {}
 	public class Bat    extends Actor {}
 	public class Wumpus extends Actor {}

@@ -135,6 +135,10 @@ public class Lander extends PhysicsActor implements Collidable {
 		public Vector2 velocity() {
 			return velocity;
 		}
+		
+		public Vector2 position() {
+			return position();
+		}
 
 		public Set<Action> actions() {
 			Set<Action> ret = new HashSet<Action>();

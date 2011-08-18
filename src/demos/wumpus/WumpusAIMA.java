@@ -15,10 +15,11 @@ public class WumpusAIMA extends Host {
 		Controller     controller = new SimultaneousController(model);
 		WumpusGridView view       = new WumpusGridView(model, controller, 800, 600);
 		
-		WumpusGrid.Hunter hunter = model.createHunter(0, 0);
+		WumpusGrid.Hunter hunter = model.createHunter(0, 3);
 		WumpusGrid.Wumpus wumpus = model.createWumpus(4, 4);
 		
-		controller.bind(hunter, new RandomAgent());
+		//controller.bind(hunter, new RandomAgent());
+		controller.bind(hunter, new LogicalWumpusGridBrain(model));
 		
 		show(view);
 	}
