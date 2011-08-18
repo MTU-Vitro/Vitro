@@ -44,7 +44,7 @@ public class TicTacView implements View {
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if (sofar > 5) {
+		if (sofar > 1) {
 			controller.next();
 			sofar = 0;
 		}

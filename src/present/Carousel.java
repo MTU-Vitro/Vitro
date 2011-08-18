@@ -25,8 +25,8 @@ import assign.search.*;
 public class Carousel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final int SCREEN_WIDTH  = 1280;
-	private static final int SCREEN_HEIGHT = 1024;
+	private static final int SCREEN_WIDTH  = 1024;
+	private static final int SCREEN_HEIGHT = 768;
 	private static final double ZOOM_TIME = 8;
 	private static final double PAN_TIME = 10;
 	private final Object paintMonitor = new Object();
@@ -136,7 +136,7 @@ public class Carousel extends JPanel implements KeyListener {
 		}
 		else if (mode == State.Slide) {
 			View v = getView(index);
-			v.tick(.1);
+			v.tick(.01);
 			if (v.controller().hasNext()) { return; }
 			if (waitForTimer(150)) { return; }
 
@@ -303,22 +303,22 @@ public class Carousel extends JPanel implements KeyListener {
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
-				int[][] maze = Math.random() > .5 ?
+				int[][] maze = Math.random() < .3 ?
 				new int[][] {
 					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0 },
+					{ 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0 },
-					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
 					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-				} :
+				} : Math.random() > .5 ?
 				new int[][] {
 					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
@@ -332,6 +332,21 @@ public class Carousel extends JPanel implements KeyListener {
 					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
 					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 0 },
 					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+				} :
+				new int[][] {
+					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 },
+					{ 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0 },
+					{ 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0 },
+					{ 0, 3, 0, 0, 0, 0, 1, 1, 1, 0, 3, 0 },
 					{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 				};
 
@@ -354,7 +369,7 @@ public class Carousel extends JPanel implements KeyListener {
 		},
 		{
 			new Slide() { public void reset() {
-				Sweeper model         = new Sweeper(60, 50, 500);
+				Sweeper model         = new Sweeper(58, 40, 300);
 				Controller controller = new SimultaneousController(model);
 				SweeperView view      = new SweeperView(model, controller);
 				controller.bind(model.player, new SweeperAgent());
@@ -426,6 +441,7 @@ public class Carousel extends JPanel implements KeyListener {
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
+				/*
 				Lunar model = new Lunar(-1.0, new Position(0.0, 10.0));
 				Lander lander = new Lander(model);
 				model.positions.put(lander, new Position(000.0, 400.0));
@@ -435,6 +451,12 @@ public class Carousel extends JPanel implements KeyListener {
 				lander.velocity = new Vector2(5.0, 0.0);
 				Controller controller = new SequentialController(model);
 				LunarView view        = new LunarView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
+				*/
+				TicTac     model      = new TicTac(3);
+				Controller controller = new SequentialController(model);
+				TicTacView view       = new TicTacView(model, controller);
+				controller.bind(model.player0, new RandomAgent());
+				controller.bind(model.player1, new RandomAgent());
 				this.view = view;
 			}},
 		}

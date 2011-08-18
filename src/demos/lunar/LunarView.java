@@ -89,7 +89,7 @@ public class LunarView implements View {
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if(sofar > .50) {
+		if(sofar > .10) {
 			controller.next();
 			sofar = 0;
 		}
@@ -355,7 +355,7 @@ public class LunarView implements View {
 	*
 	**/
 	public class HUDView {
-		private final VectorFont font = new VectorFont(6, 9);
+		private final VectorFont font = new VectorFont(18, 27);
 
 		public final Lander     lander;
 		public final LandingPad landingPad;
