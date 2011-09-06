@@ -37,7 +37,12 @@ public abstract class Model {
 	}
 	
 	/**
+	* This method will be called by the Controller after
+	* all Agents have made their decisions for their
+	* respective Actors. The returned list of Actions will
+	* be applied in the order given.
 	*
+	* @return cleanup Actions to perform.
 	**/
 	public List<Action> cleanup() {
 		return new LinkedList<Action>();

@@ -2,6 +2,14 @@ package vitro;
 
 import java.util.*;
 
+/**
+* A generic Agent implementation which
+* prompts a user via stdio to select from
+* available Actions.
+* Frequently useful for debugging.
+*
+* @author John Earnest
+**/
 public class TextAgent<A extends Actor> implements Agent<A> {
 
 	public Action choose(A actor, Set<Action> options) {

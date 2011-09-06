@@ -6,17 +6,27 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+* ColorSchemes collect a group of Colors
+* together and provide an easy way to make
+* Views customizable.
+*
+* @author John Earnest
+**/
+
 public class ColorScheme {
 
 	public Color outline;
 	public Color secondary;
 	public Color background;
-
 	public Color inactive;
 
 	// heading
 	// label
 
+	/**
+	* Create a new ColorScheme with a default grayscale palette.
+	**/
 	public ColorScheme() {
 		this(
 			Color.BLACK,
@@ -25,6 +35,13 @@ public class ColorScheme {
 		);
 	}
 
+	/**
+	* Create a new ColorScheme with specified theme colors.
+	*
+	* @param outline the color to use for drawing shapes and text.
+	* @param secondary the color to use for less important or prominent information.
+	* @param background the background color for the associated View.
+	**/
 	public ColorScheme(Color outline, Color secondary, Color background) {
 		this.outline    = outline;
 		this.secondary  = secondary;
@@ -34,10 +51,25 @@ public class ColorScheme {
 
 	public final Map<Object, Color> uniqueColors = new HashMap<Object, Color>();
 
+	/**
+	* Manually configure the key color for a specific object.
+	*
+	* @param o the object to associate with a color.
+	* @param color the color to assign to the object.
+	**/
 	public void setColor(Object o, Color color) {
 		uniqueColors.put(o, color);
 	}
 
+	/**
+	* Produce a unique, consistent color based on an object reference.
+	* Colors will attempt to be as visually distinct as possible.
+	* If an object already as an associated color stored, that color
+	* will be returned. Otherwise a new mapping will be created.
+	*
+	* @param o the object to associate with a color.
+	* @return a unique color.
+	**/
 	public Color unique(Object o) {
 		if (!uniqueColors.containsKey(o)) {
 			Random rand = new Random();
@@ -76,6 +108,18 @@ public class ColorScheme {
 		return (dr*dr) + (dg*dg) + (db*db);
 	}
 
+	/**
+	* Draw a key representing the color mappings in this
+	* ColorScheme at a specified location onscreen.
+	* If the subject of any mappings is a Class object,
+	* this method will additionally attempt to normalize
+	* the class name, discarding package names and
+	* outer class names.
+	*
+	* @param g the destination Graphics surface.
+	* @param x the x-offset of the key, in pixels.
+	* @param y the y-offset of the key, in pixels.
+	**/
 	public void drawKey(Graphics g, int x, int y) {
 		Drawing.configureVector(g);
 		int maxWidth = 0;

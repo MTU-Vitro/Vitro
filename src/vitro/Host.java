@@ -7,6 +7,20 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/**
+* The Host provides a convenient way to run a simulation
+* given a Model, View and Controller. Simply extend this
+* class, assemble your view and call show().
+*
+* The Host automatically provides a dockable set of
+* controls for stepping through the simulation which
+* match the ColorScheme of the provided View. Additionally,
+* the Host will handle displaying DataAnnotations in their
+* own window when provided.
+*
+* @author John Earnest
+**/
+
 public class Host extends JFrame implements ActionListener {
 
 	private View view;
@@ -23,10 +37,20 @@ public class Host extends JFrame implements ActionListener {
 
 	private AnnotationPanel annotations;
 
+	/**
+	* Should the control pad be docked to the main window?
+	*
+	* @param docked is the controller docked?
+	**/
 	public void dockedController(boolean docked) {
 		dockedController = docked;
 	}
 
+	/**
+	* Display the given view and allow the simulation to run.
+	*
+	* @param view the view to display.
+	**/
 	public void show(View view) {
 		this.view = view;
 

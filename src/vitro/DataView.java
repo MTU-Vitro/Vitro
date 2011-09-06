@@ -7,18 +7,51 @@ import javax.swing.*;
 import java.util.*;
 import java.util.List;
 
+/**
+* DataView contains the backing logic for rendering
+* data structures used by DataAnnotation- it can also be
+* used within your own Views and debugging tools.
+*
+* @author John Earnest
+**/
 public class DataView {
 	private final StructWrapper root;
 
+	/**
+	* Construct a DataView for a given set of
+	* data structures, honoring specific ColorScheme.
+	* Note that if the underlying data structure changes,
+	* the DataView will not update its layout or spacing.
+	* This system works best with immutable data structures
+	* or "snapshot" copies.
+	*
+	* @param o the data structure to visualize.
+	* @param colorScheme the ColorScheme to use during drawing.
+	**/
 	public DataView(Object o, ColorScheme colorScheme) {
 		root = StructWrapper.build(o, colorScheme);
 	}
 
+	/**
+	* Draw the DataView to the origin of a Graphics surface.
+	*
+	* @param g the destination Graphics surface.
+	**/
 	public void draw(Graphics g) {
 		Drawing.configureVector(g);
 		root.draw(g, 0, 0);
 	}
+
+	/**
+	* The width of the DataView, in pixels.
+	* @return the width of the view.
+	**/
 	public int width()  { return root.width(); }
+
+	/**
+	* The height of the DataView, in pixels.
+	* @return the height of the view.
+	**/
 	public int height() { return root.height(); }
 
 	private static abstract class StructWrapper {
