@@ -145,7 +145,7 @@ public class Drawing {
 	* @param thickness the thickness of the bezel, in pixels.
 	* @param ulBezel the color for the upper and left edges of the bezel.
 	* @param drBezel the color for the down and right edges of the bezel.
-	* @param main the primary fill for the rectangle.
+	* @param fill the primary fill for the rectangle.
 	**/
 	public static void drawBezelRect(Graphics g, int x, int y, int width, int height, int thickness, Color ulBezel, Color drBezel, Color fill) {
 		drawBezelRect(g, new Rectangle(x, y, width, height), thickness, ulBezel, drBezel, fill);
