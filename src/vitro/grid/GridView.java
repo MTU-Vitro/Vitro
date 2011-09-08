@@ -4,19 +4,63 @@ import vitro.*;
 import java.awt.*;
 import static vitro.util.Groups.*;
 
+/**
+* GridView is a generic View that can be applied to any GridModel.
+* It supports the display of ActorAnnotations as well as
+* GridAnnotations and can be easily extended to support new
+* features or alter the appearance of various elements.
+*
+* @author John Earnest
+**/
 public class GridView implements View {
 
+	/**
+	* The width of this View in pixels.
+	**/
 	protected final int width;
+	/**
+	* The height of this View in pixels.
+	**/
 	protected final int height;
+	/**
+	* The size (width and height) of a cell in pixels.
+	**/
 	protected final int cellSize;
-	protected final int cellMargin;
-	protected final int horizontalMargin;
-	protected final int verticalMargin;
+	/**
+	* The margin between the edges of a cell and an Actor.
+	**/
+	protected int cellMargin;
+	/**
+	* The x-offset of the grid relative to the View.
+	**/
+	protected int horizontalMargin;
+	/**
+	* The y-offset of the grid relative to the View.
+	**/
+	protected int verticalMargin;
 
+	/**
+	* This View's Model.
+	**/
 	protected final Grid        model;
+	/**
+	* This View's Controller.
+	**/
 	protected final Controller  controller;
+	/**
+	* This View's ColorScheme.
+	**/
 	protected final ColorScheme colors;
 
+	/**
+	* Construct a new GridView.
+	*
+	* @param model the Model this View will visualize.
+	* @param controller the Controller associated with the Model.
+	* @param width the width this View should take up, in pixels.
+	* @param height the height this View should take up, in pixels.
+	* @param colors the ColorScheme used for drawing this View.
+	**/
 	public GridView(Grid model, Controller controller, int width, int height, ColorScheme colors) {
 		this.model      = model;
 		this.controller = controller;
@@ -33,11 +77,33 @@ public class GridView implements View {
 		cellMargin       = cellSize / 10;
 	}
 
+	/**
+	* {@inheritDoc}
+	**/
 	public Controller  controller()  { return controller; }
+	/**
+	* {@inheritDoc}
+	**/
 	public ColorScheme colorScheme() { return colors;     }
+	/**
+	* {@inheritDoc}
+	**/
 	public int         width()       { return width;      }
+	/**
+	* {@inheritDoc}
+	**/
 	public int         height()      { return height;     }
 
+	/**
+	* Render the entire View.
+	* First, the background will be drawn, then every
+	* cell of the Grid will be drawn, then Actors will
+	* be drawn and finally any Annotations will be drawn.
+	* This process can be customized by overriding the methods
+	* responsible for each step.
+	*
+	* @param g the target Graphics2D surface.
+	**/
 	public void draw(Graphics2D g) {
 		drawBackground(g);
 		g.fillRect(0, 0, width, height);
@@ -61,10 +127,22 @@ public class GridView implements View {
 		}
 	}
 
+	/**
+	* Render the background of this View.
+	*
+	* @param g the target Graphics2D surface.
+	**/
 	protected void drawBackground(Graphics2D g) {
 		g.setColor(colors.background);
 	}
 
+	/**
+	* Render one cell of the Grid, starting at a specified position.
+	*
+	* @param g the target Graphics2D surface.
+	* @param x the x-coordinate of the top-left corner of this cell in pixels.
+	* @param y the y-coordinate of the top-left corner of this cell in pixels.
+	**/
 	protected void drawCell(Graphics2D g, int x, int y) {
 		g.setColor(colors.outline);
 		g.drawRect(
@@ -75,6 +153,12 @@ public class GridView implements View {
 		);
 	}
 
+	/**
+	* Render one Actor.
+	*
+	* @param g the target Graphics2D surface.
+	* @param a the Actor to render.
+	**/
 	protected void drawActor(Graphics2D g, Actor a) {
 		Location location = model.locations.get(a);
 		if (location == null) { return; }
@@ -99,6 +183,12 @@ public class GridView implements View {
 		);
 	}
 
+	/**
+	* Render one ActorAnnotation.
+	*
+	* @param g the target Graphics2D surface.
+	* @param a the ActorAnnotation to render.
+	**/
 	protected void drawActorAnnotation(Graphics2D g, ActorAnnotation a) {
 		Location location = model.locations.get(a.actor);
 		if (location == null) { return; }
@@ -122,6 +212,12 @@ public class GridView implements View {
 		g.setStroke(oldStroke);
 	}
 	
+	/**
+	* Render one GridAnnotation.
+	*
+	* @param g the target Graphics2D surface.
+	* @param a the GridAnnotation to render.
+	**/
 	protected void drawGridAnnotation(Graphics2D g, GridAnnotation a) {
 		for(Point p : a.coloring.keySet()) {
 			g.setColor(a.coloring.get(p));
@@ -140,6 +236,9 @@ public class GridView implements View {
 	}
 
 	private double sofar = 0;
+	/**
+	* {@inheritDoc}
+	**/
 	public void tick(double time) {
 		sofar += time;
 		if (sofar > .05) {
@@ -148,6 +247,9 @@ public class GridView implements View {
 		}
 	}
 
+	/**
+	* {@inheritDoc}
+	**/
 	public void flush() {
 		
 	}

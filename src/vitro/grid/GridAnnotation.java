@@ -4,12 +4,27 @@ import vitro.*;
 import java.util.*;
 import java.awt.*;
 
+/**
+* GridAnnotations allow users to overlay an array of Colors
+* on their Grid's View.
+*
+* @author Jason Hiebel
+**/
 public class GridAnnotation implements Annotation, Comparable {
 	private static Integer currentOrder = 0;
-	
+
+	/**
+	* A mapping between positions on the Grid and their Color.
+	**/
 	public final Map<Point, Color> coloring = new HashMap<Point, Color>();
 	private Integer order;
 	
+	/**
+	* Create a new GridAnnotation.
+	*
+	* @param colored the Locations to Color.
+	* @param color a Color to apply to every specified Location.
+	**/
 	public GridAnnotation(Collection<Location> colored, Color color) {
 		order = currentOrder++;
 		for(Location location : colored) { coloring.put(new Point(location.x, location.y), color); }
@@ -22,7 +37,11 @@ public class GridAnnotation implements Annotation, Comparable {
 	}
 	*/
 	
-	
+	/**
+	* Create a new GridAnnotation.
+	*
+	* @param colored a mapping from Locations to their desired Color.
+	**/
 	public GridAnnotation(Map<Location, Color> colored) {
 		for(Location location : colored.keySet()) { coloring.put(new Point(location.x, location.y), colored.get(location)); }
 	}
@@ -34,7 +53,15 @@ public class GridAnnotation implements Annotation, Comparable {
 	}
 	*/
 	
-	
+	/**
+	* Create a new GridAnnotation.
+	* Colors will range on a gradient between a minimum and maximum
+	* color as dictated by the range of values associated with Locations.
+	*
+	* @param scaling the values associated with specific Locations.
+	* @param colorMin the color to assign to the lowest value in values from scaling.
+	* @param colorMax the color to assign to the highest value in value from scaling.
+	**/
 	public GridAnnotation(Map<Location, ? extends Number> scaling, Color colorMin, Color colorMax) {
 		this(calculateScaling(scaling, colorMin, colorMax));
 	}
@@ -46,6 +73,15 @@ public class GridAnnotation implements Annotation, Comparable {
 	}
 	*/
 	
+	/**
+	* Generate a scaled gradient between two colors based on the
+	* values specified in the "scaling" table.
+	*
+	* @param scaling the values associated with specific Locations.
+	* @param colorMin the color to assign to the lowest value in values from scaling.
+	* @param colorMax the color to assign to the highest value in value from scaling.
+	* @return a mapping from objects to their scaled colors.
+	**/
 	protected static <K> Map<K, Color> calculateScaling(Map<K, ? extends Number> scaling, Color colorMin, Color colorMax) {
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;

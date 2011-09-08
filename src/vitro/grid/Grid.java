@@ -4,21 +4,59 @@ import vitro.*;
 import vitro.util.*;
 import java.util.*;
 
+/**
+* Grid is a Model implementation representing space as
+* a two-dimensional rectangular grid. Multiple Actors
+* can exist in the same grid cell at once by default,
+* but this behavior can be modified by overriding
+* the passable() predicates.
+*
+* @author John Earnest
+**/
 public class Grid extends Model {
 
+	/**
+	* A reference to the current Model.
+	**/
 	protected final Grid model;
 
+	/**
+	* The width of the Grid in cells.
+	**/
 	public final int width;
+
+	/**
+	* The height of the Grid in cells.
+	**/
 	public final int height;
+
+	/**
+	* A mapping from Actors in this Model to the Grid cell in which they are currently located.
+	**/
 	public final Map<Actor, Location> locations;
 
+	/**
+	* A set of x/y deltas for vertically or horizontally adjacent cells.
+	**/
 	public static final int[][] ORTHOGONAL = {{1, 0},{-1, 0},{0, 1},{0, -1}};
+	/**
+	* A set of x/y deltas for diagonally adjacent cells.
+	**/
 	public static final int[][] DIAGONAL   = {{1, 1},{-1, 1},{1,-1},{-1,-1}};
+	/**
+	* A set of x/y deltas for vertically, horizontally and diagonally adjacent cells.
+	**/
 	public static final int[][] ADJACENT   = {{1, 0},{-1, 0},{0, 1},{0, -1},{1, 1},{-1, 1},{1,-1},{-1,-1}};
 
 	private final CollectionObserver<Actor>                      actorObserver    = new ActorObserver();
 	private final CollectionObserver<Map.Entry<Actor, Location>> locationObserver = new LocationObserver();
 
+	/**
+	* Create a new Grid with a specified size.
+	*
+	* @param width the width of the Grid in cells.
+	* @param height the height of the Grid in cells.
+	**/
 	public Grid(int width, int height) {
 		super(new ObservableSet<Actor>());
 		locations = new ObservableMap<Actor, Location>();
@@ -31,6 +69,15 @@ public class Grid extends Model {
 		model = this;
 	}
 
+	/**
+	* Obtain references to Location objects representing neighboring cells.
+	* The array of deltas provided is a list of 2-length arrays representing
+	* an x-offset followed by a y-offset. See the constant arrays ORTHOGONAL, DIAGONAL and ADJACENT.
+	*
+	* @param location the origin Location.
+	* @param deltas a collection of x and y offsets to neighboring cells.
+	* @return a Set of neighboring Locations.
+	**/
 	public Set<Location> neighbors(Location location, int[][] deltas) {
 		Set<Location> ret = new HashSet<Location>();
 		for(int[] d : deltas) {
@@ -42,11 +89,41 @@ public class Grid extends Model {
 		}
 		return ret;
 	}
+
+	/**
+	* Performs the same function as neighbors(), but only returns Locations which
+	* would be passable to a specified Actor. In the case of deltas with a magnitude
+	* greater than one, note that this method only checks passability of destinations
+	* and does not check that there is an intervening path of passable adjacent cells.
+	*
+	* @param actor the actor to consider moving
+	* @param deltas a collection of x and y offsets to neighboring cells.
+	* @return a Set of passable neighboring Locations.
+	**/
+	public Set<Location> passableNeighbors(Actor actor, int[][] deltas) {
+		return passable(actor, neighbors(locations.get(actor), deltas));
+	}
 	
+	/**
+	* Performs the same function as neighbors(), but only returns Locations which
+	* would be passable to any Actor.
+	*
+	* @param location the origin Location.
+	* @param deltas a collection of x and y offsets to neighboring cells.
+	* @return a Set of passable neighboring Locations.
+	**/
 	public Set<Location> passableNeighbors(Location location, int[][] deltas) {
 		return passable(null, neighbors(location, deltas));
 	}
 
+	/**
+	* Find the first Actor at a given Location.
+	* If multiple Actors exist at a given Location the
+	* results of this method are not guaranteed to be consistent.
+	*
+	* @param location the Location to check for Actors.
+	* @return the Actor at the Location or null if no Actors exist.
+	**/
 	public Actor actorAt(Location location) {
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
 			if (location.equals(e.getValue())) { return e.getKey(); }
@@ -54,6 +131,12 @@ public class Grid extends Model {
 		return null;
 	}
 
+	/**
+	* Find all Actors at a given Location.
+	*
+	* @param location the Location to check for Actors.
+	* @return a set of Actors at the Location.
+	**/
 	public Set<Actor> actorsAt(Location location) {
 		Set<Actor> ret = new HashSet<Actor>();
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
@@ -62,6 +145,12 @@ public class Grid extends Model {
 		return ret;
 	}
 
+	/**
+	* Find all Actors in a group of Locations.
+	*
+	* @param locationSet a set of Locations to check for Actors.
+	* @return a set of Actors at the Locations.
+	**/
 	public Set<Actor> actorsAt(Set<Location> locationSet) {
 		Set<Actor> ret = new HashSet<Actor>();
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
@@ -70,6 +159,11 @@ public class Grid extends Model {
 		return ret;
 	}
 
+	/**
+	* Obtain references to all cells on the Grid.
+	*
+	* @return a set of Locations representing every cell on the Grid.
+	**/
 	public Set<Location> allCells() {
 		Set<Location> ret = new HashSet<Location>();
 		for(int x = 0; x < width; x++) {
@@ -80,19 +174,41 @@ public class Grid extends Model {
 		return ret;
 	}
 
+	/**
+	* Obtain references to all cells on the Grid which contain no Actors.
+	*
+	* @return a set of Locations representing empty cells on the Grid.
+	**/
 	public Set<Location> emptyCells() {
 		Set<Location> ret = allCells();
 		ret.removeAll(locations.values());
 		return ret;
 	}
 
-	// by overriding this method, users
-	// can easily add their own passability
-	// system of arbitrary complexity.
+	/**
+	* Check the passability of a given Location with respect
+	* to a given Actor. This method is leveraged by many
+	* of the convenience methods in Grid and by default
+	* always returns true. By overriding this method,
+	* subclasses can easily add their own passability
+	* system of arbitrary complexity.
+	*
+	* @param actor the Actor to consider.
+	* @param location the Location to consider.
+	* @return true if the Actor can move to this Location.
+	**/
 	public boolean passable(Actor actor, Location location) {
 		return true;
 	}
 
+	/**
+	* Find the Locations that a given Actor could move to.
+	* Makes use of passable(actor, location).
+	*
+	* @param actor the Actor to consider.
+	* @param locations a set of Locations to consider.
+	* @return a set of passable Locations.
+	**/
 	public Set<Location> passable(Actor actor, Set<Location> locations) {
 		Set<Location> ret = new HashSet<Location>();
 		for(Location location : locations) {
