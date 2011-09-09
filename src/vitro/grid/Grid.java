@@ -35,6 +35,9 @@ public class Grid extends Model {
 	**/
 	public final Map<Actor, Location> locations;
 
+	// internal cache of actor locations:
+	private final Map<Location, List<Actor>> actorLocations;
+
 	/**
 	* A set of x/y deltas for vertically or horizontally adjacent cells.
 	**/
@@ -60,6 +63,7 @@ public class Grid extends Model {
 	public Grid(int width, int height) {
 		super(new ObservableSet<Actor>());
 		locations = new ObservableMap<Actor, Location>();
+		actorLocations = new HashMap<Location, List<Actor>>();
 
 		((ObservableSet<Actor>)actors).addObserver(actorObserver);
 		((ObservableMap<Actor, Location>)locations).addObserver(locationObserver);
@@ -67,6 +71,18 @@ public class Grid extends Model {
 		this.width  = width;
 		this.height = height;
 		model = this;
+	}
+
+	/**
+	* Place a new Actor at a specified Location.
+	* Equivalent to this.locations.put(actor, new Location(this, x, y))
+	*
+	* @param actor the Actor to place in the grid.
+	* @param x the column in which to place the Actor.
+	* @param y the row in which to place the Actor.
+	**/
+	public void put(Actor actor, int x, int y) {
+		locations.put(actor, new Location(this, x, y));
 	}
 
 	/**
@@ -125,10 +141,16 @@ public class Grid extends Model {
 	* @return the Actor at the Location or null if no Actors exist.
 	**/
 	public Actor actorAt(Location location) {
+		/*
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
 			if (location.equals(e.getValue())) { return e.getKey(); }
 		}
 		return null;
+		*/
+		List<Actor> retList = actorLocations.get(location);
+		if (retList == null)    { return null; }
+		if (retList.size() < 1) { return null; }
+		return retList.get(0);
 	}
 
 	/**
@@ -138,23 +160,38 @@ public class Grid extends Model {
 	* @return a set of Actors at the Location.
 	**/
 	public Set<Actor> actorsAt(Location location) {
+		/*
 		Set<Actor> ret = new HashSet<Actor>();
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
 			if (location.equals(e.getValue())) { ret.add(e.getKey()); }
 		}
 		return ret;
+		*/
+		// we must build a new collection to return to
+		// avoid leaking our internal caches:
+		List<Actor> retList = actorLocations.get(location);
+		if (retList == null) { return Collections.emptySet(); }
+		return new HashSet<Actor>(retList);
 	}
 
 	/**
 	* Find all Actors in a group of Locations.
 	*
-	* @param locationSet a set of Locations to check for Actors.
+	* @param locations a set of Locations to check for Actors.
 	* @return a set of Actors at the Locations.
 	**/
-	public Set<Actor> actorsAt(Set<Location> locationSet) {
+	public Set<Actor> actorsAt(Set<Location> locations) {
+		/*
 		Set<Actor> ret = new HashSet<Actor>();
 		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
 			if(locationSet.contains(e.getValue())) { ret.add(e.getKey()); }
+		}
+		return ret;
+		*/
+		Set<Actor> ret = new HashSet<Actor>();
+		for(Location location : locations) {
+			List<Actor> actors = actorLocations.get(location);
+			if (actors != null) { ret.addAll(actors); }
 		}
 		return ret;
 	}
@@ -224,6 +261,10 @@ public class Grid extends Model {
 		}
 		
 		public void removed(ObservableCollection sender, Actor e) {
+			Location location = locations.get(e);
+			if (location != null) {
+				actorLocations.get(location).remove(e);
+			}
 			((ObservableMap<Actor,Location>)locations).store().remove(e);
 		}
 	}
@@ -231,10 +272,22 @@ public class Grid extends Model {
 	private class LocationObserver implements CollectionObserver<Map.Entry<Actor, Location>> {
 		public void added(ObservableCollection sender, Map.Entry<Actor, Location> e) {
 			((ObservableSet<Actor>)actors).store().add(e.getKey());
+
+			List<Actor> a = actorLocations.get(e.getValue());
+			if (a == null) {
+				a = new ArrayList<Actor>();
+				actorLocations.put(e.getValue(), a);
+			}
+			a.add(e.getKey());
 		}
 
 		public void removed(ObservableCollection sender, Map.Entry<Actor, Location> e) {
 			((ObservableSet<Actor>)actors).store().remove(e.getKey());
+
+			List<Actor> a = actorLocations.get(e.getValue());
+			if (a != null) {
+				a.remove(e.getKey());
+			}
 		}
 	}
 }
