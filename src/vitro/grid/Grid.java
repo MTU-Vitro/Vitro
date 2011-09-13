@@ -141,12 +141,6 @@ public class Grid extends Model {
 	* @return the Actor at the Location or null if no Actors exist.
 	**/
 	public Actor actorAt(Location location) {
-		/*
-		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
-			if (location.equals(e.getValue())) { return e.getKey(); }
-		}
-		return null;
-		*/
 		List<Actor> retList = actorLocations.get(location);
 		if (retList == null)    { return null; }
 		if (retList.size() < 1) { return null; }
@@ -160,17 +154,10 @@ public class Grid extends Model {
 	* @return a set of Actors at the Location.
 	**/
 	public Set<Actor> actorsAt(Location location) {
-		/*
-		Set<Actor> ret = new HashSet<Actor>();
-		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
-			if (location.equals(e.getValue())) { ret.add(e.getKey()); }
-		}
-		return ret;
-		*/
-		// we must build a new collection to return to
-		// avoid leaking our internal caches:
 		List<Actor> retList = actorLocations.get(location);
 		if (retList == null) { return Collections.emptySet(); }
+		// we must build a new collection to return to
+		// avoid leaking our internal caches:
 		return new HashSet<Actor>(retList);
 	}
 
@@ -181,13 +168,6 @@ public class Grid extends Model {
 	* @return a set of Actors at the Locations.
 	**/
 	public Set<Actor> actorsAt(Set<Location> locations) {
-		/*
-		Set<Actor> ret = new HashSet<Actor>();
-		for(Map.Entry<Actor, Location> e : locations.entrySet()) {
-			if(locationSet.contains(e.getValue())) { ret.add(e.getKey()); }
-		}
-		return ret;
-		*/
 		Set<Actor> ret = new HashSet<Actor>();
 		for(Location location : locations) {
 			List<Actor> actors = actorLocations.get(location);
