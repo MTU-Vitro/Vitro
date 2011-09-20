@@ -15,7 +15,7 @@ public class TicTacView implements View {
 	private final Controller controller;
 	private final ColorScheme colors = new ColorScheme();
 	private final int width  = 500;
-	private final int height = 595 + 123;
+	private final int height = 509 + 92;
 	
 	private final TicTac model;
 	private final Image board;
@@ -44,7 +44,7 @@ public class TicTacView implements View {
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if (sofar > 1) {
+		if (sofar > 10) {
 			controller.next();
 			sofar = 0;
 		}
@@ -57,22 +57,23 @@ public class TicTacView implements View {
 	public void draw(Graphics2D g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
-		g.drawImage(board, 0, 123, null);
+		g.drawImage(board, 0, 92, null);
 
 		synchronized(model) {
 			if (model.done()) {
-				if (model.hasWon(model.CROSSES)) { drawMessage(1, g); }
-				if (model.hasWon(model.CIRCLES)) { drawMessage(3, g); }
+				if (model.hasWon(model.CROSSES)) { drawMessage(3, g); }
+				if (model.hasWon(model.CIRCLES)) { drawMessage(1, g); }
 			}
 			else {
-				drawMessage(model.team() * 2, g);
+				if (model.team() == model.CROSSES) { drawMessage(2, g); }
+				if (model.team() == model.CIRCLES) { drawMessage(0, g); }
 			}
 
 			for(int x = 0; x < 3; x++) {
 				for(int y = 0; y < 3; y++) {
 					Actor a = model.actorAt(new Location(model, x, y));
 					if (a instanceof Factional) {
-						drawCross(x, y, ((Factional)a).team() != model.CROSSES, g);
+						drawCross(x, y, ((Factional)a).team() == model.CROSSES, g);
 					}
 				}
 			}
@@ -85,19 +86,19 @@ public class TicTacView implements View {
 			0,
 			0,
 			495,
-			123,
+			92,
 			0,
-			123 * index,
+			92 * index,
 			495,
-			123 * (index + 1),
+			92 * (index + 1),
 			null
 		);
 	}
 
 	private void drawCross(int x, int y, boolean blue, Graphics2D g) {
 		int tile = (x + (y * 2)) % 6;
-		int px = x * 166 + 20;
-		int py = y * 210 + 20 + 123;
+		int px = x * 170 + 20;
+		int py = y * 180 + 20 + 92;
 
 		g.drawImage(
 			crosses,
