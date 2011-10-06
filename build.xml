@@ -59,7 +59,11 @@
 		<compile files = "present/**"/>
 	</target>
 
-	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile, present:compile"/>
+	<target name = "tools:compile" depends = "stage, vitro:compile, demos:compile">
+		<compile files = "tools/**"/>
+	</target>
+
+	<target name = "compile" depends = "vitro:compile, demos:compile, tests:compile, present:compile, tools:compile"/>
 
 	<!-- Build Target(s) -->
 	<target name = "vitro:build" depends = "vitro:compile, demos:compile, assign:compile, present:compile">
