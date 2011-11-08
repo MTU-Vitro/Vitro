@@ -3,6 +3,7 @@ package vitro.tools;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.security.*;
 import vitro.*;
 
 public class Thunderdome {
@@ -34,8 +35,36 @@ public class Thunderdome {
 		catch (InstantiationException e) { e.printStackTrace(); }
 		catch (IllegalAccessException e) { e.printStackTrace(); }
 
-		Controller controller = setup.init(agents);
-		setup.eval(controller, runExperiment(controller));
+		// disallow all muckin' about.
+		System.setSecurityManager(new SecurityManager() {
+			public void checkPermission(Permission perm) {
+				if (perm instanceof PropertyPermission) {
+					PropertyPermission p = (PropertyPermission)perm;
+					// needed for System.out.println():
+					if (p.getName().equals("line.separator") &&
+						p.getActions().equals("read")) { return; }
+				}
+				if (perm instanceof RuntimePermission) {
+					RuntimePermission r = (RuntimePermission)perm;
+					// needed for the testing framework and threaded controller:
+					if (r.getName().equals("stopThread"))        { return; }
+
+					// needed to allow external signals to halt the VM (!):
+					if (r.getName().equals("modifyThread"))      { return; }
+					if (r.getName().equals("modifyThreadGroup")) { return; }
+				}
+				System.out.println("Requested Permission: "+perm);
+				throw new SecurityException("muckin' about");
+			}
+		});
+
+		try {
+			Controller controller = setup.init(agents);
+			setup.eval(controller, runExperiment(controller));
+		}
+		catch(SecurityException e) {
+			System.out.println("Security Exception: "+e.getMessage());
+		}
 	}
 
 	@SuppressWarnings("deprecation")
