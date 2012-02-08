@@ -1,4 +1,4 @@
-package assign.search;
+package demos.search;
 
 import vitro.*;
 import vitro.grid.*;
@@ -8,7 +8,7 @@ import java.util.*;
 import java.io.*;
 import vitro.util.*;
 
-public class SearchHost extends Host {
+public class SearchEye extends Host {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -19,17 +19,17 @@ public class SearchHost extends Host {
 		// host with the appropriate assignment parameters.
 		if(args.length < 1) {
 			System.out.println("No Parameters, Starting Default!");
-			new SearchHost();
+			new SearchEye();
 		}
 		else {
-			new SearchHost(args);
+			new SearchEye(args);
 		}
 	}
 
 	/**
 	*
 	**/
-	public SearchHost() {
+	public SearchEye() {
 		//this(new String[] { "pathing", "breadth" });
 		this(new String[] { "sokoban", "map4" });
 	}
@@ -37,7 +37,7 @@ public class SearchHost extends Host {
 	/**
 	*
 	**/
-	public SearchHost(String[] args) {
+	public SearchEye(String[] args) {
 		if      (args[0].equals("pathing")) { initializePart1(args);                    }
 		else if (args[0].equals("sokoban")) { initializePart2(args);                    }
 		else                                { System.out.println("Invalid Arguments."); }

@@ -1,4 +1,4 @@
-package assign.search;
+package demos.search;
 
 import vitro.util.*;
 import java.util.*;

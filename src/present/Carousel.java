@@ -20,7 +20,7 @@ import demos.lights.*;
 import demos.tictac.*;
 import demos.lunar.*;
 import demos.robots.*;
-import assign.search.*;
+import demos.search.*;
 
 public class Carousel extends JPanel implements KeyListener {
 
