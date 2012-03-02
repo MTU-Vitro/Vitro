@@ -62,8 +62,8 @@ public class GridAnnotation implements Annotation, Comparable {
 	* @param colorMin the color to assign to the lowest value in values from scaling.
 	* @param colorMax the color to assign to the highest value in value from scaling.
 	**/
-	public GridAnnotation(Map<Location, ? extends Number> scaling, Color colorMin, Color colorMax) {
-		this(calculateScaling(scaling, colorMin, colorMax));
+	public GridAnnotation(Map<Location, ? extends Number> scaling, Color colorMin, Color... colorInt) {
+		this(calculateScaling(scaling, colorMin, colorInt));
 	}
 	
 	
@@ -82,27 +82,43 @@ public class GridAnnotation implements Annotation, Comparable {
 	* @param colorMax the color to assign to the highest value in value from scaling.
 	* @return a mapping from objects to their scaled colors.
 	**/
-	protected static <K> Map<K, Color> calculateScaling(Map<K, ? extends Number> scaling, Color colorMin, Color colorMax) {
-		float min = Float.MAX_VALUE;
-		float max = Float.MIN_VALUE;
-		for(Number num : scaling.values()) {
-			min = Math.min(min, num.floatValue());
-			max = Math.max(max, num.floatValue());
-		}
+	protected static <K> Map<K, Color> calculateScaling(Map<K, ? extends Number> scaling, Color colorMin, Color... colorInt) {
+		Comparator<Number> comparator = new Comparator<Number>() {
+			public int compare(Number first, Number second) {
+				return Float.compare(first.floatValue(), second.floatValue());
+			}
+		};
+	
+		float min = Collections.min(scaling.values(), comparator).floatValue();
+		float max = Collections.max(scaling.values(), comparator).floatValue() + 0.001f;
 
-		float[] compMin = colorMin.getColorComponents(null);
-		float[] compMax = colorMax.getColorComponents(null);
+		//
+		float[][] components = new float[colorInt.length + 1][];
+		components[0] = colorMin.getColorComponents(null);
 		
+		float[] alphas = new float[colorInt.length + 1];
+		alphas[0] = colorMin.getAlpha() / 255f;
+		
+		for(int x = 0; x < colorInt.length; x++) {
+			components[x + 1] = colorInt[x].getColorComponents(null);
+			alphas[x + 1] = colorInt[x].getAlpha() / 255f;
+		}
+		
+		//
 		Map<K, Color> colors = new HashMap<K, Color>();
 		for(K key : scaling.keySet()) {
 			if(min != max) {
-				float s = (scaling.get(key).floatValue() - min) / (max - min);
+				float value = colorInt.length * (scaling.get(key).floatValue() - min) / (max - min);
+				int   index = (int)value;
+				float scale = value - index;
+
 				float[] comp = new float[] {
-					s * (compMax[0] - compMin[0]) + compMin[0],
-					s * (compMax[1] - compMin[1]) + compMin[1],
-					s * (compMax[2] - compMin[2]) + compMin[2],
+					scale * (components[index + 1][0] - components[index][0]) + components[index][0],
+					scale * (components[index + 1][1] - components[index][1]) + components[index][1],
+					scale * (components[index + 1][2] - components[index][2]) + components[index][2]
 				};
-				float alpha = ((s * (colorMax.getAlpha() - colorMin.getAlpha())) + colorMin.getAlpha()) / 255;
+				float alpha = scale * (alphas[index + 1] - alphas[index]) + alphas[index];
+				
 				colors.put(key, new Color(comp[0], comp[1], comp[2], alpha));
 			}
 			else {
