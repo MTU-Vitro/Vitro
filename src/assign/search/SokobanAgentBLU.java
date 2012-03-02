@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import vitro.*;
 import vitro.grid.*;
@@ -33,7 +33,7 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 	**/
 	@Override
 	public final Action choose(Robots.BLU actor, Set<Action> options) {
-		// Here we assume that we will always see the same actor.
+		// We assume that we will always see the same actor.
 
 		// On the first call, our state will not be initialized.
 		if(states == null) {
@@ -55,13 +55,7 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 				
 				// Second, path the block, making sure that you only expand 
 				// in "pushable" directions.
-				Search<SokobanStateBLU> method = new UniformCostSearch<SokobanStateBLU>(
-					new CostFunction<SokobanStateBLU>() {
-						public double value(SokobanStateBLU state) {
-							return state.cost;
-						}
-					}
-				);
+				Search<SokobanStateBLU> method = new UniformCostSearch<SokobanStateBLU>();
 				Domain<SokobanStateBLU> domain = new SokobanDomainBLU(
 					actor,
 					blockLocation,
@@ -161,10 +155,13 @@ public class SokobanAgentBLU implements Agent<Robots.BLU>, Annotated {
 		// GridAnnotation constructs a gradient between two colors
 		// based on the ordering and overlays the data on top of
 		// the view.
-		
-		ret.add(new GridAnnotation(pathBlock, new Color(0.90f, 0.09f, 0.08f, 0.2f)));
+		ret.add(new GridAnnotation(pathBlock, 
+			new Color(1.0f, 0f, 0f, .2f)
+		));
 		if(pathBLU != null) {
-			ret.add(new GridAnnotation(pathBLU, new Color(0.00f, 0.09f, 0.58f, 0.5f)));
+			ret.add(new GridAnnotation(pathBLU, 
+				new Color(0f, 0f, 1.0f, .5f)
+			));
 		}
 		
 

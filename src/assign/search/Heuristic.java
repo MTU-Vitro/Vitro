@@ -1,5 +1,5 @@
-package demos.search;
+package assign.search;
 
 public interface Heuristic<E>  {
-	public double value(E e);
+	public double cost(E e);
 }

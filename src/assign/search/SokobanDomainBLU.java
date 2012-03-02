@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import vitro.*;
 import vitro.grid.*;
@@ -24,6 +24,10 @@ public class SokobanDomainBLU implements Domain<SokobanStateBLU> {
 	
 	public boolean isGoal(SokobanStateBLU state) {
 		return goal.equals(state.blockLocation);
+	}
+	
+	public double cost(SokobanStateBLU head, SokobanStateBLU tail) {
+		return 1.0;
 	}
 	
 	public Set<SokobanStateBLU> expand(SokobanStateBLU state) {

@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import vitro.*;
 import vitro.grid.*;
@@ -22,6 +22,10 @@ public class DomainBLU implements Domain<Location> {
 	
 	public boolean isGoal(Location l) {
 		return goal.equals(l);
+	}
+	
+	public double cost(Location head, Location tail) {
+		return 1.0;
 	}
 	
 	public Set<Location> expand(Location location) {

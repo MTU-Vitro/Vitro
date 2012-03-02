@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import vitro.grid.*;
 

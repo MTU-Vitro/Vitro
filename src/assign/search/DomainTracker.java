@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import java.util.*;
 
@@ -21,6 +21,10 @@ public class DomainTracker<E> implements Domain<E> {
 	
 	public boolean isGoal(E e) {
 		return domain.isGoal(e);
+	}
+	
+	public double cost(E head, E tail) {
+		return domain.cost(head, tail);
 	}
 	
 	public Set<E> expand(E e) {

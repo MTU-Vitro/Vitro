@@ -1,4 +1,4 @@
-package demos.search;
+package assign.search;
 
 import vitro.grid.Location;
 
@@ -9,7 +9,7 @@ public class ManhattanHeuristic implements Heuristic<Location> {
 		this.goal = goal;
 	}
 
-	public double value(Location location) {
+	public double cost(Location location) {
 		return Math.abs(location.x - goal.x) + Math.abs(location.y - goal.y);
 	}
 }
