@@ -2,13 +2,16 @@ package vitro.grid;
 
 import vitro.*;
 import java.awt.*;
+import java.awt.geom.*;
+import java.util.*;
 import static vitro.util.Groups.*;
 
 /**
 * GridView is a generic View that can be applied to any GridModel.
 * It supports the display of ActorAnnotations as well as
-* GridAnnotations and can be easily extended to support new
-* features or alter the appearance of various elements.
+* GridAnnotations and GridLabelAnnotations, and can be easily
+* extended to support new features or alter the appearance of
+* various elements.
 *
 * @author John Earnest
 **/
@@ -38,11 +41,6 @@ public class GridView implements View {
 	* The y-offset of the grid relative to the View.
 	**/
 	protected int verticalMargin;
-
-	/**
-	* This View's Model.
-	**/
-	protected final Grid        model;
 	/**
 	* This View's Controller.
 	**/
@@ -55,27 +53,30 @@ public class GridView implements View {
 	/**
 	* Construct a new GridView.
 	*
-	* @param model the Model this View will visualize.
 	* @param controller the Controller associated with the Model.
 	* @param width the width this View should take up, in pixels.
 	* @param height the height this View should take up, in pixels.
 	* @param colors the ColorScheme used for drawing this View.
 	**/
-	public GridView(Grid model, Controller controller, int width, int height, ColorScheme colors) {
-		this.model      = model;
+	public GridView(Controller controller, int width, int height, ColorScheme colors) {
 		this.controller = controller;
 		this.width      = width;
 		this.height     = height;
 		this.colors     = colors;
 
 		cellSize = (int)Math.min(
-			width  * .8 / model.width,
-			height * .8 / model.height
+			width  * .8 / model().width,
+			height * .8 / model().height
 		);
-		horizontalMargin = (width  - (model.width  * cellSize)) / 2;
-		verticalMargin   = (height - (model.height * cellSize)) / 2;
+		horizontalMargin = (width  - (model().width  * cellSize)) / 2;
+		verticalMargin   = (height - (model().height * cellSize)) / 2;
 		cellMargin       = cellSize / 10;
 	}
+
+	/**
+	* This View's Model.
+	**/
+	protected Grid model() { return (Grid)controller.model(); }
 
 	/**
 	* {@inheritDoc}
@@ -105,23 +106,29 @@ public class GridView implements View {
 	* @param g the target Graphics2D surface.
 	**/
 	public void draw(Graphics2D g) {
-		drawBackground(g);
-		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 
-		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.width; x++) {
+		drawBackground(g);
+
+		for(int y = 0; y < model().height; y++) {
+			for(int x = 0; x < model().width; x++) {
 				drawCell(g, x, y);
 			}
 		}
-		synchronized(model) {
-			for(Actor actor : model.actors) { drawActor(g, actor); }
+		synchronized(controller) {
+			for(Actor actor : model().actors) { drawActor(g, actor); }
 			for(Annotation a : controller.annotations().keySet()) {
 				if (a instanceof ActorAnnotation) {
 					drawActorAnnotation(g, (ActorAnnotation)a);
 				}
 				else if (a instanceof GridAnnotation) {
 					drawGridAnnotation(g, (GridAnnotation)a);
+				}
+				else if (a instanceof VectorAnnotation) {
+					drawVectorAnnotation(g, (VectorAnnotation)a);
+				}
+				else if (a instanceof GridLabelAnnotation) {
+					drawGridLabelAnnotation(g, (GridLabelAnnotation)a);
 				}
 			}
 		}
@@ -134,14 +141,15 @@ public class GridView implements View {
 	**/
 	protected void drawBackground(Graphics2D g) {
 		g.setColor(colors.background);
+		g.fillRect(0, 0, width, height);
 	}
 
 	/**
-	* Render one cell of the Grid, starting at a specified position.
+	* Render one cell of the Grid.
 	*
 	* @param g the target Graphics2D surface.
-	* @param x the x-coordinate of the top-left corner of this cell in pixels.
-	* @param y the y-coordinate of the top-left corner of this cell in pixels.
+	* @param x the x-coordinate of this cell in cells.
+	* @param y the y-coordinate of this cell in cells.
 	**/
 	protected void drawCell(Graphics2D g, int x, int y) {
 		g.setColor(colors.outline);
@@ -160,27 +168,23 @@ public class GridView implements View {
 	* @param a the Actor to render.
 	**/
 	protected void drawActor(Graphics2D g, Actor a) {
-		Location location = model.locations.get(a);
+		Location location = model().locations.get(a);
 		if (location == null) { return; }
-		if (a instanceof Factional) {
-			g.setColor(colors.unique(new Integer(((Factional)a).team())));
-		}
-		else {
-			g.setColor(colors.unique(a.getClass()));
-		}
-		g.fillOval(
-			horizontalMargin + cellMargin + (location.x * cellSize) + 1,
-			verticalMargin   + cellMargin + (location.y * cellSize) + 1,
-			cellSize - (cellMargin * 2) - 1,
-			cellSize - (cellMargin * 2)
-		);
+
+		double cx = horizontalMargin + (location.x * cellSize) + (cellSize / 2.0);
+		double cy = verticalMargin   + (location.y * cellSize) + (cellSize / 2.0);
+		double r  = cellSize * .3;
+		Ellipse2D.Double oval = new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r);
+
+		g.setColor(colors.unique(
+			a instanceof Factional ?
+			new Integer(((Factional)a).team()) :
+			a.getClass()
+		));
+
+		g.fill(oval);
 		g.setColor(colors.outline);
-		g.drawOval(
-			horizontalMargin + cellMargin + (location.x * cellSize) + 1,
-			verticalMargin   + cellMargin + (location.y * cellSize) + 1,
-			cellSize - (cellMargin * 2) - 1,
-			cellSize - (cellMargin * 2)
-		);
+		g.draw(oval);
 	}
 
 	/**
@@ -190,7 +194,7 @@ public class GridView implements View {
 	* @param a the ActorAnnotation to render.
 	**/
 	protected void drawActorAnnotation(Graphics2D g, ActorAnnotation a) {
-		Location location = model.locations.get(a.actor);
+		Location location = model().locations.get(a.actor);
 		if (location == null) { return; }
 
 		Stroke oldStroke = g.getStroke();
@@ -223,7 +227,7 @@ public class GridView implements View {
 			g.setColor(a.coloring.get(p));
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 			
-			Location location = new Location(model, p.x, p.y);
+			Location location = new Location(model(), p.x, p.y);
 			if(location.valid()) {
 				g.fillRect(
 					horizontalMargin + (location.x * cellSize),
@@ -235,13 +239,67 @@ public class GridView implements View {
 		}
 	}
 
+	/**
+	* Render one GridLabelAnnotation.
+	*
+	* @param g the target Graphics2D surface.
+	* @param a the GridLabelAnnotation to render.
+	**/
+	protected void drawGridLabelAnnotation(Graphics2D g, GridLabelAnnotation a) {
+		g.setColor(colors.outline);
+		for(Map.Entry<Location, String> e : a.labels.entrySet()) {
+			Drawing.drawStringCentered(
+				g,
+				e.getValue(),
+				horizontalMargin + (e.getKey().x * cellSize) + (cellSize / 2),
+				verticalMargin   + (e.getKey().y * cellSize) + (cellSize / 2)
+			);
+		}
+	}
+
+	/**
+	* Render one VectorAnnotation.
+	*
+	* @param g the target Graphics2D surface.
+	* @param a the VectorAnnotation to render.
+	**/
+	protected void drawVectorAnnotation(Graphics2D g, VectorAnnotation a) {
+		Graphics2D gc = (Graphics2D)g.create();
+		gc.setColor(colors.outline);
+		gc.setStroke(new BasicStroke(2));
+		for(Map.Entry<Location, Integer> e : a.dirs.entrySet()) {
+			drawVector((Graphics2D)gc.create(), e.getKey(), e.getValue());
+		}
+	}
+
+	/**
+	* Render a single vector, as from a VectorAnnotation.
+	*
+	* @param cell the target cell.
+	* @param dir the direction of this vector.
+	**/
+	protected void drawVector(Graphics2D g, Location cell, int dir) {
+		g.translate(
+			horizontalMargin + (cell.x * cellSize) + (cellSize / 2.0),
+			verticalMargin   + (cell.y * cellSize) + (cellSize / 2.0)
+		);
+		g.rotate(Math.PI / 4 * dir);
+
+		int r = (int)(cellSize * .4);
+		int w = (int)(cellSize * .15);
+
+		g.drawLine( 0,  -r, 0, r);
+		g.drawLine(-w, r/2, 0, r);
+		g.drawLine( w, r/2, 0, r);
+	}
+
 	private double sofar = 0;
 	/**
 	* {@inheritDoc}
 	**/
 	public void tick(double time) {
 		sofar += time;
-		if (sofar > .05) {
+		if (sofar > .5) {
 			controller.next();
 			sofar = 0;
 		}

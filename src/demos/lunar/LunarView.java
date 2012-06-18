@@ -13,7 +13,6 @@ public class LunarView implements View {
 
 	private final ColorScheme colors = new ColorScheme(Color.WHITE, new Color(75, 75, 75), Color.BLACK);
 
-	private final Lunar      model;
 	private final Controller controller;
 	private final int        width;
 	private final int        height;
@@ -29,8 +28,7 @@ public class LunarView implements View {
 
 	private Polygon blast = null;
 
-	public LunarView(Lunar model, Controller controller, int width, int height) {
-		this.model      = model;
+	public LunarView(Controller controller, int width, int height) {
 		this.controller = controller;
 		this.width      = width;
 		this.height     = height;
@@ -38,14 +36,17 @@ public class LunarView implements View {
 		observerView   = new ObserverView();
 
 
-		landingPadView = new LandingPadView(model.landingPad);
-		hudView        = new HUDView((Lander)Groups.firstOfType(Lander.class, model.actors), model.landingPad);
+		landingPadView = new LandingPadView(model().landingPad);
+		hudView        = new HUDView((Lander)Groups.firstOfType(Lander.class, model().actors), model().landingPad);
 
 		landerViews = new HashSet<LanderView>();
-		for(Actor actor : Groups.ofType(Lander.class, model.actors)) {
+		for(Actor actor : Groups.ofType(Lander.class, model().actors)) {
 			landerViews.add(new LanderView((Lander)actor));
 		}
 	}
+
+
+	protected Lunar model() { return (Lunar)controller.model(); }
 
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
@@ -69,7 +70,7 @@ public class LunarView implements View {
 		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 
-		synchronized(model) {
+		synchronized(model()) {
 			observerView.draw(g);
 
 			AffineTransform oldTransform = g.getTransform();
@@ -112,8 +113,8 @@ public class LunarView implements View {
 		}
 
 		protected void draw(Graphics2D g) {
-			int x = (int)model.positions.get(lander).x;
-			int y = (int)model.positions.get(lander).y - 8;
+			int x = (int)model().positions.get(lander).x;
+			int y = (int)model().positions.get(lander).y - 8;
 			boolean success = lander.state == Lander.State.LANDED;
 			boolean dead    = lander.state == Lander.State.CRASHED;
 
@@ -355,7 +356,7 @@ public class LunarView implements View {
 	*
 	**/
 	public class HUDView {
-		private final VectorFont font = new VectorFont(18, 27);
+		private final VectorFont font = new VectorFont(9, 15);
 
 		public final Lander     lander;
 		public final LandingPad landingPad;
@@ -377,8 +378,8 @@ public class LunarView implements View {
 			drawGlobalDetails(g);
 
 			// draw exception notifications
-			if     (lander                      == null) { drawNotification(g, "DISCONNECTED");          }
-			else if(model.positions.get(lander) == null) { drawNotification(g, "OBTAINING POSITION..."); }
+			if     (lander                        == null) { drawNotification(g, "DISCONNECTED");          }
+			else if(model().positions.get(lander) == null) { drawNotification(g, "OBTAINING POSITION..."); }
 		}
 
 		private final void drawLanderDetails(Graphics2D g) {
@@ -386,7 +387,7 @@ public class LunarView implements View {
 			String yVelString = String.format("VEL [Y] :  %s", "----.--");
 			String fuelString = String.format("FUEL    :  %s", "----"   );
 
-			if(lander != null && model.positions.get(lander) != null) {
+			if(lander != null && model().positions.get(lander) != null) {
 				xVelString = String.format("VEL [X] :  % 07.2f", lander.velocity.x);
 				yVelString = String.format("VEL [Y] :  % 07.2f", lander.velocity.y);
 				fuelString = String.format("FUEL    : % 4d"   , lander.fuel      );
@@ -402,10 +403,10 @@ public class LunarView implements View {
 			String altString = String.format("ALTITUDE :  %s", "----.--");
 			String disString = String.format("DISTANCE :  %s", "----.--");
 
-			if(lander     != null && model.positions.get(lander)     != null &&
-			   landingPad != null && model.positions.get(landingPad) != null) {
-				double altitude =   model.positions.get(lander).y - model.positions.get(landingPad).y - 15;
-				double distance = - model.positions.get(lander).x - model.positions.get(landingPad).x;
+			if(lander     != null && model().positions.get(lander)     != null &&
+			   landingPad != null && model().positions.get(landingPad) != null) {
+				double altitude =   model().positions.get(lander).y - model().positions.get(landingPad).y - 15;
+				double distance = - model().positions.get(lander).x - model().positions.get(landingPad).x;
 
 				altString = String.format("ALTITUDE : % 07.2f", altitude);
 				disString = String.format("DISTANCE : % 07.2f", distance);
@@ -428,8 +429,8 @@ public class LunarView implements View {
 		}
 
 		private final void drawMarkerLander(Graphics2D g) {
-			if(lander != null && model.positions.get(lander) != null) {
-				Position p = model.positions.get(lander);
+			if(lander != null && model().positions.get(lander) != null) {
+				Position p = model().positions.get(lander);
 				int[][] polygon = new int[][] { 
 					{ (int)(p.x)     , (int)(p.x) -  5, (int)(p.x) +  5 }, 
 					{ (int)(p.y) + 30, (int)(p.y) + 35, (int)(p.y) + 35 }
@@ -447,8 +448,8 @@ public class LunarView implements View {
 		}
 
 		private final void drawMarkerLandingPad(Graphics2D g) {
-			if(landingPad != null && model.positions.get(landingPad) != null) {
-				Position p = model.positions.get(landingPad);
+			if(landingPad != null && model().positions.get(landingPad) != null) {
+				Position p = model().positions.get(landingPad);
 				int[][] polygon = new int[][] { { (int)(p.x), (int)(p.x) -  5, (int)(p.x) +  5 }, { -10, -15, -15 } };
 
 				AffineTransform oldTransform = g.getTransform();

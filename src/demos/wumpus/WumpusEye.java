@@ -15,7 +15,7 @@ public class WumpusEye extends Host {
 		
 		WumpusWorld model     = new WumpusWorld();
 		Controller controller = new SimultaneousController(model);
-		GraphView view        = new GraphView(model, controller, 800, 600);
+		GraphView view        = new GraphView(controller, 800, 600);
 
 		WumpusWorld.Hunter hunter = model.createHunter();
 		controller.bind(hunter, new LogicalWumpusBrain());

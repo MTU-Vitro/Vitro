@@ -1,5 +1,6 @@
 package vitro;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -12,7 +13,7 @@ import java.util.*;
 *
 * @author John Earnest
 **/
-public interface Agent<A extends Actor> {
+public interface Agent<A extends Actor> extends Serializable {
 
 	/**
 	* Select an action from the available options.

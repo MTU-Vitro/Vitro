@@ -17,14 +17,12 @@ public class TicTacView implements View {
 	private final int width  = 500;
 	private final int height = 509 + 92;
 	
-	private final TicTac model;
 	private final Image board;
 	private final Image crosses;
 	private final Image messages;
 
-	public TicTacView(TicTac model, Controller controller) {
+	public TicTacView(Controller controller) {
 		this.controller = controller;
-		this.model = model;
 		try {
 			ClassLoader loader = TicTacView.class.getClassLoader();
 			this.board    = ImageIO.read(loader.getResource("demos/tictac/board.png"));
@@ -35,6 +33,8 @@ public class TicTacView implements View {
 			throw new Error("Unable to load image resources.");
 		}
 	}
+
+	protected TicTac model() { return (TicTac)controller.model(); }
 
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
@@ -59,21 +59,21 @@ public class TicTacView implements View {
 		g.fillRect(0, 0, width, height);
 		g.drawImage(board, 0, 92, null);
 
-		synchronized(model) {
-			if (model.done()) {
-				if (model.hasWon(model.CROSSES)) { drawMessage(3, g); }
-				if (model.hasWon(model.CIRCLES)) { drawMessage(1, g); }
+		synchronized(model()) {
+			if (model().done()) {
+				if (model().hasWon(model().CROSSES)) { drawMessage(3, g); }
+				if (model().hasWon(model().CIRCLES)) { drawMessage(1, g); }
 			}
 			else {
-				if (model.team() == model.CROSSES) { drawMessage(2, g); }
-				if (model.team() == model.CIRCLES) { drawMessage(0, g); }
+				if (model().team() == model().CROSSES) { drawMessage(2, g); }
+				if (model().team() == model().CIRCLES) { drawMessage(0, g); }
 			}
 
 			for(int x = 0; x < 3; x++) {
 				for(int y = 0; y < 3; y++) {
-					Actor a = model.actorAt(new Location(model, x, y));
+					Actor a = model().actorAt(new Location(model(), x, y));
 					if (a instanceof Factional) {
-						drawCross(x, y, ((Factional)a).team() == model.CROSSES, g);
+						drawCross(x, y, ((Factional)a).team() == model().CROSSES, g);
 					}
 				}
 			}

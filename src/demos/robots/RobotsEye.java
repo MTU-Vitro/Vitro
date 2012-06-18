@@ -64,7 +64,7 @@ public class RobotsEye extends Host {
 		*/
 
 		SequentialController controller = new SequentialController(model);
-		RobotsView view                 = new RobotsView(model, controller);
+		RobotsView view                 = new RobotsView(controller);
 
 		controller.bind(Robots.BLU.class, new RandomAgent());
 		controller.bind(Robots.RNG.class, new RandomAgent());

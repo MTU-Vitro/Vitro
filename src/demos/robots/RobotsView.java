@@ -19,7 +19,6 @@ public class RobotsView implements View {
 	private final int width  = 720;
 	private final int height = 720;
 	
-	private final Robots model;
 	private final Image buffer;
 	private final Image tiles;
 	private final Image BLU;
@@ -44,12 +43,11 @@ public class RobotsView implements View {
 		bigTiles.put(Robots.TARGET, 1);
 	}
 
-	public RobotsView(Robots model, Controller controller) {
+	public RobotsView(Controller controller) {
 		this.controller = controller;
-		this.model = model;
 		this.buffer = new BufferedImage(
-			model.width  * 16,
-			model.height * 16,
+			model().width  * 16,
+			model().height * 16,
 			BufferedImage.TYPE_INT_ARGB
 		);
 		try {
@@ -75,6 +73,8 @@ public class RobotsView implements View {
 		colors.background = Color.BLACK;
 		colors.inactive   = Color.GRAY.darker();
 	}
+
+	protected Robots model() { return (Robots)controller.model(); }
 
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
@@ -151,7 +151,7 @@ public class RobotsView implements View {
 		if (actor instanceof Robots.RNG) {
 			if (sprite.x == sx && sprite.y == sy) {
 				// toggle active/inactive animations
-				if (model.dark(location)) {
+				if (model().dark(location)) {
 					sprite.anim = new int[] { 6 };
 					sprite.frame = 0;
 					sprite.z = 0;
@@ -171,9 +171,9 @@ public class RobotsView implements View {
 
 	public void flush() {
 		sprites.clear();
-		synchronized(model) {
-			for(Actor actor : model.actors) {
-				Location location = model.locations.get(actor);
+		synchronized(model()) {
+			for(Actor actor : model().actors) {
+				Location location = model().locations.get(actor);
 				if (location == null) { continue; }
 				if (actor instanceof Robots.BLU) {
 					int[] anim = new int[] { 1, 8 };
@@ -194,7 +194,7 @@ public class RobotsView implements View {
 						screenX(location),
 						screenY(location)
 					);
-					if (model.dark(location)) {
+					if (model().dark(location)) {
 						r.anim = new int[] { 6 };
 						r.z = 0;
 					}
@@ -209,10 +209,10 @@ public class RobotsView implements View {
 					));
 				}
 			}
-			for(int y = 0; y < model.height; y++) {
-				for(int x = 0; x < model.width; x++) {
-					if (model.dark(new Location(model, x, y))) {
-						boolean top = (y == 0 || !model.dark(new Location(model, x, y-1)));
+			for(int y = 0; y < model().height; y++) {
+				for(int x = 0; x < model().width; x++) {
+					if (model().dark(new Location(model(), x, y))) {
+						boolean top = (y == 0 || !model().dark(new Location(model(), x, y-1)));
 						sprites.put(
 							new Actor(),
 							new Shadow(x * 16, y * 16, top)
@@ -239,14 +239,14 @@ public class RobotsView implements View {
 	private int drawFrame = 0;
 	public void draw(Graphics2D g) {
 		if (sofar < 0) { flush(); }
-		synchronized(model) {
+		synchronized(model()) {
 			if (drawFrame >= 4) {
 				if (actionIndex < controller.previousActions().size()) {
 					if (showAction(controller.previousActions().get(actionIndex))) {
 						actionIndex++;
 					}
 				}
-				else if (model.done()) {
+				else if (model().done()) {
 					for(Sprite sprite :sprites.values()) {
 						if (sprite.tiles == BLU) {
 							sprite.anim = new int[] { 9 };
@@ -270,8 +270,8 @@ public class RobotsView implements View {
 		bg.fillRect(0, 0, width, height);
 
 		// draw background:
-		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.width; x++) {
+		for(int y = 0; y < model().height; y++) {
+			for(int x = 0; x < model().width; x++) {
 				drawCell(bg, x, y);
 			}
 		}
@@ -342,8 +342,8 @@ public class RobotsView implements View {
 		String bName = null;
 		String rName = null;
 
-		synchronized(model) {
-			for(Actor a : model.actors) {
+		synchronized(model()) {
+			for(Actor a : model().actors) {
 				if (a instanceof Robots.BLU) { bName = ""+controller.getAgent(a); }
 				if (a instanceof Robots.RNG) { rName = ""+controller.getAgent(a); }
 			}
@@ -390,7 +390,7 @@ public class RobotsView implements View {
 	}
 
 	protected void drawCell(Graphics2D g, int x, int y) {
-		if (!bigTiles.containsKey(model.tiles[y][x])) {
+		if (!bigTiles.containsKey(model().tiles[y][x])) {
 			g.setColor(Color.RED.darker().darker());
 			g.fillRect(
 				(x * 16),
@@ -400,7 +400,7 @@ public class RobotsView implements View {
 			);
 		}
 		else {
-			int tile = bigTiles.get(model.tiles[y][x]);
+			int tile = bigTiles.get(model().tiles[y][x]);
 			if (tile == -1) { return; }
 			int sw = (tiles.getWidth(null) / 16);
 			int tx = (tile % sw) * 16;

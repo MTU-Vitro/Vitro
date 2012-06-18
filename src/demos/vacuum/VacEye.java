@@ -17,7 +17,7 @@ public class VacEye extends Host {
 
 		VacWorld model                  = new VacWorld();
 		SequentialController controller = new SequentialController(model);
-		GraphView view                  = new GraphView(model, controller, 720, 720);
+		GraphView view                  = new GraphView(controller, 720, 720);
 
 		controller.bind(VacWorld.Scrubby.class, new VacBrain());
 

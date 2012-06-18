@@ -1,4 +1,5 @@
 package vitro;
+import java.io.Serializable;
 
 /**
 * Actions encapsulate atomic mutations of a Model.
@@ -9,7 +10,7 @@ package vitro;
 *
 * @author John Earnest
 **/
-public interface Action {
+public interface Action extends Serializable {
 
 	/**
 	* Apply this Action's change to a supplied Model or Models.

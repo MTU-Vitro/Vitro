@@ -15,7 +15,7 @@ public class LightsOutEye extends Host {
 
 		LightsOut model                 = new LightsOut(13, 13);
 		SequentialController controller = new SequentialController(model);
-		LightsOutView view              = new LightsOutView(model, controller, 640, 480);
+		LightsOutView view              = new LightsOutView(controller, 640, 480);
 
 		//controller.bind(LightsOut.Player.class, new RandomAgent());
 		controller.bind(LightsOut.Player.class, new LightsOutBrain());

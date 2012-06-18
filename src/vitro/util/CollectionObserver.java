@@ -1,4 +1,5 @@
 package vitro.util;
+import java.io.Serializable;
 
 /**
 * CollectionObservers can be attached
@@ -7,7 +8,7 @@ package vitro.util;
 *
 * @author John Earnest
 **/
-public interface CollectionObserver<E> {
+public interface CollectionObserver<E> extends Serializable {
 
 	/**
 	* Fired immediately after an element has been

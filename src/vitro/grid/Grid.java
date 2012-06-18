@@ -234,7 +234,7 @@ public class Grid extends Model {
 		return ret;
 	}
 
-	private class ActorObserver implements CollectionObserver<Actor> {		
+	private class ActorObserver implements CollectionObserver<Actor> {
 		public void added(ObservableCollection sender, Actor e) {
 			// If an actor is added 'Raw' we don't
 			// need to assign a default location.

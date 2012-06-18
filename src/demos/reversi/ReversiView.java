@@ -14,25 +14,25 @@ public class ReversiView implements View {
 	private final int horizontalMargin;
 	private final int verticalMargin;
 
-	private final Reversi model;
 	private final Controller controller;
 	private final ColorScheme colors;
 
-	public ReversiView(Reversi model, Controller controller, int width, int height, ColorScheme colors) {
-		this.model      = model;
+	public ReversiView(Controller controller, int width, int height, ColorScheme colors) {
 		this.controller = controller;
 		this.width      = width;
 		this.height     = height;
 		this.colors     = colors;
 
 		cellSize = (int)Math.min(
-			width  * .8 / model.width,
-			height * .8 / model.height
+			width  * .8 / model().width,
+			height * .8 / model().height
 		);
-		horizontalMargin = (width  - (model.width  * cellSize)) / 2;
-		verticalMargin   = (height - (model.height * cellSize)) / 2;
+		horizontalMargin = (width  - (model().width  * cellSize)) / 2;
+		verticalMargin   = (height - (model().height * cellSize)) / 2;
 		cellMargin       = cellSize / 10;
 	}
+
+	protected Reversi model() { return (Reversi)controller.model(); }
 
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
@@ -45,8 +45,8 @@ public class ReversiView implements View {
 		Drawing.configureVector(g);
 		g.setFont(new Font("Monospaced", Font.BOLD, 36));
 
-		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.height; x++) {
+		for(int y = 0; y < model().height; y++) {
+			for(int x = 0; x < model().height; x++) {
 				g.setColor(colors.background);
 				g.fillRect(
 					horizontalMargin + (x * cellSize),
@@ -66,16 +66,16 @@ public class ReversiView implements View {
 		g.setColor(colors.secondary);
 		g.fillRect(
 			horizontalMargin,
-			verticalMargin + (model.height * cellSize) + 1,
-			(model.width * cellSize) + 1,
+			verticalMargin + (model().height * cellSize) + 1,
+			(model().width * cellSize) + 1,
 			(cellSize / 10)
 		);
 
-		synchronized(model) {
-			for(Actor a : model.actors) {
+		synchronized(model()) {
+			for(Actor a : model().actors) {
 				if (a instanceof Reversi.Player) {
 					Reversi.Player p = (Reversi.Player)a;
-					if (p.team() != model.team()) { continue; }
+					if (p.team() != model().team()) { continue; }
 					for(Action act : p.actions()) {
 						if (!(act instanceof Reversi.Move)) { continue; }
 						Reversi.Move move = (Reversi.Move)act;
@@ -97,7 +97,7 @@ public class ReversiView implements View {
 					}
 					continue;
 				}
-				Location location = model.locations.get(a);
+				Location location = model().locations.get(a);
 				if (location == null) { continue; }
 				if (a instanceof Factional) {
 					g.setColor(colors.unique(new Integer(((Factional)a).team())));
@@ -119,7 +119,7 @@ public class ReversiView implements View {
 					cellSize - (cellMargin * 2)
 				);
 			}
-			Map<Integer, Integer> scores = model.scores();
+			Map<Integer, Integer> scores = model().scores();
 			int x = 0;
 			for(Map.Entry<Integer, Integer> score : scores.entrySet()) {
 				int center = x + (width / scores.size()) / 2;

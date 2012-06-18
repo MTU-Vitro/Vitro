@@ -2,13 +2,14 @@ package vitro.grid;
 
 import vitro.*;
 import java.util.*;
+import java.io.Serializable;
 
 /**
 * A Location represents a position on a Grid.
 *
 * @author John Earnest
 **/
-public class Location {
+public class Location implements Serializable {
 	private final Grid g;
 
 	/**
@@ -46,13 +47,12 @@ public class Location {
 	public boolean equals(Object o) {
 		if (!(o instanceof Location)) { return false; }
 		Location other = (Location)o;
-		return other.g == g && other.x == x && other.y == y;
+		return other.x == x && other.y == y;
 	}
 
 	@Override
 	public int hashCode() {
-		return g.hashCode() ^
-				new Integer(x).hashCode() ^
+		return	new Integer(x).hashCode() ^
 				new Integer(y).hashCode();
 	}
 

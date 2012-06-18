@@ -15,7 +15,7 @@ public class SlidePuzzleEye extends Host {
 
 		SlidePuzzle model               = new SlidePuzzle(3, 3);
 		SequentialController controller = new SequentialController(model);
-		SlidePuzzleView view            = new SlidePuzzleView(model, controller, 640, 480, new ColorScheme());
+		SlidePuzzleView view            = new SlidePuzzleView(controller, 640, 480, new ColorScheme());
 
 		//controller.bind(SlidePuzzle.Gap.class, new SlidePuzzleBrain());
 		controller.bind(SlidePuzzle.Gap.class, new RandomAgent());

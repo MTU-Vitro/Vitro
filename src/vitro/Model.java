@@ -1,4 +1,5 @@
 package vitro;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -10,7 +11,7 @@ import java.util.*;
 *
 * @author John Earnest
 **/
-public abstract class Model {
+public abstract class Model implements Serializable {
 
 	/**
 	* A Collection of the Actors in this Model.

@@ -8,8 +8,8 @@ import java.util.*;
 
 public class LightsOutView extends GridView {
 	
-	public LightsOutView(Grid model, Controller controller, int width, int height) {
-		super(model, controller, width, height, new ColorScheme(Color.BLACK, Color.LIGHT_GRAY, Color.BLUE));
+	public LightsOutView(Controller controller, int width, int height) {
+		super(controller, width, height, new ColorScheme(Color.BLACK, Color.LIGHT_GRAY, Color.BLUE));
 		colors.inactive = Color.GRAY;
 		colors.setColor(new Integer(0), new Color(141, 119, 197));
 		colors.setColor(new Integer(1), new Color(255, 133, 242));
@@ -37,7 +37,7 @@ public class LightsOutView extends GridView {
 	}
 
 	protected void drawActor(Graphics2D g, Actor a) {
-		Location location = model.locations.get(a);
+		Location location = model().locations.get(a);
 		if (location == null) { return; }
 
 		int cx = horizontalMargin + cellMargin + (location.x * cellSize) + (cellSize / 2);

@@ -1,5 +1,6 @@
 package vitro;
 
+import java.io.Serializable;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Random;
 * @author John Earnest
 **/
 
-public class ColorScheme {
+public class ColorScheme implements Serializable {
 
 	public Color outline;
 	public Color secondary;
