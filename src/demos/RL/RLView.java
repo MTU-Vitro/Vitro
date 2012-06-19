@@ -20,19 +20,14 @@ public class RLView extends GridView {
 	}
 
 	protected void drawCell(Graphics2D g, int x, int y) {
-		Rectangle cell = new Rectangle(
-			horizontalMargin + (x * cellSize),
-			verticalMargin   + (y * cellSize),
-			cellSize,
-			cellSize
-		);
+		Point2D.Double corner = cellCorner(x, y);
+		Rectangle2D.Double cell = new Rectangle2D.Double(corner.x, corner.y, cellSize, cellSize);
 
 		if (!model().passable(null, new Location(model(), x, y))) {
 			g.setColor(colors.inactive);
 			g.fill(cell);
 		}
-
-		if (model().goal(x, y)) {
+		else if (model().goal(x, y)) {
 			g.setColor(model().reward(x, y) > 0 ?
 				Color.GREEN.darker() :
 				Color.RED.darker()
@@ -40,28 +35,21 @@ public class RLView extends GridView {
 			g.fill(cell);
 
 			g.setColor(colors.outline);
-			g.drawRect(
-				horizontalMargin + (x * cellSize) + 5,
-				verticalMargin   + (y * cellSize) + 5,
-				cellSize - 10,
-				cellSize - 10
-			);
+			g.drawRect((int)corner.x + 5, (int)corner.y + 5, cellSize - 10, cellSize - 10);
 		}
 
 		g.setColor(colors.outline);
 		g.draw(cell);
 	}
 
-	protected void drawVector(Graphics2D g, Location cell, int dir) {
+	protected void drawVector(Graphics2D g, Location cell, double dir) {
 		double py = (cellSize * .50 * -1) + 5;
 		double tw = (cellSize * .25);
 		double th = (cellSize * .10);
 
-		g.translate(
-			horizontalMargin + (cell.x * cellSize) + (cellSize / 2.0),
-			verticalMargin   + (cell.y * cellSize) + (cellSize / 2.0)
-		);
-		g.rotate(Math.PI / 4 * dir);
+		Point2D.Double center = cellCenter(cell);
+		g.translate(center.x, center.y);
+		g.rotate(2 * Math.PI * dir);
 		
 		Path2D.Double shape = new Path2D.Double();
 		shape.moveTo(      0, py     );

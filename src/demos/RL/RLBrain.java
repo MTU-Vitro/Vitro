@@ -10,11 +10,11 @@ import static vitro.util.Groups.*;
 public class RLBrain implements Agent<RLActor>, Persistent, Annotated {
 	
 	public Action choose(RLActor actor, Set<Action> options) {
-		visited.put(actor.location(), (int)(Math.random() * 4)*2);
+		visited.put(actor.location(), (int)(Math.random() * 4) * .25);
 		return any(options);
 	}
 
-	private Map<Location, Integer> visited = new HashMap<Location, Integer>();
+	private Map<Location, Double> visited = new HashMap<Location, Double>();
 
 	public Set<Annotation> annotations() {
 		return Collections.singleton((Annotation)new VectorAnnotation(Color.BLACK, visited));
@@ -33,6 +33,6 @@ public class RLBrain implements Agent<RLActor>, Persistent, Annotated {
 	public void thaw(Object o) {
 		//System.out.println("Thawed: " + o);
 		//counter = (Integer)o;
-		visited = (Map<Location, Integer>)o;
+		visited = (Map<Location, Double>)o;
 	}
 }

@@ -295,7 +295,7 @@ public class HexView implements View {
 		Graphics2D gc = (Graphics2D)g.create();
 		gc.setColor(colors.outline);
 		gc.setStroke(new BasicStroke(2));
-		for(Map.Entry<Location, Integer> e : a.dirs.entrySet()) {
+		for(Map.Entry<Location, Double> e : a.dirs.entrySet()) {
 			drawVector((Graphics2D)gc.create(), e.getKey(), e.getValue());
 		}
 	}
@@ -306,10 +306,10 @@ public class HexView implements View {
 	* @param cell the target cell.
 	* @param dir the direction of this vector.
 	**/
-	protected void drawVector(Graphics2D g, Location cell, int dir) {
+	protected void drawVector(Graphics2D g, Location cell, double dir) {
 		Point2D.Double center = hexCenter(cell, radius);
 		g.translate(center.x, center.y);
-		g.rotate(Math.PI / 3 * dir);
+		g.rotate(2 * Math.PI * dir);
 
 		int r = (int)(radius * .4 );
 		int w = (int)(radius * .15);

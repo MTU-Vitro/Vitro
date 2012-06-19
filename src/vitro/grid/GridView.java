@@ -153,12 +153,8 @@ public class GridView implements View {
 	**/
 	protected void drawCell(Graphics2D g, int x, int y) {
 		g.setColor(colors.outline);
-		g.drawRect(
-			horizontalMargin + (x * cellSize),
-			verticalMargin   + (y * cellSize),
-			cellSize,
-			cellSize
-		);
+		Point2D.Double corner = cellCorner(x, y);
+		g.drawRect((int)corner.x, (int)corner.y, cellSize, cellSize);
 	}
 
 	/**
@@ -170,11 +166,10 @@ public class GridView implements View {
 	protected void drawActor(Graphics2D g, Actor a) {
 		Location location = model().locations.get(a);
 		if (location == null) { return; }
-
-		double cx = horizontalMargin + (location.x * cellSize) + (cellSize / 2.0);
-		double cy = verticalMargin   + (location.y * cellSize) + (cellSize / 2.0);
+		
+		Point2D.Double center = cellCenter(location);
 		double r  = cellSize * .3;
-		Ellipse2D.Double oval = new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r);
+		Ellipse2D.Double oval = new Ellipse2D.Double(center.x - r, center.y - r, 2 * r, 2 * r);
 
 		g.setColor(colors.unique(
 			a instanceof Factional ?
@@ -207,12 +202,11 @@ public class GridView implements View {
 			0
 		));
 		g.setColor(colors.unique(a.label));
-		g.drawOval(
-			horizontalMargin + cellMargin/2 + (location.x * cellSize),
-			verticalMargin   + cellMargin/2 + (location.y * cellSize),
-			cellSize - cellMargin,
-			cellSize - cellMargin
-		);
+		
+		Point2D.Double center = cellCenter(location);
+		double r = (cellSize - cellMargin) / 2;
+		Ellipse2D.Double oval = new Ellipse2D.Double(center.x - r, center.y - r, 2 * r, 2 * r);
+		g.draw(oval);
 		g.setStroke(oldStroke);
 	}
 	
@@ -225,16 +219,12 @@ public class GridView implements View {
 	protected void drawGridAnnotation(Graphics2D g, GridAnnotation a) {
 		for(Point p : a.coloring.keySet()) {
 			g.setColor(a.coloring.get(p));
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-			
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));		
 			Location location = new Location(model(), p.x, p.y);
+
 			if(location.valid()) {
-				g.fillRect(
-					horizontalMargin + (location.x * cellSize),
-					verticalMargin   + (location.y * cellSize),
-					cellSize,
-					cellSize
-				);
+				Point2D.Double corner = cellCorner(location);
+				g.fillRect((int)corner.x, (int)corner.y, cellSize, cellSize);
 			}
 		}
 	}
@@ -248,12 +238,8 @@ public class GridView implements View {
 	protected void drawGridLabelAnnotation(Graphics2D g, GridLabelAnnotation a) {
 		g.setColor(colors.outline);
 		for(Map.Entry<Location, String> e : a.labels.entrySet()) {
-			Drawing.drawStringCentered(
-				g,
-				e.getValue(),
-				horizontalMargin + (e.getKey().x * cellSize) + (cellSize / 2),
-				verticalMargin   + (e.getKey().y * cellSize) + (cellSize / 2)
-			);
+			Point2D.Double center = cellCenter(e.getKey());
+			Drawing.drawStringCentered(g, e.getValue(), center.x, center.y);
 		}
 	}
 
@@ -267,7 +253,7 @@ public class GridView implements View {
 		Graphics2D gc = (Graphics2D)g.create();
 		gc.setColor(colors.outline);
 		gc.setStroke(new BasicStroke(2));
-		for(Map.Entry<Location, Integer> e : a.dirs.entrySet()) {
+		for(Map.Entry<Location, Double> e : a.dirs.entrySet()) {
 			drawVector((Graphics2D)gc.create(), e.getKey(), e.getValue());
 		}
 	}
@@ -278,12 +264,10 @@ public class GridView implements View {
 	* @param cell the target cell.
 	* @param dir the direction of this vector.
 	**/
-	protected void drawVector(Graphics2D g, Location cell, int dir) {
-		g.translate(
-			horizontalMargin + (cell.x * cellSize) + (cellSize / 2.0),
-			verticalMargin   + (cell.y * cellSize) + (cellSize / 2.0)
-		);
-		g.rotate(Math.PI / 4 * dir);
+	protected void drawVector(Graphics2D g, Location cell, double dir) {
+		Point2D.Double center = cellCenter(cell);
+		g.translate(center.x, center.y);
+		g.rotate(2 * Math.PI * dir);
 
 		int r = (int)(cellSize * .4);
 		int w = (int)(cellSize * .15);
@@ -312,4 +296,25 @@ public class GridView implements View {
 		
 	}
 
+	public Point2D.Double cellCorner(Location location) {
+		return cellCorner(location.x, location.y);
+	}
+
+	public Point2D.Double cellCorner(int x, int y) {
+		return new Point2D.Double(
+			horizontalMargin + (x * cellSize),
+			  verticalMargin + (y * cellSize)
+		);
+	}
+
+	public Point2D.Double cellCenter(Location location) {
+		return cellCenter(location.x, location.y);
+	}
+
+	public Point2D.Double cellCenter(int x, int y) {
+		return new Point2D.Double(
+			horizontalMargin + (x * cellSize) + (cellSize / 2.0),
+			  verticalMargin + (y * cellSize) + (cellSize / 2.0)
+		);
+	}
 }

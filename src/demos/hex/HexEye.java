@@ -39,7 +39,7 @@ class Notator implements Agent<Actor>, Annotated {
 		for(int x = 0; x < 10; x++) {
 			labels.dirs.put(
 				new Location(null, (int)(Math.random() * 10), (int)(Math.random() * 8)),
-				(int)(Math.random() * 8)
+				(int)(Math.random() * 6) * (1.0/6)
 			);
 		}
 		return Collections.singleton((Annotation)labels);
