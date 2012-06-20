@@ -4,16 +4,34 @@ import vitro.*;
 import java.awt.Color;
 import java.util.*;
 
-public class VectorAnnotation implements Annotation {
-	public final Map<Location, Double> dirs = new HashMap<Location, Double>();
-	public final Color color;
+/**
+* VectorAnnotations allow users to overlay a flow field
+* on selected cells of a Grid. Vector directions are specified
+* as a value between 0 and 1, clockwise from "north".
+*
+* @author John Earnest
+**/
 
-	public VectorAnnotation(Color color) {
-		this.color = color;
+public class VectorAnnotation implements Annotation {
+
+	/**
+	* This VectorAnnotation's Location-vector associations.
+	**/
+	public final Map<Location, Double> dirs = new HashMap<Location, Double>();
+
+	/**
+	* Construct a new, empty VectorAnnotation.
+	**/
+	public VectorAnnotation() {
+		
 	}
 
-	public VectorAnnotation(Color color, Map<Location, Double> dirs) {
-		this(color);
+	/**
+	* Construct a VectorAnnotation pre-initialized with a set of vectors.
+	*
+	* @param dirs a set of Location-vector associations.
+	**/
+	public VectorAnnotation(Map<Location, Double> dirs) {
 		this.dirs.putAll(dirs);
 	}
 }

@@ -35,7 +35,7 @@ class Notator implements Agent<Actor>, Annotated {
 	public Action choose(Actor a, Set<Action> options) { return vitro.util.Groups.any(options); }
 
 	public Set<Annotation> annotations() {
-		VectorAnnotation labels = new VectorAnnotation(Color.BLUE);
+		VectorAnnotation labels = new VectorAnnotation();
 		for(int x = 0; x < 10; x++) {
 			labels.dirs.put(
 				new Location(null, (int)(Math.random() * 10), (int)(Math.random() * 8)),

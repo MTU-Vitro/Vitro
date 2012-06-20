@@ -17,7 +17,7 @@ public class RLBrain implements Agent<RLActor>, Persistent, Annotated {
 	private Map<Location, Double> visited = new HashMap<Location, Double>();
 
 	public Set<Annotation> annotations() {
-		return Collections.singleton((Annotation)new VectorAnnotation(Color.BLACK, visited));
+		return Collections.singleton((Annotation)new VectorAnnotation(visited));
 		//return Collections.singleton((Annotation)new GridLabelAnnotation(visited));
 	}
 

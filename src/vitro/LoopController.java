@@ -3,12 +3,30 @@ package vitro;
 import java.io.*;
 import java.util.*;
 
+/**
+* LoopController acts as a wrapper for another
+* Controller instance and allows one to set up
+* a simulation that runs for multiple trials.
+* The underlying Model and any Agents which
+* implement Persistent will have their data
+* preserved across trials.
+* The Controller, Models and Agents used with
+* LoopController must be Serializable.
+*
+* @author John Earnest
+**/
 public class LoopController extends Controller {
 
 	private Controller instance;
 	private final Controller basis;
 	private int loopCount;
 
+	/**
+	* Construct a new LoopController.
+	*
+	* @param basis the Controller of the simulation to run several times.
+	* @param loopCount the number of times to run the basis simulation.
+	**/
 	public LoopController(Controller basis, int loopCount) {
 		super(null);
 		this.basis     = basis;
