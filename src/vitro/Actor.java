@@ -1,4 +1,5 @@
 package vitro;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -8,7 +9,7 @@ import java.util.*;
 *
 * @author John Earnest
 **/
-public class Actor {
+public class Actor implements Serializable {
 
 	/**
 	* A collection of Actions that are possible for this Actor.

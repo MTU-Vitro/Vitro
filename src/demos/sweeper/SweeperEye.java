@@ -15,7 +15,7 @@ public class SweeperEye extends Host {
 	public SweeperEye() {
 		Sweeper model         = new Sweeper(25, 25, 100);
 		Controller controller = new SimultaneousController(model);
-		SweeperView view      = new SweeperView(model, controller);
+		SweeperView view      = new SweeperView(controller);
 
 		controller.bind(model.player, new SweeperAgent());
 

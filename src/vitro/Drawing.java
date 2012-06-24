@@ -61,15 +61,15 @@ public class Drawing {
 	* @param x the x coordinate of the centerpoint.
 	* @param y the y coordinate of the centerpoint.
 	**/
-	public static void drawStringCentered(Graphics g, String s, int x, int y) {
+	public static void drawStringCentered(Graphics g, String s, double x, double y) {
 		if(s.length() == 0) { return; }
 		Font font = g.getFont();
 		TextLayout layout = new TextLayout(s, font, g.getFontMetrics().getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
 		g.drawString(
 			s,
-			x-(int)((bounds.getX() + bounds.getWidth())  / 2),
-			y+(int)(bounds.getHeight() / 2)
+			(int)(x-((bounds.getX() + bounds.getWidth())  / 2)),
+			(int)(y+(bounds.getHeight() / 2))
 		);
 	}
 

@@ -13,7 +13,6 @@ public class GraphView implements View {
 	private final Tweener globalTween = new Tweener(0, 1, FRAME_INTERVAL);
 	private final Tweener globalPulse = new Tweener(0, FRAME_INTERVAL/2, new Tweener(1, 0, FRAME_INTERVAL/2));
 
-	public final Graph model;
 	private final Controller controller;
 	private final ColorScheme palette;
 
@@ -32,8 +31,7 @@ public class GraphView implements View {
 	private GraphFrame previousFrame = null;
 	private GraphFrame currentFrame  = null;
 
-	public GraphView(Graph model, Controller controller, int width, int height, ColorScheme palette) {
-		this.model = model;
+	public GraphView(Controller controller, int width, int height, ColorScheme palette) {
 		this.controller = controller;
 		this.width = width;
 		this.height = height;
@@ -43,13 +41,15 @@ public class GraphView implements View {
 		//palette.inactive = new Color(70, 0, 0);
 	}
 
-	public GraphView(Graph model, Controller controller, int width, int height) {
-		this(model, controller, width, height, new ColorScheme());
+	public GraphView(Controller controller, int width, int height) {
+		this(controller, width, height, new ColorScheme());
 	}
 
 	public GraphView(GraphView other) {
-		this(other.model, other.controller, other.width, other.height, other.palette);
+		this(other.controller, other.width, other.height, other.palette);
 	}
+
+	protected Graph model() { return (Graph)controller.model(); }
 
 	public ColorScheme colorScheme() { return palette;    }
 	public Controller  controller()  { return controller; }
@@ -61,13 +61,13 @@ public class GraphView implements View {
 	}
 
 	public Node createNode(double x, double y, String label) {
-		Node ret = model.createNode();
+		Node ret = model().createNode();
 		nodeToView.put(ret, new NodeView(ret, (int)(x*width), (int)(y*height), label));
 		return ret;
 	}
 
 	public Edge createEdge(Node start, Node end) {
-		Edge ret = model.createEdge(start, end);
+		Edge ret = model().createEdge(start, end);
 		edgeToView.put(ret, new EdgeView(nodeToView.get(start), nodeToView.get(end)));
 		return ret;
 	}
@@ -93,18 +93,18 @@ public class GraphView implements View {
 			globalTween.reset();
 			globalPulse.reset();
 			controller.next();
-			synchronized(model) {
+			synchronized(model()) {
 				updateViews();
 				previousFrame = currentFrame;
-				currentFrame = new GraphFrame(previousFrame, model);
+				currentFrame = new GraphFrame(previousFrame, model());
 			}
 		}
 	}
 
 	public void flush() {
-		synchronized(model) {
+		synchronized(model()) {
 			updateViews();
-			currentFrame = new GraphFrame(null, model);
+			currentFrame = new GraphFrame(null, model());
 		}
 	}
 
@@ -114,19 +114,19 @@ public class GraphView implements View {
 
 	private void updateViews() {
 		// make sure our view of the model is up-to-date:
-		for(Actor actor : model.actors) {
+		for(Actor actor : model().actors) {
 			if (!actorToView.containsKey(actor)) {
 				actorToView.put(actor, new ActorView(actor));
 			}
 		}
-		for(Node node : model.nodes) {
+		for(Node node : model().nodes) {
 			if (!nodeToView.containsKey(node)) {
 				// TODO: come up with a halfway sane way to choose
 				// locations for new nodes that are created raw:
 				nodeToView.put(node, new NodeView(node, 0, 0, ""));
 			}
 		}
-		for(Edge edge : model.edges) {
+		for(Edge edge : model().edges) {
 			if (!edgeToView.containsKey(edge)) {
 				NodeView start = nodeToView.get(edge.start);
 				NodeView end   = nodeToView.get(edge.end);
@@ -141,26 +141,26 @@ public class GraphView implements View {
 		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 		
-		synchronized(model) {
+		synchronized(model()) {
 			updateViews();
-			for(Edge edge : model.edges) {
+			for(Edge edge : model().edges) {
 				edgeToView.get(edge).draw(g);
 			}
-			for(Node node : model.nodes) {
+			for(Node node : model().nodes) {
 				nodeToView.get(node).draw(g);
 			}
-			for(Actor actor : model.actors) {
+			for(Actor actor : model().actors) {
 				actorToView.get(actor).draw(g);
 			}
 			for(Annotation a : controller.annotations().keySet()) {
 				if (a instanceof ActorAnnotation) {
 					ActorAnnotation aa = (ActorAnnotation)a;
-					if (!model.actors.contains(aa.actor)) { continue; }
+					if (!model().actors.contains(aa.actor)) { continue; }
 					actorToView.get(aa.actor).annotation(g, aa);
 				}
 				if (a instanceof EdgeAnnotation) {
 					EdgeAnnotation ea = (EdgeAnnotation)a;
-					if (!model.edges.contains(ea.edge)) { continue; }
+					if (!model().edges.contains(ea.edge)) { continue; }
 					edgeToView.get(ea.edge).annotation(g, ea);
 				}
 			}
@@ -247,7 +247,7 @@ public class GraphView implements View {
 		}
 
 		public void draw(Graphics g) {
-			if (!nodeToView.containsKey(model.getLocation(actor))) { return; }
+			if (!nodeToView.containsKey(model().getLocation(actor))) { return; }
 			int x = currentFrame.getLocation(actor).x;
 			int y = currentFrame.getLocation(actor).y;
 			Drawing.drawCircleCentered(g, x, y, radius, palette.outline, fill);
@@ -279,7 +279,7 @@ public class GraphView implements View {
 
 		public GraphFrame(GraphFrame previous, Graph model) {
 			this.previous = previous;
-			for(Actor actor : model.actors) {
+			for(Actor actor : model().actors) {
 				NodeView node = nodeToView.get(model.getLocation(actor));
 				if (node != null) {
 					setLocation(actor, new Point(node.x, node.y));
@@ -328,7 +328,7 @@ public class GraphView implements View {
 			if (locations.containsKey(actor)) {
 				return locations.get(actor).position();
 			}
-			NodeView node = nodeToView.get(model.getLocation(actor));
+			NodeView node = nodeToView.get(model().getLocation(actor));
 			return new Point(node.x, node.y);
 		}
 	}

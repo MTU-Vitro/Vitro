@@ -12,24 +12,25 @@ public class SlidePuzzleView implements View {
 	private final int horizontalMargin;
 	private final int verticalMargin;
 
-	private final SlidePuzzle model;
 	private final Controller controller;
 	private final ColorScheme colors;
 
-	public SlidePuzzleView(SlidePuzzle model, Controller controller, int width, int height, ColorScheme colors) {
-		this.model      = model;
+	public SlidePuzzleView(Controller controller, int width, int height, ColorScheme colors) {
 		this.controller = controller;
 		this.width      = width;
 		this.height     = height;
 		this.colors     = colors;
 
 		cellSize = (int)Math.min(
-			width  * .8 / model.width,
-			height * .8 / model.height
+			width  * .8 / model().width,
+			height * .8 / model().height
 		);
-		horizontalMargin = (width  - (model.width  * cellSize)) / 2;
-		verticalMargin   = (height - (model.height * cellSize)) / 2;
+		horizontalMargin = (width  - (model().width  * cellSize)) / 2;
+		verticalMargin   = (height - (model().height * cellSize)) / 2;
 	}
+
+
+	protected SlidePuzzle model() { return (SlidePuzzle)controller.model(); }
 
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
@@ -42,8 +43,8 @@ public class SlidePuzzleView implements View {
 		Drawing.configureVector(g);
 		g.setFont(g.getFont().deriveFont(30.0f));
 
-		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.height; x++) {
+		for(int y = 0; y < model().height; y++) {
+			for(int x = 0; x < model().height; x++) {
 				g.setColor(colors.outline);
 				g.drawRect(
 					horizontalMargin + (x * cellSize),
@@ -53,7 +54,7 @@ public class SlidePuzzleView implements View {
 				);
 				Drawing.drawStringCentered(
 					g,
-					(model.numbers[y][x] == 0) ? "" : String.format("%d", model.numbers[y][x]),
+					(model().numbers[y][x] == 0) ? "" : String.format("%d", model().numbers[y][x]),
 					horizontalMargin + (x * cellSize) + (cellSize / 2),
 					verticalMargin   + (y * cellSize) + (cellSize / 2)
 				);
@@ -62,14 +63,14 @@ public class SlidePuzzleView implements View {
 		g.setColor(colors.secondary);
 		g.fillRect(
 			horizontalMargin,
-			verticalMargin + (model.height * cellSize) + 1,
-			(model.width * cellSize) + 1,
+			verticalMargin + (model().height * cellSize) + 1,
+			(model().width * cellSize) + 1,
 			(cellSize / 10)
 		);
 
-		synchronized(model) {
-			for(Actor a : model.actors) {
-				Location location = model.locations.get(a);
+		synchronized(model()) {
+			for(Actor a : model().actors) {
+				Location location = model().locations.get(a);
 				if (location == null) { continue; }
 				g.setColor(colors.unique(a));
 				g.fillRect(

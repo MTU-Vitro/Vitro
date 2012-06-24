@@ -30,13 +30,6 @@ public class GridAnnotation implements Annotation, Comparable {
 		for(Location location : colored) { coloring.put(new Point(location.x, location.y), color); }
 	}
 	
-	
-	/*
-	public GridAnnotation(Collection<Point> colored, Color color) {
-		for(Point point : colored) { coloring.put(point, color); }
-	}
-	*/
-	
 	/**
 	* Create a new GridAnnotation.
 	*
@@ -45,13 +38,6 @@ public class GridAnnotation implements Annotation, Comparable {
 	public GridAnnotation(Map<Location, Color> colored) {
 		for(Location location : colored.keySet()) { coloring.put(new Point(location.x, location.y), colored.get(location)); }
 	}
-	
-	
-	/*
-	public GridAnnotation(Map<Point, Color> colored) {
-		for(Point point : colored.keySet()) { coloring.put(point, colored.get(point)); }
-	}
-	*/
 	
 	/**
 	* Create a new GridAnnotation.
@@ -65,13 +51,6 @@ public class GridAnnotation implements Annotation, Comparable {
 	public GridAnnotation(Map<Location, ? extends Number> scaling, Color colorMin, Color... colorInt) {
 		this(calculateScaling(scaling, colorMin, colorInt));
 	}
-	
-	
-	/*
-	public GridAnnotation(Map<Point, ? extends Number> scaling, Color colorMin, Color colorMax) {
-		this(calculateScaling(scaling, colorMin, colorMax));
-	}
-	*/
 	
 	/**
 	* Generate a scaled gradient between two colors based on the

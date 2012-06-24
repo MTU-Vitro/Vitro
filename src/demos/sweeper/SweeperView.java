@@ -12,7 +12,6 @@ import java.util.*;
 
 public class SweeperView implements View {
 
-	protected final Sweeper     model;
 	protected final Controller  controller;
 	protected final ColorScheme colors;
 
@@ -46,14 +45,13 @@ public class SweeperView implements View {
 
 	protected State state;
 
-	public SweeperView(Sweeper model, Controller controller) {
-		this.model      = model;
+	public SweeperView(Controller controller) {
 		this.controller = controller;
 		this.colors     = new ColorScheme(Color.BLACK, Color.GRAY, Color.WHITE);
 
 		this.buffer   = 10;
-		this.width    = model.width  * (Cell.SIZE + 1) + 2 * buffer +  9;
-		this.height   = model.height * (Cell.SIZE + 1) + 3 * buffer + 51;
+		this.width    = model().width  * (Cell.SIZE + 1) + 2 * buffer +  9;
+		this.height   = model().height * (Cell.SIZE + 1) + 3 * buffer + 51;
 
 		this.outer = new Component(
 			new Rectangle(
@@ -103,16 +101,19 @@ public class SweeperView implements View {
 			3, false
 		);
 
-		this.cells = new ArrayList<Cell>(model.width * model.height);
-		for(int y = 0; y < model.height; y++) {
-			for(int x = 0; x < model.width; x++) {
-				cells.add(new Cell(new Location(model, x, y)));
+		this.cells = new ArrayList<Cell>(model().width * model().height);
+		for(int y = 0; y < model().height; y++) {
+			for(int x = 0; x < model().width; x++) {
+				cells.add(new Cell(new Location(model(), x, y)));
 			}
 		}
 
 		state = updateState();
 	}
-	
+
+
+	protected Sweeper model() { return (Sweeper)controller.model(); }
+
 	public Controller  controller()  { return controller; }
 	public ColorScheme colorScheme() { return colors;     }
 	public int         width()       { return width;      }
@@ -124,7 +125,7 @@ public class SweeperView implements View {
 	}
 
 	public void flush() {
-		synchronized(model) {
+		synchronized(model()) {
 			state = updateState();
 		}
 	}
@@ -135,7 +136,7 @@ public class SweeperView implements View {
 		g.fillRect(0, 0, width, height);
 		Drawing.configureRaster(g);
 
-		synchronized(model) {
+		synchronized(model()) {
 			outer.draw(g);
 			score.draw(g);
 			board.draw(g);
@@ -175,11 +176,11 @@ public class SweeperView implements View {
 		Location   previous   = action != null ? ((Sweeper.FlipAction)action).location : null;
 		Annotation annotation = Groups.firstOfType(GridAnnotation.class, controller.annotations().keySet());
 
-		int mines = Groups.ofType(Sweeper.Mine.class, model.actors).size();
+		int mines = Groups.ofType(Sweeper.Mine.class, model().actors).size();
 		int flags = annotation != null ? ((GridAnnotation)annotation).coloring.keySet().size() : 0;
 		int ticks = controller.index();
 
-		return new State(model.done(), model.success(), previous, annotation, mines, flags, ticks);
+		return new State(model().done(), model().success(), previous, annotation, mines, flags, ticks);
 	}
 
 	protected enum Smiles {
@@ -328,7 +329,7 @@ public class SweeperView implements View {
 				SIZE + 1, SIZE + 1
 			);
 
-			Actor actor = Groups.firstOfType(Sweeper.Mine.class, model.actorsAt(location));
+			Actor actor = Groups.firstOfType(Sweeper.Mine.class, model().actorsAt(location));
 			this.mine = actor != null ? (Sweeper.Mine)actor : null;
 		}
 
@@ -381,7 +382,7 @@ public class SweeperView implements View {
 		}
 
 		public void drawCount(Graphics2D g) {
-			int count = model.count(location);
+			int count = model().count(location);
 			if(count < 0) { return; }
 		
 			g.setFont(g.getFont().deriveFont(Font.BOLD, 12f));
@@ -401,7 +402,7 @@ public class SweeperView implements View {
 			g.setColor(darker);
 			g.draw(area);
 
-			if(model.hidden.contains(location)) {
+			if(model().hidden.contains(location)) {
 				drawCell(g);
 
 				if(state.annotation != null && ((GridAnnotation)state.annotation).coloring.keySet().contains(new Point(location.x, location.y))) {
@@ -457,7 +458,7 @@ public class SweeperView implements View {
 			}
 			else {
 				if(mine == null) {
-					if(model.hidden.contains(location)) {
+					if(model().hidden.contains(location)) {
 						drawCell(g);
 					}
 					else {

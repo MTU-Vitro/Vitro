@@ -1,5 +1,6 @@
 package vitro;
 
+import java.io.Serializable;
 import vitro.util.*;
 import java.util.*;
 
@@ -11,10 +12,9 @@ import java.util.*;
 *
 * @author John Earnest
 **/
-public abstract class Controller {
-	
-	public final Model model;
+public abstract class Controller implements Serializable {
 
+	private   final Model innerModel;
 	protected final Set<Agent> agents = new HashSet<Agent>();
 	protected final Map<Class, Agent> classAgents = new HashMap<Class, Agent>();
 	protected final Map<Actor, Agent> actorAgents = new HashMap<Actor, Agent>();
@@ -23,13 +23,39 @@ public abstract class Controller {
 	private List<Map<Annotation, Agent>> footnotes = new ArrayList<Map<Annotation, Agent>>();
 	private int cursor = 0;
 
+	private final Map<Object, Integer> agentIds = new HashMap<Object, Integer>();
+	private int agentId = 0;
+
 	/**
 	* Construct a new Controller associated with a given Model.
 	*
 	* @param model the model which will be driven by this controller.
 	**/
 	public Controller(Model model) {
-		this.model = model;
+		this.innerModel = model;
+		assignId(model);
+	}
+
+	/**
+	* Obtain a reference to the underlying Model.
+	**/
+	public Model model() {
+		return innerModel;
+	}
+
+	private void assignId(Object o) {
+		agentIds.put(o, agentId++);
+	}
+	
+	/**
+	* Obtain a unique identifier for this Controller's Model
+	* or referenced Agents.
+	*
+	* @param o the Object to consider.
+	**/
+	public int getId(Object o) {
+		if (!agentIds.containsKey(o)) { return -1; }
+		return agentIds.get(o);
 	}
 
 	/**
@@ -43,6 +69,7 @@ public abstract class Controller {
 	public void bind(Class c, Agent agent) {
 		classAgents.put(c, agent);
 		agents.add(agent);
+		assignId(agent);
 	}
 
 	/**
@@ -55,6 +82,7 @@ public abstract class Controller {
 	public void bind(Actor actor, Agent agent) {
 		actorAgents.put(actor, agent);
 		agents.add(agent);
+		assignId(agent);
 	}
 
 	// As far as I can tell, there is no type-safe way to extract Agents
@@ -108,8 +136,8 @@ public abstract class Controller {
 	* @return true if the Model can advance to another state or false if the simulation is 'done'.
 	**/
 	public boolean hasNext() {
-		synchronized(model) {
-			return !model.done();
+		synchronized(this) {
+			return !model().done();
 		}
 	}
 
@@ -126,13 +154,13 @@ public abstract class Controller {
 	public void next() {
 		if (!hasNext()) { return; }
 
-		synchronized(model) {		
+		synchronized(this) {		
 			// generate a new round:
 			if (cursor == history.size()) {
 
 				//long startTime = System.currentTimeMillis();
 				List<Action> round = nextRound();
-				for(Action action : model.cleanup()) {
+				for(Action action : model().cleanup()) {
 					action.apply();
 					round.add(action);
 				}
@@ -168,7 +196,7 @@ public abstract class Controller {
 	public void prev() {
 		if (!hasPrev()) { return; }
 
-		synchronized(model) {
+		synchronized(this) {
 			cursor--;
 			List<Action> actions = history.get(cursor);
 			for(int x = actions.size() - 1; x >= 0; x--) {
@@ -183,7 +211,7 @@ public abstract class Controller {
 	* @return a mapping from every Annotation to the Agent which produced it.
 	**/
 	public Map<Annotation, Agent> annotations() {
-		synchronized(model) {
+		synchronized(this) {
 			if (cursor < 1) { return new HashMap<Annotation, Agent>(); }
 			return footnotes.get(cursor-1);
 		}
@@ -207,15 +235,15 @@ public abstract class Controller {
 	* @return a List of Actors which may act.
 	**/
 	protected List<Actor> actors() {
-		if (!(model instanceof Factional)) {
-			return new ArrayList<Actor>(model.actors);
+		if (!(model() instanceof Factional)) {
+			return new ArrayList<Actor>(model().actors);
 		}
 		// If we're interacting with a Factional model,
 		// only neutral actors and actors from the current
 		// team should have a chance to act:
 		List<Actor> ret = new ArrayList<Actor>();
-		int currentTeam = ((Factional)model).team();
-		for(Actor a : model.actors) {
+		int currentTeam = ((Factional)model()).team();
+		for(Actor a : model().actors) {
 			if (a instanceof Factional) {
 				if (((Factional)a).team() != currentTeam) { continue; }
 			}

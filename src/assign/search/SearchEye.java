@@ -108,7 +108,7 @@ public class SearchEye extends Host {
 
 		Robots     model      = new Robots(maze);
 		Controller controller = new SequentialController(model);
-		RobotsView view       = new RobotsView(model, controller);
+		RobotsView view       = new RobotsView(controller);
 
 		model.locations.put(model.createBLU(), new Location(model, 1, 1));
 		controller.bind(Robots.BLU.class, new PathingAgent(type));
@@ -212,7 +212,7 @@ public class SearchEye extends Host {
 		else { System.out.println("Invalid Map."); return; }
 
 		Controller controller = new SequentialController(model);
-		RobotsView view       = new RobotsView(model, controller);
+		RobotsView view       = new RobotsView(controller);
 
 		controller.bind(Robots.BLU.class, new SokobanAgentBLU());
 

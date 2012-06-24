@@ -293,7 +293,7 @@ public class Carousel extends JPanel implements KeyListener {
 			new Slide() { public void reset() {
 				Reversi model                   = new Reversi(8, 8);
 				SequentialController controller = new SequentialController(model);
-				ReversiView view                = new ReversiView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT, new ColorScheme());
+				ReversiView view                = new ReversiView(controller, SCREEN_WIDTH, SCREEN_HEIGHT, new ColorScheme());
 				Reversi.Player black = model.createPlayer(Reversi.BLACK);
 				Reversi.Player white = model.createPlayer(Reversi.WHITE);
 				model.actors.add(black);
@@ -354,14 +354,14 @@ public class Carousel extends JPanel implements KeyListener {
 				model.locations.put(model.createBLU()  , new Location(model, 1, 1));
 				model.locations.put(model.createBlock(), new Location(model, 2, 2));
 				Controller controller = new SequentialController(model);
-				RobotsView view       = new RobotsView(model, controller);
+				RobotsView view       = new RobotsView(controller);
 				controller.bind(Robots.BLU.class, new SokobanAgentBLU());
 				this.view = view;
 			}},
 			new Slide() { public void reset() {
 				LightsOut model                 = new LightsOut(13, 13);
 				SequentialController controller = new SequentialController(model);
-				LightsOutView view              = new LightsOutView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
+				LightsOutView view              = new LightsOutView(controller, SCREEN_WIDTH, SCREEN_HEIGHT);
 				controller.bind(LightsOut.Player.class, new LightsOutBrain());
 				model.shuffle();
 				this.view = view;
@@ -371,7 +371,7 @@ public class Carousel extends JPanel implements KeyListener {
 			new Slide() { public void reset() {
 				Sweeper model         = new Sweeper(58, 40, 300);
 				Controller controller = new SimultaneousController(model);
-				SweeperView view      = new SweeperView(model, controller);
+				SweeperView view      = new SweeperView(controller);
 				controller.bind(model.player, new SweeperAgent());
 				model.clearSafeArea();
 				this.view = view;
@@ -379,7 +379,7 @@ public class Carousel extends JPanel implements KeyListener {
 			new Slide() { public void reset() {
 				VacWorld model                  = new VacWorld();
 				SequentialController controller = new SequentialController(model);
-				GraphView view                  = new GraphView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
+				GraphView view                  = new GraphView(controller, SCREEN_WIDTH, SCREEN_HEIGHT);
 				controller.bind(VacWorld.Scrubby.class, new VacBrain());
 
 				Node entrance    = view.createNode(.05, .58, "Entrance"    );
@@ -445,7 +445,7 @@ public class Carousel extends JPanel implements KeyListener {
 				Lander lander = new Lander(model);
 				model.positions.put(lander, new Position(Math.random() * 400 - 200, 400.0));
 				Controller controller = new SequentialController(model);
-				LunarView view        = new LunarView(model, controller, SCREEN_WIDTH, SCREEN_HEIGHT);
+				LunarView view        = new LunarView(controller, SCREEN_WIDTH, SCREEN_HEIGHT);
 				controller.bind(lander.navigation, new LunarBrain(Math.random() > .5));
 				this.view = view;
 				

@@ -15,7 +15,7 @@ public class ThreadedController extends Controller {
 	@SuppressWarnings("deprecation")
 	public List<Action> nextRound() {
 		List<Decider> threads = new ArrayList<Decider>();
-		for(Actor a : model.actors) {
+		for(Actor a : model().actors) {
 			Decider d = new Decider(a);
 			threads.add(d);
 			d.start();

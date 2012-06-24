@@ -15,7 +15,7 @@ public class ReversiEye extends Host {
 
 		Reversi model                   = new Reversi(8, 8);
 		SequentialController controller = new SequentialController(model);
-		ReversiView view                = new ReversiView(model, controller, 640, 480, new ColorScheme());
+		ReversiView view                = new ReversiView(controller, 640, 480, new ColorScheme());
 
 		//model.createPiece(42, 0, 0);
 		//model.createPiece(42, 0, 7);

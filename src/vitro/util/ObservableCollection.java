@@ -1,12 +1,14 @@
 package vitro.util;
 
+import java.io.Serializable;
+
 /**
 * ObservableCollections can be used whenever
 * it is useful to monitor mutation of Collections.
 *
 * @author John Earnest
 **/
-public interface ObservableCollection<E> {
+public interface ObservableCollection<E> extends Serializable {
 	
 	/**
 	* Register a CollectionObserver with this Collection.

@@ -43,6 +43,8 @@
 			>
 				<!-- show all warnings -->
 				<compilerarg value = "-Xlint"/>
+				<!-- serialization warnings are irrelevant to our application: -->
+				<compilerarg value = "-Xlint:-serial"/>
 				<!-- compile against external jars/libs -->
 				<classpath refid = "compile.classpath"/>
 			</javac>
@@ -92,6 +94,7 @@
 				sourcepath   = "${src}"
 				packagenames = "vitro, vitro.*, vitro.*.*"
 				link         = "http://download.oracle.com/javase/6/docs/api/"
+				author       = "no"
 			>
 				<classpath refid = "test.classpath"/>
 			</javadoc>
