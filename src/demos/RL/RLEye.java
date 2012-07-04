@@ -12,7 +12,7 @@ public class RLEye extends Host {
 	}
 
 	public RLEye() {
-		RLModel model = new RLModel(8, 1, 0, 1,
+		RLModel model = new RLModel(8, 2, 0, 2,
 			new int[][] {
 				{1, 1, 1, 2},
 				{1, 0, 1, 2},
@@ -29,7 +29,7 @@ public class RLEye extends Host {
 		model.startPosition(0, 2);
 		controller.bind(model.actor(), new RLBrain());
 
-		LoopController loop = new LoopController(controller, 10);
+		LoopController loop = new LoopController(controller, 30);
 		RLView view         = new RLView(loop, 480, 480);
 		show(view);
 	}

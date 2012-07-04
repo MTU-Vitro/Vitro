@@ -15,6 +15,8 @@ public class RLModel extends Grid {
 	private final double forward;
 	private final double left;
 	private final double right;
+	
+	private boolean terminated;
 
 	public RLModel(double n, double e, double s, double w, int[][] type, int[][] reward) {
 		super(type[0].length, type.length);
@@ -29,6 +31,8 @@ public class RLModel extends Grid {
 		this.forward = n / sum;
 		this.left    = w / sum;
 		this.right   = e / sum;
+		
+		terminated = false;
 	}
 
 	public RLActor actor() {
@@ -60,10 +64,15 @@ public class RLModel extends Grid {
 		return type[location.y][location.x] != 0;
 	}
 	
+	public void terminated(boolean terminate) {
+		terminated = terminate;
+	}
+	
 	public boolean done() {
-		Location l = locations.get(actor);
-		if (type[l.y][l.x] == 2) { return true; }
-		return false;
+		return terminated;
+		//Location l = locations.get(actor);
+		//if (type[l.y][l.x] == 2) { return true; }
+		//return false;
 	}
 
 	private static int[][] deltas = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
@@ -128,6 +137,47 @@ class RLMove implements Action {
 	public void undo() {
 		model.locations.put(model.actor(), start);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof RLMove)) { return false; }
+		RLMove other = (RLMove)o;
+		return start.equals(other.start) &&
+		         end.equals(other.end  );
+	}
+
+	@Override
+	public int hashCode() {
+		return start.hashCode() ^
+		         end.hashCode();
+	}
+}
+
+class RLTerminate implements Action {
+	public final RLModel model;
+	
+	public RLTerminate(RLModel model) {
+		this.model = model;
+	}
+	
+	public void apply() {
+		model.terminated(true);
+	}
+	
+	public void undo() {
+		model.terminated(false);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof RLTerminate)) { return false; }
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return 1;
+	}
 }
 
 class Reward implements Action {
@@ -157,6 +207,12 @@ class RLActor extends GridActor {
 
 	public Set<Action> actions() {
 		Set<Action> ret = super.actions();
+		
+		if (((RLModel)model).goal(location())) {
+			ret.add(new RLTerminate((RLModel)model));
+			return ret;
+		}
+		
 		for(Location location : passableNeighbors(ORTHOGONAL)) {
 			ret.add(new RLMove((RLModel)model, location));
 		}
