@@ -5,11 +5,11 @@ import vitro.*;
 import vitro.grid.*;
 import vitro.tools.*;
 
-public class ReversiTournament extends RoundRobin {
+public class ReversiTournament extends Tournament {
 	
 	private Map<Integer, Agent> teamids = new HashMap<Integer, Agent>();
-	//public ReversiTournament() { super(2, true); }
-	public ReversiTournament() { super(2, 3); }
+	public ReversiTournament() { super(2, true); } // tournament
+	//public ReversiTournament() { super(2, 3); } // round robin
 
 	@Override
 	protected View match(List<Agent> competitors) {

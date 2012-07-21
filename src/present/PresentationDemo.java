@@ -17,11 +17,13 @@ public class PresentationDemo extends SlideShow {
 		//add("/home/campus06/jwearnes/Desktop/chapter01.pdf");
 		add("/home/campus06/jwearnes/Desktop/chapter01(2).pdf");
 
-		Sweeper model         = new Sweeper(58, 40, 300);
-		Controller controller = new SimultaneousController(model);
-		SweeperView view      = new SweeperView(controller);
-		controller.bind(model.player, new SweeperAgent());
-		model.clearSafeArea();
-		add(1, view);
+		{ // clean sweep demo
+			Sweeper model         = new Sweeper(58, 40, 300);
+			Controller controller = new SimultaneousController(model);
+			SweeperView view      = new SweeperView(controller);
+			controller.bind(model.player, new SweeperAgent());
+			model.clearSafeArea();
+			add(1, view);
+		}
 	}
 }

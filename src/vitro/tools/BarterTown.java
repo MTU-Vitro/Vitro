@@ -13,6 +13,17 @@ import java.io.*;
 import java.net.*;
 import vitro.*;
 
+/**
+* BarterTown is a system for running competitive matches between
+* Agents within a Vitro model. A Scenario is used to both
+* specify the method of sequencing and evaluating matches and to
+* set up matches themselves. Prototypes are available which
+* cause the system to act like a tournament bracket or other
+* run-off structures.
+*
+* @author John Earnest
+**/
+
 public class BarterTown {
 	
 	private final Scenario     scenario;
@@ -109,7 +120,7 @@ public class BarterTown {
 		}
 	}
 
-	public void run() {
+	void run() {
 		anim = scenario.preMatch();
 
 		while(true) {
