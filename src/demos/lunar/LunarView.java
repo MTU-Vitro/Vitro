@@ -90,7 +90,7 @@ public class LunarView implements View {
 	private double sofar = 0;
 	public void tick(double time) {
 		sofar += time;
-		if(sofar > .10) {
+		if(sofar > 1) {
 			controller.next();
 			sofar = 0;
 		}
@@ -307,7 +307,7 @@ public class LunarView implements View {
 		private Set<Point> generateStars(int density) {
 			Set<Point> stars = new HashSet<Point>();
 			for(int x = 0; x < density; x++) {
-				stars.add(new Point((int)(Math.random() * width), (int)(Math.random() * height)));
+				stars.add(new Point((int)(Math.random() * 3 * width) - width, (int)(Math.random() * height)));
 			}
 			return stars;
 		}
@@ -316,36 +316,35 @@ public class LunarView implements View {
 			int[] x = new int[50];
 			int[] y = new int[50];
 
-			int xp = -10;
+			int xp = -400;
 			int yp = startHeight;
 
 			for(int i = 1; i < 49; i++) {
 				x[i] = xp;
 				y[i] = yp;
-				xp += (int)(Math.random() * 10) + (width / 40);
+				xp += (int)(Math.random() * 10) + (width / 20);
 				yp += (int)(Math.random() * (2 * diffHeight)) - diffHeight;
 			}
 
-			x[ 0] = -20;       y[ 0] = 2 * height;
+			x[ 0] = -400;      y[ 0] = 2 * height;
 			x[49] = 2 * width; y[49] = 2 * height;
 
 			return new Polygon(x, y, 50);
 		}
 
 		private Polygon generateGround(int startHeight) {
-			int[] x = new int[50];
-			int[] y = new int[50];
+			int[] x = new int[100];
+			int[] y = new int[100];
 
-			int xp = -10;
-			for(int i = 1; i < 49; i++) {
+			int xp = -400;
+			for(int i = 1; i < 99; i++) {
 				x[i] = xp;
 				y[i] = startHeight + (int)(Math.random() *  6) - 3;
-
-				xp += (int)(Math.random() * 10) + (width / 40);
+				xp += (int)(Math.random() * 10) + (width / 20);
 			}
 
-			x[ 0] = -20;       y[ 0] = 2 * height;
-			x[49] = 2 * width; y[49] = 2 * height;
+			x[ 0] = -400;      y[ 0] = 2 * height;
+			x[99] = 2 * width; y[99] = 2 * height;
 
 			return new Polygon(x, y, 50);
 		}
