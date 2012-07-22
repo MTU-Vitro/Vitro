@@ -23,6 +23,10 @@ public class DomainTracker<E> implements Domain<E> {
 		return domain.isGoal(e);
 	}
 	
+	public double cost(E head, E tail) {
+		return domain.cost(head, tail);
+	}
+	
 	public Set<E> expand(E e) {
 		count += 1;
 		expansions.put(e, count);

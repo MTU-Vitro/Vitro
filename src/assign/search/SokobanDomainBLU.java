@@ -26,6 +26,10 @@ public class SokobanDomainBLU implements Domain<SokobanStateBLU> {
 		return goal.equals(state.blockLocation);
 	}
 	
+	public double cost(SokobanStateBLU head, SokobanStateBLU tail) {
+		return 1.0;
+	}
+	
 	public Set<SokobanStateBLU> expand(SokobanStateBLU state) {
 		Set<SokobanStateBLU> ret = new HashSet<SokobanStateBLU>();
 

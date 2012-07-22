@@ -9,7 +9,10 @@ public class EuclidianHeuristic implements Heuristic<Location> {
 		this.goal = goal;
 	}
 
-	public double value(Location location) {
-		return (Double)Math.sqrt(Math.pow(location.x - goal.x, 2) + Math.pow(location.y - goal.y, 2));
+	public double cost(Location location) {
+		return Math.sqrt(
+			Math.pow(location.x - goal.x, 2) + 
+			Math.pow(location.y - goal.y, 2)
+		);
 	}
 }

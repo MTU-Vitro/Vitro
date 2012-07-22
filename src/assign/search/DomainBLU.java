@@ -24,6 +24,10 @@ public class DomainBLU implements Domain<Location> {
 		return goal.equals(l);
 	}
 	
+	public double cost(Location head, Location tail) {
+		return 1.0;
+	}
+	
 	public Set<Location> expand(Location location) {
 		return blu.passableNeighbors(location, Robots.ORTHOGONAL);
 	}

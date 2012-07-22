@@ -17,7 +17,7 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 	* 
 	**/
 	public enum PathType { 
-		BREADTH, DEPTH, ASTAR_EUCLIDIAN, ASTAR_MANHATTAN; 
+		BREADTH, DEPTH, UNIFORM_COST, ASTAR_EUCLIDIAN, ASTAR_MANHATTAN; 
 	}
 	
 	/**
@@ -86,13 +86,13 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 				                       break;
 				case DEPTH           : method = new DepthFirstSearch<Location>();
 				                       break;
+				case UNIFORM_COST    : method = new UniformCostSearch<Location>();
+				                       break;
 				case ASTAR_EUCLIDIAN : method = new AStarSearch<Location>(
-				                           new ConstantCostFunction<Location>(),
 				                           new EuclidianHeuristic(goal)
 				                       );
 				                       break;
 				case ASTAR_MANHATTAN : method = new AStarSearch<Location>(
-				                           new ConstantCostFunction<Location>(),
 				                           new ManhattanHeuristic(goal)
 				                       );
 				                       break;
@@ -142,12 +142,26 @@ public class PathingAgent implements Agent<Robots.BLU>, Annotated {
 		// GridAnnotation constructs a gradient between two colors
 		// based on the ordering and overlays the data on top of
 		// the view.
+		/*
 		ret.add(new GridAnnotation(
 			expansions,
 			new Color(0.90f, 0.09f, 0.58f, 0.5f),
 			new Color(0.03f, 0.08f, 0.50f, 0.5f)
 		));
+		*/
+		ret.add(new GridAnnotation(
+			expansions,
+			new Color(1f, 0f, 0f, 0.5f),
+			new Color(0f, 1f, 0f, 0.5f),
+			new Color(0f, 0f, 1f, 0.5f)
+		));
 
 		return ret;
 	}
+	
+	/**
+	*
+	**/
+	@Override
+	public String toString() { return "Awesome Pathing Robot"; }
 }

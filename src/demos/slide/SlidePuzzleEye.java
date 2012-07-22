@@ -18,7 +18,7 @@ public class SlidePuzzleEye extends Host {
 		SlidePuzzleView view            = new SlidePuzzleView(controller, 640, 480, new ColorScheme());
 
 		//controller.bind(SlidePuzzle.Gap.class, new SlidePuzzleBrain());
-		controller.bind(SlidePuzzle.Gap.class, new RandomAgent());
+		controller.bind(SlidePuzzle.Gap.class, new SlidePuzzleBrain());
 
 		model.shuffle();
 
