@@ -33,7 +33,7 @@ public class PresentTool extends JPanel implements KeyListener {
 		// the constructor of the SlideShow implementation.
 
 		JFrame window = new JFrame();
-		Dimension preferredSize = new Dimension(1366, 768);
+		Dimension preferredSize = new Dimension(1024, 768);
 		PresentTool app = new PresentTool(preferredSize,show);
 		window.add(app);
 		window.addKeyListener(app);

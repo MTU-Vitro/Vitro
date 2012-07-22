@@ -40,7 +40,7 @@ public class ReversiView implements View {
 	public int         height()      { return height;     }
 
 	public void draw(Graphics2D g) {
-		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(colors.background);
 		g.fillRect(0, 0, width, height);
 		Drawing.configureVector(g);
 		g.setFont(new Font("Monospaced", Font.BOLD, 36));
