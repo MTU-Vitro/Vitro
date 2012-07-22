@@ -27,7 +27,7 @@ public abstract class SlideShow extends AbstractList<Slide> {
 	}
 
 	public void addImage(String imagePath) {
-		addImage(size() - 1, imagePath);
+		addImage(size(), imagePath);
 	}
 
 	public void add(int index, View view) {
@@ -35,7 +35,7 @@ public abstract class SlideShow extends AbstractList<Slide> {
 	}
 
 	public void add(View view) {
-		add(size() - 1, view);
+		add(size(), view);
 	}
 
 	public void add(String pdfPath) {
@@ -94,38 +94,5 @@ class PDFSlide extends Slide {
 			0.0f, // rotation
 			1.0f  // zoom
 		);
-	}
-}
-
-class HostSlide extends Slide {
-	private final View view;
-
-	public HostSlide(View view, Slide.Transition transition) {
-		setTransition(transition);
-		this.view = view;
-	}
-
-	public HostSlide(View view) {
-		this(view, Slide.Transition.None);
-	}
-
-	void paint(Graphics2D g, Dimension size) {
-		g.translate(
-			(size.getWidth()  - view.width())  / 2,
-			(size.getHeight() - view.height()) / 2
-		);
-		view.draw(g);
-	}
-
-	void tick() {
-		view.tick(.1);
-	}
-
-	void gotFocus() {
-		
-	}
-
-	void lostFocus() {
-		
 	}
 }

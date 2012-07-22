@@ -33,7 +33,7 @@ public class PresentTool extends JPanel implements KeyListener {
 		// the constructor of the SlideShow implementation.
 
 		JFrame window = new JFrame();
-		Dimension preferredSize = new Dimension(1024, 768);
+		Dimension preferredSize = new Dimension(1366, 768);
 		PresentTool app = new PresentTool(preferredSize,show);
 		window.add(app);
 		window.addKeyListener(app);
@@ -81,22 +81,24 @@ public class PresentTool extends JPanel implements KeyListener {
 
 	public void paint(Graphics g) {
 		if (transitionTimer < 1) {
-			g.setColor(Color.WHITE);
+			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, (int)size.getWidth(), (int)size.getHeight());
 			show.get(slideIndex).paint((Graphics2D)(g.create()), size);
 		}
 		else {
-			g.setColor(Color.WHITE);
+			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, (int)size.getWidth(), (int)size.getHeight());
 			show.get(slideIndex).paint((Graphics2D)(g.create()), size);
 		}
 	}
 
+	private boolean wait = true;
+
 	public void tick() {
 		if (transitionTimer > 0)  {
 			transitionTimer--;
 		}
-		else {
+		else if (!wait) {
 			show.get(slideIndex).tick();
 		}
 	}
@@ -108,12 +110,41 @@ public class PresentTool extends JPanel implements KeyListener {
 			slideIndex = Math.min(show.size() - 1, slideIndex + 1);
 			show.get(slideIndex).gotFocus();
 			transitionTimer = 20;
+			wait = true;
 		}
 		if (k.getKeyCode() == KeyEvent.VK_LEFT) {
 			show.get(slideIndex).lostFocus();
 			slideIndex = Math.max(              0, slideIndex - 1);
 			show.get(slideIndex).gotFocus();
 			transitionTimer = 20;
+			wait = true;
+		}
+		if (show.get(slideIndex) instanceof HostSlide) {
+			View view = ((HostSlide)(show.get(slideIndex))).view;
+
+			if (k.getKeyCode() == KeyEvent.VK_SPACE) {
+				wait = !wait;
+			}
+			else if (k.getKeyCode() == KeyEvent.VK_A) {
+				wait = true;
+				view.controller().prev();
+				view.flush();
+				repaint();
+			}
+			else if (k.getKeyCode() == KeyEvent.VK_D) {
+				wait = true;
+				view.controller().next();
+				view.flush();
+				repaint();
+			}
+			else if (k.getKeyCode() == KeyEvent.VK_W) {
+				wait = true;
+				while(view.controller().hasPrev()) {
+					view.controller().prev();
+				}
+				view.flush();
+				repaint();
+			}
 		}
 	}
 
